@@ -19,19 +19,23 @@ public class Storage {
     private static String filePath;
     
     // Public methods
-    public static String prepareStorage() {
-        return "feedback";
+    public static String prepareStorage(String fileName) {
+        setFilePath(fileName);
+        getDataFromFile();
+        return String.format(Constants.MSG_TASK_FILE, fileName);
     }
     
     public static String add(String desc, Date startDate, Date endDate) {
         Task newTask = new Task(desc, startDate, endDate);
         tasks.put(newTask.getId(), newTask);
+        writeToFile();
         return String.format(Constants.MSG_ADDED, newTask.getUserFormat());
     }
     
     public static String delete(int id) {
         Task removedTask = tasks.get(id);
         tasks.remove(id);
+        writeToFile();
         return String.format(Constants.MSG_DELETED, removedTask.getUserFormat());
     }
     
@@ -47,6 +51,7 @@ public class Storage {
             updatedTask.setEndDate(endDate);
         }
         tasks.put(id, updatedTask);
+        writeToFile();
         return String.format(Constants.MSG_UPDATED, updatedTask.getUserFormat());
     }
     
@@ -54,6 +59,7 @@ public class Storage {
         Task doneTask = tasks.get(id);
         doneTask.setDone(true);
         tasks.put(id, doneTask);
+        writeToFile();
         return String.format(Constants.MSG_UPDATED, doneTask.getUserFormat());
     }
     
@@ -105,7 +111,7 @@ public class Storage {
     }
     
     private static void getDataFromFile() {
-        jsonStr = "";
+        String jsonStr = "";
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
             String line = br.readLine();
