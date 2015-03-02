@@ -45,7 +45,8 @@ public class Logic {
 			returnMessage = Constants.MSG_HELP;
 			return returnMessage;
 		case SETDIR:
-
+			returnMessage = setDirectory(userInput);
+			return returnMessage;
 		case EXIT:
 
 		default:
@@ -53,14 +54,21 @@ public class Logic {
 		}
 	}
 
+	private static String setDirectory(String userInput) {
+		String returnMessage;
+		String filePath = Interpreter.interpretFilePath(userInput);
+		returnMessage = Storage.setFilePath(filePath);
+		return returnMessage;
+	}
+
 	private static String add(String userInput) {
-		Task taskToAdd = Interpreter.getParameters(userInput);
+		Task taskToAdd = Interpreter.interpretParameters(userInput);
 		String userFeedback = Storage.add(taskToAdd);
 		return userFeedback;
 	}
 
 	private static String delete(String userInput) {
-		int[] linesToDelete = Interpreter.getLineIndices(userInput);
+		int[] linesToDelete = Interpreter.interpretLineIndices(userInput);
 		String userFeedback = "";
 		for (int line : linesToDelete) {
 			if (userFeedback.isEmpty()) {
@@ -73,7 +81,7 @@ public class Logic {
 	}
 
 	private static String done(String userInput) {
-		int[] linesDone = Interpreter.getLineIndices(userInput);
+		int[] linesDone = Interpreter.interpretLineIndices(userInput);
 		String userFeedback = "";
 		for (int line : linesDone) {
 			if (userFeedback.isEmpty()) {
@@ -100,13 +108,13 @@ public class Logic {
 	}
 
 	private static String search(String userInput){
-		String searchParameter = Interpreter.getSearchParameter(userInput);
+		String searchParameter = Interpreter.interpretSearchParameter(userInput);
 		String userFeedback = Storage.search(searchParameter);
 		return userFeedback;
 	}
 	
 	private static String edit(String userInput){
-		Task taskToEdit = Interpreter.getEditParameter(userInput);
+		Task taskToEdit = Interpreter.interpretEditParameter(userInput);
 		String userFeedback = Storage.update(taskToEdit);
 		return userFeedback;
 	}
