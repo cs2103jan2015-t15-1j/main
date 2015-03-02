@@ -42,7 +42,8 @@ public class Logic {
 			returnMessage = search(userInput);
 			return returnMessage;
 		case HELP:
-
+			returnMessage = Constants.MSG_HELP;
+			return returnMessage;
 		case SETDIR:
 
 		case EXIT:
