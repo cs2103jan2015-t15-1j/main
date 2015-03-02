@@ -40,6 +40,8 @@ public class Logic {
 		case REDO:
 			returnMessage = redo();
 			return returnMessage;
+		case SEARCH:
+			
 		case HELP:
 
 		case SETDIR:
