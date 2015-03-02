@@ -1,19 +1,16 @@
 public class Logic {
 
-	private static final String MESSAGE_ENVIRONMENT_READY = null;
-	private static final String MESSAGE_INITIALIZATION_ERROR = null;
-
 	public static String initializeEnvironment() {
 		if (Storage.prepareStorage()) {
-			return MESSAGE_ENVIRONMENT_READY;
+			return Constants.MESSAGE_ENVIRONMENT_READY;
 		} else {
-			return MESSAGE_INITIALIZATION_ERROR;
+			return Constants.MESSAGE_INITIALIZATION_ERROR;
 		}
 	}
 
 	public static String execute(String userInput) {
 		String returnMessage;
-		COMMAND_TYPE commandType = Interpreter.getCommandType(userInput);
+		COMMAND_TYPE commandType = Interpreter.interpretCommandType(userInput);
 
 		switch (commandType) {
 		case ADD:
@@ -28,7 +25,6 @@ public class Logic {
 		case DELETE:
 			returnMessage = delete(userInput);
 			return returnMessage;
-
 		case EDIT:
 			returnMessage = edit(userInput);
 			return returnMessage;
@@ -48,10 +44,15 @@ public class Logic {
 			returnMessage = setDirectory(userInput);
 			return returnMessage;
 		case EXIT:
-
+			returnMessage = save();
+			return returnMessage;
 		default:
-
+			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
 		}
+	}
+
+	private static String save() {
+		Storage.writeToFile();
 	}
 
 	private static String setDirectory(String userInput) {
@@ -107,13 +108,14 @@ public class Logic {
 		return userFeedback;
 	}
 
-	private static String search(String userInput){
-		String searchParameter = Interpreter.interpretSearchParameter(userInput);
+	private static String search(String userInput) {
+		String searchParameter = Interpreter
+				.interpretSearchParameter(userInput);
 		String userFeedback = Storage.search(searchParameter);
 		return userFeedback;
 	}
-	
-	private static String edit(String userInput){
+
+	private static String edit(String userInput) {
 		Task taskToEdit = Interpreter.interpretEditParameter(userInput);
 		String userFeedback = Storage.update(taskToEdit);
 		return userFeedback;

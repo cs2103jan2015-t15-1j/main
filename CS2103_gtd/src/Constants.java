@@ -7,5 +7,8 @@ public final class Constants {
 	public static final String MSG_SEARCH_UNSUCCESSFUL = "No tasks containing your keyword was found";
 	public static final String MSG_TASK_FILE = "The file %1$s is used for stroring your tasks";
 	public static final String MSG_HELP = "Available commands:\nadd <description> <start time (if any)> <end time(if any)>\ndisplay\ndone <task identification number(s)>\ndelete <task identification number(s)>\nedit <task identification number> <new parameters>\nundo\nredo\nsearch <Keyword>\nhelp\nsetdir <file path>";
+	public static final String MESSAGE_ENVIRONMENT_READY = "Welcome to TaskWaltz";
+	public static final String MESSAGE_INITIALIZATION_ERROR = "There was a problem opening TaskWaltz";
+	public static final String MESSAGE_COMMAND_EXECUTION_ERROR = "TaskWaltz was not able to execute the following command: ";
 
 }
