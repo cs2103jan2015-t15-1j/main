@@ -2,9 +2,6 @@ public class Logic {
 
 	private static final String MESSAGE_ENVIRONMENT_READY = null;
 	private static final String MESSAGE_INITIALIZATION_ERROR = null;
-	private static final int EXPECTED_DESCRIPTION_POSITION = 0;
-	private static final int EXPECTED_START_DATE_POSITION = 1;
-	private static final int EXPECTED_END_DATE_POSITION = 2;
 
 	public static String initializeEnvironment() {
 		if (Storage.prepareStorage()) {
@@ -41,7 +38,8 @@ public class Logic {
 			returnMessage = redo();
 			return returnMessage;
 		case SEARCH:
-			
+			returnMessage = search(userInput);
+			return returnMessage;
 		case HELP:
 
 		case SETDIR:
@@ -99,6 +97,10 @@ public class Logic {
 		return userFeedback;
 	}
 
-	
+	private static String search(String userInput){
+		String searchParameter = Interpreter.getSearchParameter(userInput);
+		String userFeedback = Storage.search(searchParameter);
+		return userFeedback;
+	}
 	
 }

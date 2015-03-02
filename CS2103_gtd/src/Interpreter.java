@@ -13,5 +13,10 @@ public class Interpreter {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public static String getSearchParameter(String userInput) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
