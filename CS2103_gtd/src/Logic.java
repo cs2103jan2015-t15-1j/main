@@ -30,7 +30,8 @@ public class Logic {
 			return returnMessage;
 
 		case EDIT:
-
+			returnMessage = edit(userInput);
+			return returnMessage;
 		case UNDO:
 			returnMessage = undo();
 			return returnMessage;
@@ -103,4 +104,9 @@ public class Logic {
 		return userFeedback;
 	}
 	
+	private static String edit(String userInput){
+		Task taskToEdit = Interpreter.getEditParameter(userInput);
+		String userFeedback = Storage.update(taskToEdit);
+		return userFeedback;
+	}
 }
