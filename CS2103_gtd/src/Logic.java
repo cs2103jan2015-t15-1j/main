@@ -20,23 +20,20 @@ public class Logic {
 
 	public static String execute(String userInput){
 		String returnMessage;
-		commandType = Interpreter.getCommandType(userInput);
+		COMMAND_TYPE commandType = Interpreter.getCommandType(userInput);
 		
 		switch (commandType){
 		case ADD:
-			commandParameters = Interpreter.getAddParameters(userInput);
-			description = commandParameters[EXPECTED_DESCRIPTION_POSITION];
-			startDate = commandParameters[EXPECTED_START_DATE_POSITION];
-			endDate = commandParameters[EXPECTED_END_DATE_POSITION];
-			taskAdded = Storage.add(description,startDate,endDate);
-			returnMessage[0] = "Added " + taskAdded.getUserFormat();
+			returnMessage = add(userInput);
 			return returnMessage;
 		case DISPLAY:
-		
+			returnMessage = display();
+			return returnMessage;
 		case DONE:
 			
 		case DELETE:
-			linesToDelete = Interpreter.getDeleteParameters(userInput);
+			returnMessage = delete(userInput);
+			return returnMessage;
 			
 			
 		case EDIT:
@@ -56,13 +53,13 @@ public class Logic {
 		}
 	}
 	
-	private String add(String userInput){
+	private static String add(String userInput){
 		Task taskToAdd = Interpreter.getParameters(userInput);
 		String userFeedback = Storage.add(taskToAdd);
 		return userFeedback;
 	}
 	
-	private String delete(String userInput){
+	private static String delete(String userInput){
 		int[] linesToDelete = Interpreter.getLinesToDelete(userInput);
 		String userFeedback = "";
 		for(int line :linesToDelete){
@@ -70,12 +67,31 @@ public class Logic {
 				userFeedback = Storage.delete(line);
 			}
 			else{
-				String temp = userFeedback + "\n"+Storage.delete(line);
-				userFeedback = temp;
+				userFeedback += "\n"+Storage.delete(line);
 			}
 		}
 		return userFeedback;
 	}
+	
+	private static String done(String userInput){
+		int[] linesDone = Interpreter.getLineIndices(userInput);
+		String userFeedback = "";
+		for(int line :linesDone){
+			if(userFeedback.isEmpty()){
+				userFeedback = Storage.done(line);
+			}
+			else{
+				userFeedback += "\n"+Storage.done(line);
+			}
+		}
+		return userFeedback;
+	}
+	
+	private static String display(){
+		return Storage.getTasks();
+	}
+	
+	private static 
 }
 
 

@@ -9,7 +9,7 @@ public class Interpreter {
 		return null;
 	}
 
-	public static int[] getLinesToDelete(String userInput) {
+	public static int[] getLineIndices(String userInput) {
 		// TODO Auto-generated method stub
 		return null;
 	}
