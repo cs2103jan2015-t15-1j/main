@@ -58,7 +58,8 @@ public class Logic {
 	
 	private String add(String userInput){
 		Task taskToAdd = Interpreter.getParameters(userInput);
-		
+		String userFeedback = Storage.add(taskToAdd);
+		return userFeedback;
 	}
 }
 
