@@ -61,6 +61,21 @@ public class Logic {
 		String userFeedback = Storage.add(taskToAdd);
 		return userFeedback;
 	}
+	
+	private String delete(String userInput){
+		int[] linesToDelete = Interpreter.getLinesToDelete(userInput);
+		String userFeedback = "";
+		for(int line :linesToDelete){
+			if(userFeedback.isEmpty()){
+				userFeedback = Storage.delete(line);
+			}
+			else{
+				String temp = userFeedback + "\n"+Storage.delete(line);
+				userFeedback = temp;
+			}
+		}
+		return userFeedback;
+	}
 }
 
 
