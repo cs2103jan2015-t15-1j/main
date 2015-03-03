@@ -7,23 +7,22 @@ public class Interpreter {
 	
 	private static final String EMPTY_STRING = "";
 	private static final String WHITESPACE = "\\s+";
-	private static final int POSITION_FIRST = 0;
+	private static final int ARRAY_POSITION_FIRST = 0;
 	
 	public static COMMAND_TYPE interpretCommandType(String usercommand) {
-		
-		return null;
+		return determineCommandType(extractFirstWord(usercommand));
 	}
 	
-	private static String extractFirstWord(String usercommand) {
-		if (usercommand.trim().equals(EMPTY_STRING)) {
+	static String extractFirstWord(String usercommand) {
+		usercommand = usercommand.trim();
+		if (usercommand.equals(EMPTY_STRING)) {
 			return EMPTY_STRING;
 		}
-		String command = usercommand.trim().split(WHITESPACE)[POSITION_FIRST];
-		return command;
+		return usercommand.split(WHITESPACE)[ARRAY_POSITION_FIRST];
 	}
 	
 	// accommodate different names/abbreviations for the same command
-	private static COMMAND_TYPE determineCommandType(String commandTypeString) {
+	static COMMAND_TYPE determineCommandType(String commandTypeString) {
 		//ADD, DISPLAY, DONE, DELETE, EDIT, UNDO, REDO, HELP, SETDIR, EXIT
 		if (commandTypeString.equalsIgnoreCase("ADD")) {
 			return COMMAND_TYPE.ADD;
