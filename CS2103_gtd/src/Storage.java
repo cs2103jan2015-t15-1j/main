@@ -45,10 +45,10 @@ public class Storage {
             updatedTask.setDescription(desc);
         }
         if (startDate != null) {
-            updatedTask.setStartDate(startDate);
+            updatedTask.setStartDateTime(startDate);
         }
         if (endDate != null) {
-            updatedTask.setEndDate(endDate);
+            updatedTask.setEndDateTime(endDate);
         }
         tasks.put(id, updatedTask);
         writeToFile();
