@@ -23,11 +23,12 @@ public class Storage {
     public static String prepareStorage(String fileName) {
         setFilePath(fileName);
         getDataFromFile();
-        return String.format(Constants.MESSAGE_TASK_FILE, fileName);
+        return String.format(Constants.MESSAGE_WELCOME, fileName);
     }
     
-    public static void setFilePath(String fileName) {
-        //todo: check if file/filename is valid
+    public static String setFilePath(String fileName) {
+        //TODO: check if file/filename is valid
+        //TODO: delete data from old file
         filePath = System.getProperty("user.dir") + "/" + fileName;
         File file = new File(filePath);
         try {
@@ -37,6 +38,7 @@ public class Storage {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return String.format(Constants.MESSAGE_FILE_CHANGE, fileName);
     }
     
     public static String add(Task newTask) {

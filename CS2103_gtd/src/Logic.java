@@ -45,17 +45,9 @@ public class Logic {
 		case EXIT:
 			returnMessage = save();
 			return returnMessage;
-		case GETDIR:
-			returnMessage = getDirectory();
-			return returnMessage;
 		default:
 			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
 		}
-	}
-
-	private static String getDirectory(){
-		String userFeedback = Storage.getDirectory();
-		return userFeedback;
 	}
 	
 	private static String save() {
