@@ -82,5 +82,11 @@ public class Task {
 			return false;
 		}
 	}
-
+	
+	public Task(String descr, LocalDateTime start, LocalDateTime end){
+		description = descr;
+		startDateTime = start;
+		endDateTime = end;
+	}
+	
 }

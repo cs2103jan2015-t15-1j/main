@@ -223,5 +223,10 @@ public class Interpreter {
 		}
 		return paramsAfterParse;
 	}
+	
+	public static String interpretFilePath(String userInput) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

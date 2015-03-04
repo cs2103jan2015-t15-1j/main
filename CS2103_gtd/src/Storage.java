@@ -17,42 +17,56 @@ public class Storage {
     private static Map<Integer, Task> tasks = new HashMap<Integer, Task>();
     private static Stack undoStack = new Stack();
     private static String filePath;
+    private static int lastIdNumber = 0;
     
     // Public methods
     public static String prepareStorage(String fileName) {
         setFilePath(fileName);
         getDataFromFile();
-        return String.format(Constants.MSG_TASK_FILE, fileName);
+        return String.format(Constants.MESSAGE_TASK_FILE, fileName);
     }
     
-    public static String add(String desc, Date startDate, Date endDate) {
-        Task newTask = new Task(desc, startDate, endDate);
-        tasks.put(newTask.getId(), newTask);
+    public static void setFilePath(String fileName) {
+        //todo: check if file/filename is valid
+        filePath = System.getProperty("user.dir") + "/" + fileName;
+        File file = new File(filePath);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public static String add(Task newTask) {
+        tasks.put(getNextIdNr(), newTask);
         writeToFile();
-        return String.format(Constants.MSG_ADDED, newTask.getUserFormat());
+        return String.format(Constants.MESSAGE_ADDED, newTask.getUserFormat());
     }
     
     public static String delete(int id) {
         Task removedTask = tasks.get(id);
         tasks.remove(id);
         writeToFile();
-        return String.format(Constants.MSG_DELETED, removedTask.getUserFormat());
+        return String.format(Constants.MESSAGE_DELETED, removedTask.getUserFormat());
     }
     
-    public static String update(int id, String desc, Date startDate, Date endDate) {
-        Task updatedTask = tasks.get(id);
-        if (desc != null) {
-            updatedTask.setDescription(desc);
+    public static String update(Task changes) {
+        int idToUpdate = changes.getId();
+        Task taskToUpdate = tasks.get(idToUpdate);
+        if (changes.getDescription() != null) {
+            taskToUpdate.setDescription(changes.getDescription());
         }
-        if (startDate != null) {
-            updatedTask.setStartDateTime(startDate);
+        if (changes.getStartDateTime() != null) {
+            taskToUpdate.setStartDateTime(changes.getStartDateTime());
         }
-        if (endDate != null) {
-            updatedTask.setEndDateTime(endDate);
+        if (changes.getEndDateTime() != null) {
+            taskToUpdate.setEndDateTime(changes.getEndDateTime());
         }
-        tasks.put(id, updatedTask);
+        tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
-        return String.format(Constants.MSG_UPDATED, updatedTask.getUserFormat());
+        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getUserFormat());
     }
     
     public static String done(int id) {
@@ -60,30 +74,32 @@ public class Storage {
         doneTask.setDone(true);
         tasks.put(id, doneTask);
         writeToFile();
-        return String.format(Constants.MSG_UPDATED, doneTask.getUserFormat());
+        return String.format(Constants.MESSAGE_UPDATED, doneTask.getUserFormat());
     }
     
     public static String getTasks() {
         if (tasks.isEmpty()) {
-            return Constants.MSG_NO_TASKS;
+            return Constants.MESSAGE_NO_TASKS;
         }
         String allTasks = "";
         for (Task task : tasks.values()) {
-            allTasks += task.getId() + ". " + task.getUserFormat();
+            allTasks += task.getId() + ". " + task.getUserFormat() + "\n";
         }
         return allTasks;
     }
     
-    public static String search(String keyword) {
+    public static String search(Task searchObj) {
+    	// Use Task object to access not only keyword, but also constraints for startDate, endDate...etc.
+    	String keyword = searchObj.getDescription();
         String searchResult = "";
         for (Task task : tasks.values()) {
             String taskDesc = task.getUserFormat();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResult += task.getId() + ". " + task.getUserFormat();
+                searchResult += task.getId() + ". " + task.getUserFormat() + "\n";
             }
         }
         if (searchResult == "") {
-            return Constants.MSG_SEARCH_UNSUCCESSFUL;
+            return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         }
         return searchResult;
     }
@@ -95,19 +111,16 @@ public class Storage {
     public static String redo() {
         return "feedback";
     }
+    
+    public static String exit() {
+        writeToFile();
+        return "feedback";
+    }
 
     // Private methods
-    private static void setFilePath(String fileName) {
-        //todo: check if file/filename is valid
-        filePath = System.getProperty("user.dir") + "/" + fileName;
-        File file = new File(filePath);
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static int getNextIdNr() {
+        lastIdNumber++;
+        return lastIdNumber;
     }
     
     private static void getDataFromFile() {
@@ -146,12 +159,13 @@ public class Storage {
             currentObj = arr.getInt(i);
             String desc = jsonObj.getString("desc");
             Date startDate = jsonObj.getDate("startDate");
-            Date startDate = jsonObj.getDate("endDate");
+            Date endDate = jsonObj.getDate("endDate");
             boolean done = jsonObj.getBoolean("done");
-            Task newTask = new Task(desc, startDate, endDate, done); 
-            tasks.put(i, newTask);
+            Task newTask = new Task(desc, startDate, endDate, done);
+            tasks.put(getNextIdNr(), newTask);
         }
     }
+    
     
     private static void writeToFile() {
         JSONObject jsonObj = new JSONObject();
@@ -161,11 +175,11 @@ public class Storage {
             JSONObject taskObj = new JSONObject();
             String desc = task.getDescription();
             taskObj.put("desc: "+desc);
-            Date startDate = task.getStartDate().toString();
+            LocalDateTime startDate = task.getStartDateTime();
             taskObj.put("startDate: "+startDate);
-            Date endDate = task.getStartDate().toString();
+            LocalDateTime endDate = task.getStartDateTime();
             taskObj.put("endDate: "+endDate);
-            String done = task.getDone().toString();
+            String done = task.getDone() + "";
             taskObj.put("done: "+done);
             jsonArray.add(taskObj);
         }
