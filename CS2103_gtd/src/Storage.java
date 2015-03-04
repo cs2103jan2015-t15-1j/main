@@ -1,10 +1,10 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -194,14 +194,13 @@ public class Storage {
         
         jsonObj.put("tasks", jsonArray);
  
-        FileWriter file = new FileWriter(filePath);
         try {
+            FileWriter file = new FileWriter(filePath);
             file.write(jsonObj.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
             file.flush();
             file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     
