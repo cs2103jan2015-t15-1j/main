@@ -17,6 +17,7 @@ public class Storage {
     private static Map<Integer, Task> tasks = new HashMap<Integer, Task>();
     private static Stack undoStack = new Stack();
     private static String filePath;
+    private static int lastIdNumber = 0;
     
     // Public methods
     public static String prepareStorage(String fileName) {
@@ -25,7 +26,7 @@ public class Storage {
         return String.format(Constants.MSG_TASK_FILE, fileName);
     }
     
-    private static void setFilePath(String fileName) {
+    public static void setFilePath(String fileName) {
         //todo: check if file/filename is valid
         filePath = System.getProperty("user.dir") + "/" + fileName;
         File file = new File(filePath);
@@ -38,9 +39,8 @@ public class Storage {
         }
     }
     
-    public static String add(String desc, Date startDate, Date endDate) {
-        Task newTask = new Task(desc, startDate, endDate);
-        tasks.put(newTask.getId(), newTask);
+    public static String add(Task newTask) {
+        tasks.put(getNextIdNr(), newTask);
         writeToFile();
         return String.format(Constants.MSG_ADDED, newTask.getUserFormat());
     }
@@ -52,20 +52,21 @@ public class Storage {
         return String.format(Constants.MSG_DELETED, removedTask.getUserFormat());
     }
     
-    public static String update(int id, String desc, Date startDate, Date endDate) {
-        Task updatedTask = tasks.get(id);
-        if (desc != null) {
-            updatedTask.setDescription(desc);
+    public static String update(Task changes) {
+        idToUpdate = changes.getId();
+        Task taskToUpdate = tasks.get(idToUpdate);
+        if (changes.desc != null) {
+            taskToUpdate.setDescription(changes.desc);
         }
-        if (startDate != null) {
-            updatedTask.setStartDate(startDate);
+        if (changes.startDate != null) {
+            taskToUpdate.setStartDate(changes.startDate);
         }
-        if (endDate != null) {
-            updatedTask.setEndDate(endDate);
+        if (changes.endDate != null) {
+            taskToUpdate.setEndDate(changes.endDate);
         }
-        tasks.put(id, updatedTask);
+        tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
-        return String.format(Constants.MSG_UPDATED, updatedTask.getUserFormat());
+        return String.format(Constants.MSG_UPDATED, taskToUpdate.getUserFormat());
     }
     
     public static String done(int id) {
@@ -115,6 +116,11 @@ public class Storage {
     }
 
     // Private methods
+    private static int getNextIdNr() {
+        lastIdNumber++;
+        return lastIdNumber;
+    }
+    
     private static void getDataFromFile() {
         String jsonStr = "";
         try {
