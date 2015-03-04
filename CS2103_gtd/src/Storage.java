@@ -15,7 +15,6 @@ import org.json.*; //download: http://mvnrepository.com/artifact/org.json/json
 public class Storage {
     
     private static Map<Integer, Task> tasks = new HashMap<Integer, Task>();
-    private static Stack undoStack = new Stack();
     private static String filePath;
     private static int lastIdNumber = 0;
     
@@ -91,8 +90,8 @@ public class Storage {
     }
     
     public static String search(Task searchObj) {
-    	// Use Task object to access not only keyword, but also constraints for startDate, endDate...etc.
-    	String keyword = searchObj.getDescription();
+        // Use Task object to access not only keyword, but also constraints for startDate, endDate...etc.
+        String keyword = searchObj.getDescription();
         String searchResult = "";
         for (Task task : tasks.values()) {
             String taskDesc = task.getUserFormat();
@@ -202,14 +201,6 @@ public class Storage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    
-    private static void addUndo(COMMAND_TYPE ct, int taskId) {
-         
-    }
-    
-    private static void addRedo(COMMAND_TYPE ct, int taskId) {
-        
     }
 
 
