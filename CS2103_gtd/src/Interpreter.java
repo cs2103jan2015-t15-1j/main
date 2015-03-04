@@ -8,6 +8,8 @@
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Interpreter {
 	
@@ -26,16 +28,17 @@ public class Interpreter {
 	private static final String[] displayParameterKeywords = 
 		{KEYWORD_DISPLAY_DUE, KEYWORD_DISPLAY_AFTER, KEYWORD_DISPLAY_BEFORE, KEYWORD_DISPLAY_ON};
 	
-	private static final String DATE_DELIMITTER = "(\\s|-|/)";
-	private static final String DD_MM_YYYY = "\\d\\d" + DATE_DELIMITTER + "\\d\\d" +
-			DATE_DELIMITTER + "\\d\\d\\d\\d";
+	private static final String DELIMITTER_DATE = "(\\s|-|/)";
+	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String DELIMITTER_TIME = "(:)";
+	private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME + "([0-5])\\d";
 	
 	
 	private static final String EMPTY_STRING = "";
 	private static final String SINGLE_SPACE = " ";
 	private static final String WHITESPACE = "\\s+";
 	private static final int ARRAY_POSITION_FIRST = 0;
-	private static final int KEYWORD_DOES_NOT_EXIST = -1;
 	private static final String PARAMETER_DOES_NOT_EXIST = null;
 	private static final int INT_PARAM_INVALID = -1;
 	
@@ -144,36 +147,43 @@ public class Interpreter {
 	}
 	
 	static LocalDateTime interpretDateTimeParam(String param, COMMAND_TYPE commandType) {
+		// NEED TO BE IMPLEMENTED:
 		// Difference between Add and Edit: Add will fill in unspecified fields of LocalDateTime by default, whereas
 		// Edit will only fill in fields of LocalDateTime that need to be changed.
 		
-		// 1. extract LocalDate
 		// Date example: 02-03-2015
 		LocalDate date = extractLocalDate(param);
-		
-		// 2. extract LocalTime
 		// Time example: 8PM | 8:00 | 20:00 | 8
 		LocalTime time = extractLocalTime(param);
 		
-		// 3. Combine date and time to LocalDateTime
-		LocalDateTime dateTime = LocalDateTime.of(date, time);
-		
-		// 4. return LocalDateTime object.
-		return dateTime;
+		return LocalDateTime.of(date, time);
 	}
 	
-	static LocalDate extractLocalDate(String param) {
-		//need to be implemented. Consider using Regex.
-		//variety of input forms covered.
-		//return null if none present.
-		return LocalDate.of(2015, 03, 03);
+	static LocalDate extractLocalDate(String param) {		
+		Pattern p = Pattern.compile(DD_MM_YYYY);
+		Matcher m = p.matcher(param);
+		if (m.find()) {
+			String dateString = m.group();
+			String[] dateSegments = dateString.split(DELIMITTER_DATE);
+			// Following Singaporean date convention: day, month, year
+			return LocalDate.of(Integer.parseInt(dateSegments[2]), 
+					Integer.parseInt(dateSegments[1]), Integer.parseInt(dateSegments[0]));
+		} else {
+			return null;
+		}
 	}
 	
-	static LocalTime extractLocalTime(String param) {
-		//need to be implemented. Consider using Regex.
-		//variety of input forms covered.
-		//return null if none present.
-		return LocalTime.of(9, 30);
+	static LocalTime extractLocalTime(String param) {		
+		Pattern p = Pattern.compile(HH_MM);
+		Matcher m = p.matcher(param);
+		if (m.find()) {
+			String timeString = m.group();
+			String[] timeSegments = timeString.split(DELIMITTER_TIME);
+			// Following Singaporean time convention: hour:minute
+			return LocalTime.of(Integer.parseInt(timeSegments[0]), Integer.parseInt(timeSegments[1]));
+		} else {
+			return null;
+		}
 	}
 	
 	static String extractFirstWord(String usercommand) {
