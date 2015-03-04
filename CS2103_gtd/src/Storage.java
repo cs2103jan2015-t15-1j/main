@@ -25,6 +25,19 @@ public class Storage {
         return String.format(Constants.MSG_TASK_FILE, fileName);
     }
     
+    private static void setFilePath(String fileName) {
+        //todo: check if file/filename is valid
+        filePath = System.getProperty("user.dir") + "/" + fileName;
+        File file = new File(filePath);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     public static String add(String desc, Date startDate, Date endDate) {
         Task newTask = new Task(desc, startDate, endDate);
         tasks.put(newTask.getId(), newTask);
@@ -95,21 +108,13 @@ public class Storage {
     public static String redo() {
         return "feedback";
     }
+    
+    public static String exit() {
+        writeToFile();
+        return "feedback";
+    }
 
     // Private methods
-    private static void setFilePath(String fileName) {
-        //todo: check if file/filename is valid
-        filePath = System.getProperty("user.dir") + "/" + fileName;
-        File file = new File(filePath);
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
     private static void getDataFromFile() {
         String jsonStr = "";
         try {
