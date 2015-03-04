@@ -159,8 +159,8 @@ public class Storage {
             Date startDate = jsonObj.getDate("startDate");
             Date startDate = jsonObj.getDate("endDate");
             boolean done = jsonObj.getBoolean("done");
-            Task newTask = new Task(desc, startDate, endDate, done); 
-            tasks.put(i, newTask);
+            Task newTask = new Task(desc, startDate, endDate, done);
+            tasks.put(getNextIdNr(), newTask);
         }
     }
     
