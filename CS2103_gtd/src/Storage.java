@@ -53,16 +53,16 @@ public class Storage {
     }
     
     public static String update(Task changes) {
-        idToUpdate = changes.getId();
+        int idToUpdate = changes.getIdNumber();
         Task taskToUpdate = tasks.get(idToUpdate);
-        if (changes.desc != null) {
-            taskToUpdate.setDescription(changes.desc);
+        if (changes.getDescription() != null) {
+            taskToUpdate.setDescription(changes.getDescription());
         }
-        if (changes.startDate != null) {
-            taskToUpdate.setStartDate(changes.startDate);
+        if (changes.getStartDate() != null) {
+            taskToUpdate.setStartDate(changes.getStartDate());
         }
-        if (changes.endDate != null) {
-            taskToUpdate.setEndDate(changes.endDate);
+        if (changes.getEndDate() != null) {
+            taskToUpdate.setEndDate(changes.getEndDate());
         }
         tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
@@ -83,7 +83,7 @@ public class Storage {
         }
         String allTasks = "";
         for (Task task : tasks.values()) {
-            allTasks += task.getId() + ". " + task.getUserFormat() + "\n";
+            allTasks += task.getIdNumber() + ". " + task.getUserFormat() + "\n";
         }
         return allTasks;
     }
@@ -93,7 +93,7 @@ public class Storage {
         for (Task task : tasks.values()) {
             String taskDesc = task.getUserFormat();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResult += task.getId() + ". " + task.getUserFormat() + "\n";
+                searchResult += task.getIdNumber() + ". " + task.getUserFormat() + "\n";
             }
         }
         if (searchResult == "") {
