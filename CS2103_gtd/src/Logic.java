@@ -37,7 +37,7 @@ public class Logic {
 			returnMessage = search(userInput);
 			return returnMessage;
 		case HELP:
-			returnMessage = Constants.MSG_HELP;
+			returnMessage = Constants.MESSAGE_HELP;
 			return returnMessage;
 		case SETDIR:
 			returnMessage = setDirectory(userInput);
@@ -71,13 +71,13 @@ public class Logic {
 	}
 
 	private static String add(String userInput) {
-		Task taskToAdd = Interpreter.interpretParameters(userInput);
+		Task taskToAdd = Interpreter.interpretAddOREditParameter(userInput, COMMAND_TYPE.ADD);
 		String userFeedback = Storage.add(taskToAdd);
 		return userFeedback;
 	}
 
 	private static String delete(String userInput) {
-		int[] linesToDelete = Interpreter.interpretLineIndices(userInput);
+		int[] linesToDelete = Interpreter.interpretDeleteParameter(userInput);
 		String userFeedback = "";
 		for (int line : linesToDelete) {
 			if (userFeedback.isEmpty()) {
@@ -90,7 +90,7 @@ public class Logic {
 	}
 
 	private static String done(String userInput) {
-		int[] linesDone = Interpreter.interpretLineIndices(userInput);
+		int[] linesDone = Interpreter.interpretDoneParameter(userInput);
 		String userFeedback = "";
 		for (int line : linesDone) {
 			if (userFeedback.isEmpty()) {
@@ -117,14 +117,16 @@ public class Logic {
 	}
 
 	private static String search(String userInput) {
-		String searchParameter = Interpreter
-				.interpretSearchParameter(userInput);
+		Task searchParameter = Interpreter
+				.interpretDisplayParameter(userInput);
 		String userFeedback = Storage.search(searchParameter);
 		return userFeedback;
 	}
 
 	private static String edit(String userInput) {
-		Task taskToEdit = Interpreter.interpretEditParameter(userInput);
+		int editTaskID = Interpreter.interpretEditParameter(userInput);
+		//TODO: Pull info of the Task of this ID from storage and display to user.
+		Task taskToEdit = Interpreter.interpretAddOREditParameter(userInput, COMMAND_TYPE.EDIT);
 		String userFeedback = Storage.update(taskToEdit);
 		return userFeedback;
 	}

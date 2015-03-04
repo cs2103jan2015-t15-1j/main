@@ -53,16 +53,16 @@ public class Storage {
     }
     
     public static String update(Task changes) {
-        int idToUpdate = changes.getIdNumber();
+        int idToUpdate = changes.getId();
         Task taskToUpdate = tasks.get(idToUpdate);
         if (changes.getDescription() != null) {
             taskToUpdate.setDescription(changes.getDescription());
         }
-        if (changes.getStartDate() != null) {
-            taskToUpdate.setStartDate(changes.getStartDate());
+        if (changes.getStartDateTime() != null) {
+            taskToUpdate.setStartDateTime(changes.getStartDateTime());
         }
-        if (changes.getEndDate() != null) {
-            taskToUpdate.setEndDate(changes.getEndDate());
+        if (changes.getEndDateTime() != null) {
+            taskToUpdate.setEndDateTime(changes.getEndDateTime());
         }
         tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
@@ -83,17 +83,19 @@ public class Storage {
         }
         String allTasks = "";
         for (Task task : tasks.values()) {
-            allTasks += task.getIdNumber() + ". " + task.getUserFormat() + "\n";
+            allTasks += task.getId() + ". " + task.getUserFormat() + "\n";
         }
         return allTasks;
     }
     
-    public static String search(String keyword) {
+    public static String search(Task searchObj) {
+    	// Use Task object to access not only keyword, but also constraints for startDate, endDate...etc.
+    	String keyword = searchObj.getDescription();
         String searchResult = "";
         for (Task task : tasks.values()) {
             String taskDesc = task.getUserFormat();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResult += task.getIdNumber() + ". " + task.getUserFormat() + "\n";
+                searchResult += task.getId() + ". " + task.getUserFormat() + "\n";
             }
         }
         if (searchResult == "") {
@@ -157,12 +159,13 @@ public class Storage {
             currentObj = arr.getInt(i);
             String desc = jsonObj.getString("desc");
             Date startDate = jsonObj.getDate("startDate");
-            Date startDate = jsonObj.getDate("endDate");
+            Date endDate = jsonObj.getDate("endDate");
             boolean done = jsonObj.getBoolean("done");
             Task newTask = new Task(desc, startDate, endDate, done);
             tasks.put(getNextIdNr(), newTask);
         }
     }
+    
     
     private static void writeToFile() {
         JSONObject jsonObj = new JSONObject();
@@ -172,11 +175,11 @@ public class Storage {
             JSONObject taskObj = new JSONObject();
             String desc = task.getDescription();
             taskObj.put("desc: "+desc);
-            Date startDate = task.getStartDate().toString();
+            LocalDateTime startDate = task.getStartDateTime();
             taskObj.put("startDate: "+startDate);
-            Date endDate = task.getStartDate().toString();
+            LocalDateTime endDate = task.getStartDateTime();
             taskObj.put("endDate: "+endDate);
-            String done = task.getDone().toString();
+            String done = task.getDone() + "";
             taskObj.put("done: "+done);
             jsonArray.add(taskObj);
         }
