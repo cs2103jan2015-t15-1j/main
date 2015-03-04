@@ -158,14 +158,20 @@ public class Storage {
         JSONObject jsonObj = new JSONObject(jsonStr);
         JSONArray jsonArr = jsonObj.getJSONArray("tasks");
         for (int i = 0; i < jsonArr.length(); i++)  {
-            currentObj = arr.getInt(i);
-            String desc = jsonObj.getString("desc");
-            Date startDate = jsonObj.getDate("startDate");
-            Date endDate = jsonObj.getDate("endDate");
-            boolean done = jsonObj.getBoolean("done");
-            Task newTask = new Task(desc, startDate, endDate, done);
-            tasks.put(getNextIdNr(), newTask);
+            JSONObject currentObj = jsonArr.getJSONObject(i);
+            String desc = currentObj.getString("desc");
+            LocalDateTime startDate = converteToDate(currentObj.getString("startDate"));
+            LocalDateTime endDate = converteToDate(currentObj.getString("endDate"));
+            boolean done = currentObj.getBoolean("done");
+            int taskId = getNextIdNr();
+            Task newTask = new Task(taskId, desc, startDate, endDate, done);
+            tasks.put(taskId, newTask);
         }
+    }
+    
+    private static LocalDateTime converteToDate(String strDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return LocalDateTime.parse(strDate, formatter);
     }
     
     
@@ -176,21 +182,21 @@ public class Storage {
         for (Task task : tasks.values()) {
             JSONObject taskObj = new JSONObject();
             String desc = task.getDescription();
-            taskObj.put("desc: "+desc);
-            LocalDateTime startDate = task.getStartDateTime();
-            taskObj.put("startDate: "+startDate);
-            LocalDateTime endDate = task.getStartDateTime();
-            taskObj.put("endDate: "+endDate);
+            taskObj.put("desc", desc);
+            String startDate = task.getStartDateTime().toString();
+            taskObj.put("startDate", startDate);
+            String endDate = task.getStartDateTime().toString();
+            taskObj.put("endDate", endDate);
             String done = task.getDone() + "";
-            taskObj.put("done: "+done);
-            jsonArray.add(taskObj);
+            taskObj.put("done", done);
+            jsonArray.put(taskObj);
         }
         
         jsonObj.put("tasks", jsonArray);
  
         FileWriter file = new FileWriter(filePath);
         try {
-            file.write(jsonObj.toJSONString());
+            file.write(jsonObj.toString());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

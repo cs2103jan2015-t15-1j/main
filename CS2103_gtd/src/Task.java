@@ -18,6 +18,14 @@ public class Task {
 		done = false;
 	}
 	
+	public Task(int i, String desc, LocalDateTime start, LocalDateTime end, boolean d) {
+	    id = i;
+	    description = desc;
+	    startDateTime = start;
+	    endDateTime = end;
+	    done = d;
+	}
+	
 	public String getStorageFormat() {
 		return null;
 	}
