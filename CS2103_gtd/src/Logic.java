@@ -1,11 +1,10 @@
 public class Logic {
 
 	public static String initializeEnvironment() {
-		if (Storage.prepareStorage()) {
-			return Constants.MESSAGE_ENVIRONMENT_READY;
-		} else {
-			return Constants.MESSAGE_INITIALIZATION_ERROR;
-		}
+	    // Todo: get current file path from a file
+	    String filePath = "storage_file.txt";
+		String initializationFeedback = Storage.prepareStorage(filePath);
+		return initializationFeedback;
 	}
 
 	public static String execute(String userInput) {
