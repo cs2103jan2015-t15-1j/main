@@ -83,6 +83,7 @@ public class Interpreter {
 		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
 		
 		String paramDescription = kList.getDescription();
+		System.out.println("desc: "+paramDescription);
 		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
 		String paramLocation = kList.getParameter(KEYWORD_ADD_LOCATION);
 		String paramEventStart = kList.getParameter(KEYWORD_ADD_EVENTSTART);

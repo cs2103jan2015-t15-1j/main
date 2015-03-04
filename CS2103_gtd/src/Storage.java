@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 import org.json.*; //download: http://mvnrepository.com/artifact/org.json/json
 
@@ -137,7 +136,9 @@ public class Storage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        createTasksFromJson(jsonStr);
+        if (jsonStr.length() > 0) {
+            createTasksFromJson(jsonStr);
+        }
     }
     
     /* JSON example:
