@@ -23,7 +23,7 @@ public class Storage {
     public static String prepareStorage(String fileName) {
         setFilePath(fileName);
         getDataFromFile();
-        return String.format(Constants.MSG_TASK_FILE, fileName);
+        return String.format(Constants.MESSAGE_TASK_FILE, fileName);
     }
     
     public static void setFilePath(String fileName) {
@@ -42,14 +42,14 @@ public class Storage {
     public static String add(Task newTask) {
         tasks.put(getNextIdNr(), newTask);
         writeToFile();
-        return String.format(Constants.MSG_ADDED, newTask.getUserFormat());
+        return String.format(Constants.MESSAGE_ADDED, newTask.getUserFormat());
     }
     
     public static String delete(int id) {
         Task removedTask = tasks.get(id);
         tasks.remove(id);
         writeToFile();
-        return String.format(Constants.MSG_DELETED, removedTask.getUserFormat());
+        return String.format(Constants.MESSAGE_DELETED, removedTask.getUserFormat());
     }
     
     public static String update(Task changes) {
@@ -66,7 +66,7 @@ public class Storage {
         }
         tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
-        return String.format(Constants.MSG_UPDATED, taskToUpdate.getUserFormat());
+        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getUserFormat());
     }
     
     public static String done(int id) {
@@ -74,12 +74,12 @@ public class Storage {
         doneTask.setDone(true);
         tasks.put(id, doneTask);
         writeToFile();
-        return String.format(Constants.MSG_UPDATED, doneTask.getUserFormat());
+        return String.format(Constants.MESSAGE_UPDATED, doneTask.getUserFormat());
     }
     
     public static String getTasks() {
         if (tasks.isEmpty()) {
-            return Constants.MSG_NO_TASKS;
+            return Constants.MESSAGE_NO_TASKS;
         }
         String allTasks = "";
         for (Task task : tasks.values()) {
@@ -97,7 +97,7 @@ public class Storage {
             }
         }
         if (searchResult == "") {
-            return Constants.MSG_SEARCH_UNSUCCESSFUL;
+            return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         }
         return searchResult;
     }
