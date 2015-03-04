@@ -52,7 +52,7 @@ public class Logic {
 	}
 
 	private static String save() {
-		Storage.writeToFile();
+		Storage.exit();
 	}
 
 	private static String setDirectory(String userInput) {
