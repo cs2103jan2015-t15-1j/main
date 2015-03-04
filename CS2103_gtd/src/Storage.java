@@ -82,7 +82,7 @@ public class Storage {
         }
         String allTasks = "";
         for (Task task : tasks.values()) {
-            allTasks += task.getId() + ". " + task.getUserFormat();
+            allTasks += task.getId() + ". " + task.getUserFormat() + "\n";
         }
         return allTasks;
     }
@@ -92,7 +92,7 @@ public class Storage {
         for (Task task : tasks.values()) {
             String taskDesc = task.getUserFormat();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResult += task.getId() + ". " + task.getUserFormat();
+                searchResult += task.getId() + ". " + task.getUserFormat() + "\n";
             }
         }
         if (searchResult == "") {
