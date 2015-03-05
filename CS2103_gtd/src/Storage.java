@@ -166,12 +166,12 @@ public class Storage {
             String startDateString = currentObj.getString("startDate");
             LocalDateTime startDate = null;
             if (!startDateString.equals(Constants.STORAGE_ENTRY_DOES_NOT_EXIST)) {
-            	startDate = converteToDate(currentObj.getString("startDate"));
+            	startDate = converteToDate(startDateString);
             }
             String endDateString = currentObj.getString("endDate");
             LocalDateTime endDate = null;
             if (!endDateString.equals(Constants.STORAGE_ENTRY_DOES_NOT_EXIST)) {
-            	endDate = converteToDate(currentObj.getString("endDate"));
+                endDate = converteToDate(endDateString);
             }
             boolean done = currentObj.getBoolean("done");
             int taskId = getNextIdNr();
