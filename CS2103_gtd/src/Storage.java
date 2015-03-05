@@ -17,7 +17,7 @@ public class Storage {
     private static String filePath;
     private static int lastIdNumber = 0;
     private static final DateTimeFormatter dateTimeStorageFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final String ENTRY_DOEST_NOT_EXIST = "EMTPY";
+    private static final String ENTRY_DOES_NOT_EXIST = "EMTPY";
     
     // Public methods
     public static String prepareStorage(String fileName) {
@@ -162,8 +162,16 @@ public class Storage {
         for (int i = 0; i < jsonArr.length(); i++)  {
             JSONObject currentObj = jsonArr.getJSONObject(i);
             String desc = currentObj.getString("desc");
-            LocalDateTime startDate = converteToDate(currentObj.getString("startDate"));
-            LocalDateTime endDate = converteToDate(currentObj.getString("endDate"));
+            String startDateString = currentObj.getString("startDate");
+            LocalDateTime startDate = null;
+            if (!startDateString.equals(ENTRY_DOES_NOT_EXIST)) {
+            	startDate = converteToDate(currentObj.getString("startDate"));
+            }
+            String endDateString = currentObj.getString("endDate");
+            LocalDateTime endDate = null;
+            if (!endDateString.equals(ENTRY_DOES_NOT_EXIST)) {
+            	endDate = converteToDate(currentObj.getString("endDate"));
+            }
             boolean done = currentObj.getBoolean("done");
             int taskId = getNextIdNr();
             Task newTask = new Task(taskId, desc, startDate, endDate, done);
@@ -185,12 +193,12 @@ public class Storage {
             JSONObject taskObj = new JSONObject();
             String desc = task.getDescription();
             taskObj.put("desc", desc);
-            String startDate = ENTRY_DOEST_NOT_EXIST;
+            String startDate = ENTRY_DOES_NOT_EXIST;
             if (task.getStartDateTime() != null) {
             	startDate = task.getStartDateTime().format(dateTimeStorageFormat);
             }
             taskObj.put("startDate", startDate);
-            String endDate = ENTRY_DOEST_NOT_EXIST;
+            String endDate = ENTRY_DOES_NOT_EXIST;
             if (task.getEndDateTime() != null) {
             	endDate = task.getStartDateTime().format(dateTimeStorageFormat);
             }
