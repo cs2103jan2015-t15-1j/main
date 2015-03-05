@@ -14,7 +14,7 @@ public final class Constants {
 	public static final String MESSAGE_FILE_CHANGE = "The file %1$s is now used for storing tasks";
 	
 	public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
-	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd:%4$s\n";
+	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 }

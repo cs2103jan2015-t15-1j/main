@@ -14,17 +14,17 @@ import java.util.regex.Pattern;
 public class Interpreter {
 	
 	// Keywords
-	private static final String KEYWORD_ADD_DEADLINE = "(by|BY|due|DUE)";
-	private static final String KEYWORD_ADD_LOCATION = "(at|AT|@)";
-	private static final String KEYWORD_ADD_EVENTSTART = "(from|FROM|start|START)";
-	private static final String KEYWORD_ADD_EVENTEND = "(to|TO|end|END)";
+	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
+	private static final String KEYWORD_ADD_LOCATION = "((at)|(AT)|(@))";
+	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START))";
+	private static final String KEYWORD_ADD_EVENTEND = "((to)|(TO)|(end)|(END))";
 	private static final String[] addParameterKeywords = 
 		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_LOCATION, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
 	
-	private static final String KEYWORD_DISPLAY_DUE = "(due|DUE)";
-	private static final String KEYWORD_DISPLAY_AFTER = "(after|AFTER)";
-	private static final String KEYWORD_DISPLAY_BEFORE = "(before|BEFORE)";
-	private static final String KEYWORD_DISPLAY_ON = "(on|ON)";
+	private static final String KEYWORD_DISPLAY_DUE = "((due)|(DUE))";
+	private static final String KEYWORD_DISPLAY_AFTER = "((after)|(AFTER))";
+	private static final String KEYWORD_DISPLAY_BEFORE = "((before)|(BEFORE))";
+	private static final String KEYWORD_DISPLAY_ON = "((on)|(ON))";
 	private static final String[] displayParameterKeywords = 
 		{KEYWORD_DISPLAY_DUE, KEYWORD_DISPLAY_AFTER, KEYWORD_DISPLAY_BEFORE, KEYWORD_DISPLAY_ON};
 	
@@ -108,7 +108,7 @@ public class Interpreter {
 				LocalDateTime eventStart = interpretDateTimeParam(paramEventStart, commandType);
 				LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd, commandType);
 				newTask.setStartDateTime(eventStart);
-				newTask.setEndDateTime(eventStart);
+				newTask.setEndDateTime(eventEnd);
 				
 			} else {
 				// task type is floating

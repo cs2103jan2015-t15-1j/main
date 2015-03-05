@@ -63,7 +63,8 @@ public class KeywordInfo implements Comparable<KeywordInfo> {
 			//System.err.println("Keyword " + this.keyword + " does not exist");
 			return THIS_AFTER_OTHER;
 		}
-		if (this.getPosition() < otherKeywordInfo.getPosition()) {
+		if (this.getPosition() < otherKeywordInfo.getPosition() ||
+				otherKeywordInfo.getPosition() == KEYWORD_DOES_NOT_EXIST) {
 			return THIS_BEFORE_OTHER;
 		} else if (this.getPosition() == otherKeywordInfo.getPosition()) {
 			return THIS_EQUAL_OTHER;

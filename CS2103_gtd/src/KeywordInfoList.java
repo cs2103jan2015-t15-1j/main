@@ -7,6 +7,8 @@
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class KeywordInfoList {
@@ -16,6 +18,8 @@ public class KeywordInfoList {
 	private static final String PARAMETER_DOES_NOT_EXIST = null;
 	private static final int KEYWORD_DOES_NOT_EXIST = -1;
 	private static final String SINGLE_SPACE = " ";
+	private static final String SINGLE_SPACE_REGEX = "\\s";
+	private static final int SINGLE_SPACE_LENGTH = 1;
 	private static final int ARRAY_POSITION_FIRST = 0;
 	
 	// Fields
@@ -46,7 +50,7 @@ public class KeywordInfoList {
 	
 	public String getParameter(String keywordRegex) {
 		for (int i = 0; i < kList.size(); i++) {
-			if (kList.get(i).getKeyword().matches(keywordRegex)) {
+			if (kList.get(i).getKeyword().equals(keywordRegex)) {
 				return kList.get(i).getParameter();
 			}
 		}
@@ -64,11 +68,11 @@ public class KeywordInfoList {
 	private void updateKeywordPositions(String usercommand) {
 		for (int i = 0; i < kList.size(); i++) {
 			String keyword = kList.get(i).getKeyword();
-			String keywordPadded = SINGLE_SPACE + keyword + SINGLE_SPACE;
-			if (usercommand.contains(keywordPadded)) {
-				int fromIndex = usercommand.indexOf(keywordPadded);
-				int keywordPosition = usercommand.indexOf(keyword, fromIndex);
-				kList.get(i).setPosition(keywordPosition);
+			String keywordPadded = SINGLE_SPACE_REGEX + keyword + SINGLE_SPACE_REGEX;
+			Pattern patternKeyword = Pattern.compile(keywordPadded);
+			Matcher matcher = patternKeyword.matcher(usercommand);
+			if (matcher.find()) {
+				kList.get(i).setPosition(matcher.start() + SINGLE_SPACE_LENGTH);
 			} else {
 				kList.get(i).setPosition(KEYWORD_DOES_NOT_EXIST);
 			}
@@ -77,6 +81,7 @@ public class KeywordInfoList {
 	
 	private void updateKeywordParametersSorted(ArrayList<KeywordInfo> keywordInfoList, String usercommand) {
 		Collections.sort(keywordInfoList);
+		
 		if (keywordInfoList.get(ARRAY_POSITION_FIRST).getPosition() != KEYWORD_DOES_NOT_EXIST) {
 			for (int i = 0; i < keywordInfoList.size(); i++) {
 				boolean lastParameter = false;

@@ -41,7 +41,9 @@ public class Storage {
     }
     
     public static String add(Task newTask) {
-        tasks.put(getNextIdNr(), newTask);
+    	int taskID = getNextIdNr();
+    	newTask.setId(taskID);
+        tasks.put(taskID, newTask);
         writeToFile();
         return String.format(Constants.MESSAGE_ADDED, newTask.getUserFormat());
     }
