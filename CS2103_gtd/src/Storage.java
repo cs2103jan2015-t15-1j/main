@@ -16,8 +16,7 @@ public class Storage {
     private static Map<Integer, Task> tasks = new HashMap<Integer, Task>();
     private static String filePath;
     private static int lastIdNumber = 0;
-    private static final DateTimeFormatter dateTimeStorageFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final String ENTRY_DOES_NOT_EXIST = "EMTPY";
+    
     
     // Public methods
     public static String prepareStorage(String fileName) {
@@ -164,12 +163,12 @@ public class Storage {
             String desc = currentObj.getString("desc");
             String startDateString = currentObj.getString("startDate");
             LocalDateTime startDate = null;
-            if (!startDateString.equals(ENTRY_DOES_NOT_EXIST)) {
+            if (!startDateString.equals(Constants.STORAGE_ENTRY_DOES_NOT_EXIST)) {
             	startDate = converteToDate(currentObj.getString("startDate"));
             }
             String endDateString = currentObj.getString("endDate");
             LocalDateTime endDate = null;
-            if (!endDateString.equals(ENTRY_DOES_NOT_EXIST)) {
+            if (!endDateString.equals(Constants.STORAGE_ENTRY_DOES_NOT_EXIST)) {
             	endDate = converteToDate(currentObj.getString("endDate"));
             }
             boolean done = currentObj.getBoolean("done");
@@ -193,16 +192,10 @@ public class Storage {
             JSONObject taskObj = new JSONObject();
             String desc = task.getDescription();
             taskObj.put("desc", desc);
-            String startDate = ENTRY_DOES_NOT_EXIST;
-            if (task.getStartDateTime() != null) {
-            	startDate = task.getStartDateTime().format(dateTimeStorageFormat);
-            }
-            taskObj.put("startDate", startDate);
-            String endDate = ENTRY_DOES_NOT_EXIST;
-            if (task.getEndDateTime() != null) {
-            	endDate = task.getStartDateTime().format(dateTimeStorageFormat);
-            }
-            taskObj.put("endDate", endDate);
+            String startDateTime = task.getStartDateTimeInString();
+            taskObj.put("startDate", startDateTime);
+            String endDateTime = task.getEndDateTimeInString();
+            taskObj.put("endDate", endDateTime);
             String done = task.getDone() + "";
             taskObj.put("done", done);
             jsonArray.put(taskObj);

@@ -2,6 +2,8 @@ import java.time.LocalDateTime;
 
 
 public class Task {
+	
+	
 	private int id;
 	private String description;
 	private LocalDateTime startDateTime;
@@ -31,8 +33,9 @@ public class Task {
 	}
 	public String getUserFormat() {
 		//Should this include the task Index as well or should we have a separate method for that?
-		//Brief information about id, desc, startdate, enddate ?? and maybe in the future, specify task type as well?
-		return null;
+		//Brief information about id, desc, startdate, enddate ?? and maybe in the future, specify task type as well? 
+		String feedback = String.format(Constants.FORMAT_DISPLAY_TASKINFO, this.getId(), this.getDescription(), this.getStartDateTimeInString(), this.getEndDateTimeInString()); 
+		return feedback;
 	}
 	public int getId() {
 		return id;
@@ -47,6 +50,23 @@ public class Task {
 	public LocalDateTime getEndDateTime() {
 		return endDateTime;
 	}
+	
+	public String getStartDateTimeInString() {
+		return getDateTimeInString(this.getStartDateTime());
+	}
+	
+	public String getEndDateTimeInString() {
+		return getDateTimeInString(this.getEndDateTime());
+	}
+	
+	public static String getDateTimeInString(LocalDateTime dateTime) {
+		String dateTimeString = Constants.STORAGE_ENTRY_DOES_NOT_EXIST;
+        if (dateTime != null) {
+        	dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+        }
+        return dateTimeString;
+	}
+	
 	public String getLocation() {
 		return location;
 	}

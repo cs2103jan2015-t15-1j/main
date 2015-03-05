@@ -1,3 +1,5 @@
+import java.time.format.DateTimeFormatter;
+
 public final class Constants {
 
 	public static final String MESSAGE_ADDED = "Your task %1$s has been added";
@@ -10,5 +12,9 @@ public final class Constants {
 	public static final String MESSAGE_INITIALIZATION_ERROR = "There was a problem opening TaskWaltz";
 	public static final String MESSAGE_COMMAND_EXECUTION_ERROR = "TaskWaltz was not able to execute the following command: ";
 	public static final String MESSAGE_FILE_CHANGE = "The file %1$s is now used for storing tasks";
+	
+	public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
+	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd:%4$s\n";
+	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 }
