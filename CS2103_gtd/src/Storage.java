@@ -16,6 +16,8 @@ public class Storage {
     private static Map<Integer, Task> tasks = new HashMap<Integer, Task>();
     private static String filePath;
     private static int lastIdNumber = 0;
+    private static final DateTimeFormatter dateTimeStorageFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final String ENTRY_DOEST_NOT_EXIST = "EMTPY";
     
     // Public methods
     public static String prepareStorage(String fileName) {
@@ -183,9 +185,15 @@ public class Storage {
             JSONObject taskObj = new JSONObject();
             String desc = task.getDescription();
             taskObj.put("desc", desc);
-            String startDate = task.getStartDateTime().toString();
+            String startDate = ENTRY_DOEST_NOT_EXIST;
+            if (task.getStartDateTime() != null) {
+            	startDate = task.getStartDateTime().format(dateTimeStorageFormat);
+            }
             taskObj.put("startDate", startDate);
-            String endDate = task.getStartDateTime().toString();
+            String endDate = ENTRY_DOEST_NOT_EXIST;
+            if (task.getEndDateTime() != null) {
+            	endDate = task.getStartDateTime().format(dateTimeStorageFormat);
+            }
             taskObj.put("endDate", endDate);
             String done = task.getDone() + "";
             taskObj.put("done", done);

@@ -77,25 +77,27 @@ public class KeywordInfoList {
 	
 	private void updateKeywordParametersSorted(ArrayList<KeywordInfo> keywordInfoList, String usercommand) {
 		Collections.sort(keywordInfoList);
-		for (int i = 0; i < keywordInfoList.size(); i++) {
-			boolean lastParameter = false;
-			String parameter = null;
-			int thisKeywordPosition = keywordInfoList.get(i).getPosition();
-			if (i < keywordInfoList.size() - 1) {
-				int nextKeywordPosition = keywordInfoList.get(i + 1).getPosition();
-				if (nextKeywordPosition != KEYWORD_DOES_NOT_EXIST) {
-					parameter = usercommand.substring(thisKeywordPosition, nextKeywordPosition);
+		if (keywordInfoList.get(ARRAY_POSITION_FIRST).getPosition() != KEYWORD_DOES_NOT_EXIST) {
+			for (int i = 0; i < keywordInfoList.size(); i++) {
+				boolean lastParameter = false;
+				String parameter = null;
+				int thisKeywordPosition = keywordInfoList.get(i).getPosition();
+				if (i < keywordInfoList.size() - 1) {
+					int nextKeywordPosition = keywordInfoList.get(i + 1).getPosition();
+					if (nextKeywordPosition != KEYWORD_DOES_NOT_EXIST) {
+						parameter = usercommand.substring(thisKeywordPosition, nextKeywordPosition);
+					} else {
+						parameter = usercommand.substring(thisKeywordPosition);
+						lastParameter = true;
+					}
 				} else {
 					parameter = usercommand.substring(thisKeywordPosition);
-					lastParameter = true;
 				}
-			} else {
-				parameter = usercommand.substring(thisKeywordPosition);
-			}
-			parameter = removeFirstWord(parameter);
-			keywordInfoList.get(i).setParameter(parameter);
-			if (lastParameter) {
-				break;
+				parameter = removeFirstWord(parameter);
+				keywordInfoList.get(i).setParameter(parameter);
+				if (lastParameter) {
+					break;
+				}
 			}
 		}
 	}

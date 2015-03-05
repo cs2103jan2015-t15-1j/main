@@ -31,6 +31,7 @@ public class Task {
 	}
 	public String getUserFormat() {
 		//Should this include the task Index as well or should we have a separate method for that?
+		//Brief information about id, desc, startdate, enddate ?? and maybe in the future, specify task type as well?
 		return null;
 	}
 	public int getId() {
