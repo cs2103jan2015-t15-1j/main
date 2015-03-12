@@ -84,9 +84,9 @@ public class Storage {
         if (tasks.isEmpty()) {
             return Constants.MESSAGE_NO_TASKS;
         }
-        String allTasks = "";
+        String allTasks = "\n" + Constants.DISPLAY_TABLE_HEADERS + "\n";
         for (Task task : tasks.values()) {
-            allTasks += task.getId() + ". " + task.getUserFormat() + "\n";
+            allTasks += task.getUserFormat() + "\n";
         }
         return allTasks;
     }
@@ -96,7 +96,7 @@ public class Storage {
         String keyword = searchObj.getDescription();
         String searchResult = "";
         for (Task task : tasks.values()) {
-            String taskDesc = task.getUserFormat();
+            String taskDesc = task.getDescription();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
                 searchResult += task.getId() + ". " + task.getUserFormat() + "\n";
             }
@@ -165,12 +165,12 @@ public class Storage {
             String desc = currentObj.getString("desc");
             String startDateString = currentObj.getString("startDate");
             LocalDateTime startDate = null;
-            if (!startDateString.equals(Constants.STORAGE_ENTRY_DOES_NOT_EXIST)) {
+            if (!startDateString.equals("")) {
             	startDate = converteToDate(startDateString);
             }
             String endDateString = currentObj.getString("endDate");
             LocalDateTime endDate = null;
-            if (!endDateString.equals(Constants.STORAGE_ENTRY_DOES_NOT_EXIST)) {
+            if (!endDateString.equals("")) {
                 endDate = converteToDate(endDateString);
             }
             boolean done = currentObj.getBoolean("done");

@@ -16,5 +16,6 @@ public final class Constants {
 	public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-70s%-17s%-17s", "ID", "Description", "Start Time", "End Time");
 
 }

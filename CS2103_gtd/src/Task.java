@@ -34,8 +34,9 @@ public class Task {
 	public String getUserFormat() {
 		//Should this include the task Index as well or should we have a separate method for that?
 		//Brief information about id, desc, startdate, enddate ?? and maybe in the future, specify task type as well? 
-		String feedback = String.format(Constants.FORMAT_DISPLAY_TASKINFO, this.getId(), this.getDescription(), this.getStartDateTimeInString(), this.getEndDateTimeInString()); 
-		return feedback;
+//		String feedback = String.format(Constants.FORMAT_DISPLAY_TASKINFO, this.getId(), this.getDescription(), this.getStartDateTimeInString(), this.getEndDateTimeInString()); 
+		String feedback = String.format("%-4d%-70s%-17s%-17s", this.getId(), this.getDescription(), this.getStartDateTimeInString(), this.getEndDateTimeInString());
+	    return feedback;
 	}
 	public int getId() {
 		return id;
@@ -60,7 +61,7 @@ public class Task {
 	}
 	
 	public static String getDateTimeInString(LocalDateTime dateTime) {
-		String dateTimeString = Constants.STORAGE_ENTRY_DOES_NOT_EXIST;
+		String dateTimeString = "";
         if (dateTime != null) {
         	dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
         }
