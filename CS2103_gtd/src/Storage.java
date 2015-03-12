@@ -55,8 +55,8 @@ public class Storage {
         return String.format(Constants.MESSAGE_DELETED, removedTask.getUserFormat());
     }
     
-    public static String update(Task changes) {
-        int idToUpdate = changes.getId();
+    public static String update(int idToUpdate, Task changes) {
+        //int idToUpdate = changes.getId();
         Task taskToUpdate = tasks.get(idToUpdate);
         if (changes.getDescription() != null) {
             taskToUpdate.setDescription(changes.getDescription());

@@ -80,10 +80,11 @@ public class Interpreter {
 	// Difference between Add and Edit: Add will fill in unspecified fields of LocalDateTime by default, whereas
 	// Edit will only fill in fields of LocalDateTime that need to be changed.
 	public static Task interpretAddOREditParameter(String usercommand, COMMAND_TYPE commandType) {
+		//it doesn't know that it should ignore the id parameter when edit is being executed
 		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
 		
 		String paramDescription = kList.getDescription();
-		System.out.println("desc: "+paramDescription);
+		System.out.println("desc: "+paramDescription);//this shouldn't be here
 		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
 		String paramLocation = kList.getParameter(KEYWORD_ADD_LOCATION);
 		String paramEventStart = kList.getParameter(KEYWORD_ADD_EVENTSTART);
@@ -120,7 +121,8 @@ public class Interpreter {
 	}
 	
 	public static int interpretEditParameter(String usercommand) {
-		int[] parameter = interpretTaskIDs(usercommand);
+		String usercommandWithoutFirstWord = removeFirstWord(usercommand);
+		int[] parameter = interpretTaskIDs(usercommandWithoutFirstWord);
 		return parameter[ARRAY_POSITION_FIRST];
 	}
 	
@@ -216,10 +218,13 @@ public class Interpreter {
 				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
 			} catch (NumberFormatException paramNotInt) {
 				//INVALID!
-				for (int j = 0; j < paramsAfterParse.length; j++) {
+				//Luqman->Hanbin: Why are you making it all invalid?
+				//Is it possible that some of the uer inputs are valid?
+				/*for (int j = 0; j < paramsAfterParse.length; j++) {
 					paramsAfterParse[j] = INT_PARAM_INVALID;
 				}
-				break;
+				break;*/
+				paramsAfterParse[i] = INT_PARAM_INVALID;
 			}
 		}
 		return paramsAfterParse;

@@ -119,7 +119,7 @@ public class Logic {
 		int editTaskID = Interpreter.interpretEditParameter(userInput);
 		//TODO: Pull info of the Task of this ID from storage and display to user.
 		Task taskToEdit = Interpreter.interpretAddOREditParameter(userInput, COMMAND_TYPE.EDIT);
-		String userFeedback = Storage.update(taskToEdit);
+		String userFeedback = Storage.update(editTaskID,taskToEdit);
 		return userFeedback;
 	}
 }
