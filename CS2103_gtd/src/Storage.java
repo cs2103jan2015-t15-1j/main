@@ -45,14 +45,14 @@ public class Storage {
     	newTask.setId(taskID);
         tasks.put(taskID, newTask);
         writeToFile();
-        return String.format(Constants.MESSAGE_ADDED, newTask.getUserFormat());
+        return String.format(Constants.MESSAGE_ADDED, newTask.getId(), newTask.getDescription());
     }
     
     public static String delete(int id) {
         Task removedTask = tasks.get(id);
         tasks.remove(id);
         writeToFile();
-        return String.format(Constants.MESSAGE_DELETED, removedTask.getUserFormat());
+        return String.format(Constants.MESSAGE_DELETED, removedTask.getId());
     }
     
     public static String update(int idToUpdate, Task changes) {
@@ -69,7 +69,7 @@ public class Storage {
         }
         tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getUserFormat());
+        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
     }
     
     public static String done(int id) {
@@ -77,16 +77,16 @@ public class Storage {
         doneTask.setDone(true);
         tasks.put(id, doneTask);
         writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, doneTask.getUserFormat());
+        return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
     }
     
     public static String getTasks() {
         if (tasks.isEmpty()) {
             return Constants.MESSAGE_NO_TASKS;
         }
-        String allTasks = "\n" + Constants.DISPLAY_TABLE_HEADERS + "\n";
+        String allTasks = "\n" + Constants.DISPLAY_TABLE_HEADERS;
         for (Task task : tasks.values()) {
-            allTasks += task.getUserFormat() + "\n";
+            allTasks += "\n" + task.getUserFormat();
         }
         return allTasks;
     }

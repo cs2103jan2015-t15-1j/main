@@ -9,7 +9,7 @@ public class UI {
         String initalizationMessage = Logic.initializeEnvironment();
         showToUser(initalizationMessage);
         while (true) {
-            System.out.print("Enter command: ");
+            System.out.print("\nEnter command: ");
             String userCommand = scanner.nextLine();
             String feedback = Logic.execute(userCommand);
             showToUser(feedback);

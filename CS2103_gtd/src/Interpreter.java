@@ -81,10 +81,12 @@ public class Interpreter {
 	// Edit will only fill in fields of LocalDateTime that need to be changed.
 	public static Task interpretAddOREditParameter(String usercommand, COMMAND_TYPE commandType) {
 		//it doesn't know that it should ignore the id parameter when edit is being executed
+	    if (commandType.equals(COMMAND_TYPE.EDIT)) {
+	        usercommand = removeFirstWord(usercommand);
+	    }
 		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
 		
 		String paramDescription = kList.getDescription();
-		System.out.println("desc: "+paramDescription);//this shouldn't be here
 		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
 		String paramLocation = kList.getParameter(KEYWORD_ADD_LOCATION);
 		String paramEventStart = kList.getParameter(KEYWORD_ADD_EVENTSTART);
