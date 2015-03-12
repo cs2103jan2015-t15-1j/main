@@ -24,6 +24,9 @@ public class Logic {
 		case DELETE:
 			returnMessage = delete(userInput);
 			return returnMessage;
+		case CLEAR:
+		    returnMessage = clear(userInput);
+            return returnMessage;
 		case EDIT:
 			returnMessage = edit(userInput);
 			return returnMessage;
@@ -79,6 +82,11 @@ public class Logic {
 		}
 		return userFeedback;
 	}
+	
+	private static String clear(String userInput) {
+        String userFeedback = Storage.deleteAll();
+        return userFeedback;
+    }
 
 	private static String done(String userInput) {
 		int[] linesDone = Interpreter.interpretDoneParameter(userInput);

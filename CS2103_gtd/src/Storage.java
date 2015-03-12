@@ -55,6 +55,12 @@ public class Storage {
         return String.format(Constants.MESSAGE_DELETED, removedTask.getId());
     }
     
+    public static String deleteAll() {
+        tasks = new HashMap<Integer, Task>();
+        writeToFile();
+        return String.format(Constants.MESSAGE_ALL_DELETED);
+    }
+    
     public static String update(int idToUpdate, Task changes) {
         //int idToUpdate = changes.getId();
         Task taskToUpdate = tasks.get(idToUpdate);

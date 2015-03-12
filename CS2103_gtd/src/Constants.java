@@ -5,6 +5,7 @@ public final class Constants {
 	public static final String MESSAGE_ADDED = "The task %1$d. %2$s, has been added";
 	public static final String MESSAGE_DELETED = "Task nr %1$d has been deleted";
 	public static final String MESSAGE_UPDATED = "Task nr %1$d has been updated";
+	public static final String MESSAGE_ALL_DELETED = "All tasks are now deleted";
 	public static final String MESSAGE_NO_TASKS = "You have currently no tasks.";
 	public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks containing your keyword was found";
 	public static final String MESSAGE_WELCOME = "Welcome to TaskWaltz!\nThe file %1$s is ready for storing your tasks";

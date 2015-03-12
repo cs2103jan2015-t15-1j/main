@@ -59,6 +59,8 @@ public class Interpreter {
 			return COMMAND_TYPE.EDIT;
 		} else if (commandTypeString.equalsIgnoreCase("DELETE")) {
 			return COMMAND_TYPE.DELETE;
+		} else if (commandTypeString.equalsIgnoreCase("CLEAR")) {
+            return COMMAND_TYPE.CLEAR;
 		} else if (commandTypeString.equalsIgnoreCase("DONE")) {
 			return COMMAND_TYPE.DONE;
 		} else if (commandTypeString.equalsIgnoreCase("UNDO")) {
