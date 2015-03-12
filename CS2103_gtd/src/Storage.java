@@ -115,9 +115,8 @@ public class Storage {
         return "feedback";
     }
     
-    public static String exit() {
+    public static void exit() {
         writeToFile();
-        return "feedback";
     }
 
     // Private methods

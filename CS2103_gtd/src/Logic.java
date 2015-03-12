@@ -43,16 +43,15 @@ public class Logic {
 			returnMessage = setDirectory(userInput);
 			return returnMessage;
 		case EXIT:
-			returnMessage = save();
-			return returnMessage;
+			exit();
 		default:
 			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
 		}
 	}
 	
-	private static String save() {
-		String userFeedback = Storage.exit();
-		return userFeedback;
+	private static void exit() {
+		Storage.exit();
+		System.exit(0);
 	}
 
 	private static String setDirectory(String userInput) {
