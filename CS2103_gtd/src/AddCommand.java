@@ -2,6 +2,7 @@
 public class AddCommand implements Command {
 
 	Task taskToAdd;
+	int taskID;
 	public AddCommand(String userInput){
 		taskToAdd = Interpreter.interpretAddOREditParameter(userInput, COMMAND_TYPE.ADD);
 	}
@@ -9,13 +10,14 @@ public class AddCommand implements Command {
 	@Override
 	public String execute(Storage storage) {
 		String userFeedback = storage.add(taskToAdd);
+		taskID = taskToAdd.getId();
 		return userFeedback;
 	}
 
 	@Override
 	public String undo(Storage storage) {
-		// TODO Auto-generated method stub
-		return null;
+		String userFeedback = storage.delete(taskID);
+		return userFeedback;
 	}
 
 }
