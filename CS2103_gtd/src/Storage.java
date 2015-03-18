@@ -86,6 +86,10 @@ public class Storage {
         return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
     }
     
+    public Task getTask(int id) {
+        return tasks.get(id);
+    }
+    
     public String getTasks() {
         if (tasks.isEmpty()) {
             return Constants.MESSAGE_NO_TASKS;
