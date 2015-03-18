@@ -92,7 +92,9 @@ public class Storage {
         }
         String allTasks = "\n" + Constants.DISPLAY_TABLE_HEADERS;
         for (Task task : tasks.values()) {
-            allTasks += "\n" + task.getUserFormat();
+            if (!task.getDone()) { 
+                allTasks += "\n" + task.getUserFormat();
+            }
         }
         return allTasks;
     }
@@ -102,9 +104,11 @@ public class Storage {
         String keyword = searchObj.getDescription();
         String searchResult = "";
         for (Task task : tasks.values()) {
-            String taskDesc = task.getDescription();
-            if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                searchResult += task.getId() + ". " + task.getUserFormat() + "\n";
+            if (!task.getDone()) { 
+                String taskDesc = task.getDescription();
+                if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
+                    searchResult += "\n" + task.getUserFormat();
+                }
             }
         }
         if (searchResult == "") {
