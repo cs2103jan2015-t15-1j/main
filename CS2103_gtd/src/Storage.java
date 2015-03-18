@@ -17,7 +17,6 @@ public class Storage {
     private String filePath;
     private int lastIdNumber = 0;
     
-    
     // Public methods
     public String prepareStorage(String fileName) {
         assert fileName.length() == 0;
