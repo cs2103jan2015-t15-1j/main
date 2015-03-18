@@ -13,19 +13,19 @@ import org.json.*; //download: http://mvnrepository.com/artifact/org.json/json
 
 public class Storage {
     
-    private static Map<Integer, Task> tasks = new HashMap<Integer, Task>();
-    private static String filePath;
-    private static int lastIdNumber = 0;
+    private Map<Integer, Task> tasks = new HashMap<Integer, Task>();
+    private String filePath;
+    private int lastIdNumber = 0;
     
     
     // Public methods
-    public static String prepareStorage(String fileName) {
+    public String prepareStorage(String fileName) {
         setFilePath(fileName);
         getDataFromFile();
         return String.format(Constants.MESSAGE_WELCOME, fileName);
     }
     
-    public static String setFilePath(String fileName) {
+    public String setFilePath(String fileName) {
         //TODO: check if file/filename is valid
         //TODO: delete data from old file
         filePath = System.getProperty("user.dir") + "/" + fileName;
@@ -40,7 +40,7 @@ public class Storage {
         return String.format(Constants.MESSAGE_FILE_CHANGE, fileName);
     }
     
-    public static String add(Task newTask) {
+    public String add(Task newTask) {
     	int taskID = getNextIdNr();
     	newTask.setId(taskID);
         tasks.put(taskID, newTask);
@@ -48,20 +48,20 @@ public class Storage {
         return String.format(Constants.MESSAGE_ADDED, newTask.getId(), newTask.getDescription());
     }
     
-    public static String delete(int id) {
+    public String delete(int id) {
         Task removedTask = tasks.get(id);
         tasks.remove(id);
         writeToFile();
         return String.format(Constants.MESSAGE_DELETED, removedTask.getId());
     }
     
-    public static String deleteAll() {
+    public String deleteAll() {
         tasks = new HashMap<Integer, Task>();
         writeToFile();
         return String.format(Constants.MESSAGE_ALL_DELETED);
     }
     
-    public static String update(int idToUpdate, Task changes) {
+    public String update(int idToUpdate, Task changes) {
         //int idToUpdate = changes.getId();
         Task taskToUpdate = tasks.get(idToUpdate);
         if (changes.getDescription() != null) {
@@ -78,7 +78,7 @@ public class Storage {
         return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
     }
     
-    public static String done(int id) {
+    public String done(int id) {
         Task doneTask = tasks.get(id);
         doneTask.setDone(true);
         tasks.put(id, doneTask);
@@ -86,7 +86,7 @@ public class Storage {
         return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
     }
     
-    public static String getTasks() {
+    public String getTasks() {
         if (tasks.isEmpty()) {
             return Constants.MESSAGE_NO_TASKS;
         }
@@ -97,7 +97,7 @@ public class Storage {
         return allTasks;
     }
     
-    public static String search(Task searchObj) {
+    public String search(Task searchObj) {
         // Use Task object to access not only keyword, but also constraints for startDate, endDate...etc.
         String keyword = searchObj.getDescription();
         String searchResult = "";
@@ -113,25 +113,17 @@ public class Storage {
         return searchResult;
     }
     
-    public static String undo() {
-        return "feedback";
-    }
-    
-    public static String redo() {
-        return "feedback";
-    }
-    
-    public static void exit() {
+    public void exit() {
         writeToFile();
     }
 
     // Private methods
-    private static int getNextIdNr() {
+    private int getNextIdNr() {
         lastIdNumber++;
         return lastIdNumber;
     }
     
-    private static void getDataFromFile() {
+    private void getDataFromFile() {
         String jsonStr = "";
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -162,7 +154,7 @@ public class Storage {
      *      ...]
      *  }
      */
-    private static void createTasksFromJson(String jsonStr) {
+    private void createTasksFromJson(String jsonStr) {
         JSONObject jsonObj = new JSONObject(jsonStr);
         JSONArray jsonArr = jsonObj.getJSONArray("tasks");
         for (int i = 0; i < jsonArr.length(); i++)  {
@@ -185,13 +177,13 @@ public class Storage {
         }
     }
     
-    private static LocalDateTime converteToDate(String strDate) {
+    private LocalDateTime converteToDate(String strDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return LocalDateTime.parse(strDate, formatter);
     }
     
     
-    private static void writeToFile() {
+    private void writeToFile() {
         JSONObject jsonObj = new JSONObject();
  
         JSONArray jsonArray = new JSONArray();

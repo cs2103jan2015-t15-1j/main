@@ -1,9 +1,12 @@
 public class Logic {
+    
+    static Storage storage;
 
 	public static String initializeEnvironment() {
 		// Todo: get current file path from a file
+	    storage = new Storage();
 		String filePath = "storage_file.txt";
-		String initializationFeedback = Storage.prepareStorage(filePath);
+		String initializationFeedback = storage.prepareStorage(filePath);
 		return initializationFeedback;
 	}
 
@@ -53,21 +56,21 @@ public class Logic {
 	}
 
 	private static void exit() {
-		Storage.exit();
+	    storage.exit();
 		System.exit(0);
 	}
 
 	private static String setDirectory(String userInput) {
 		String returnMessage;
 		String filePath = Interpreter.interpretFilePath(userInput);
-		returnMessage = Storage.setFilePath(filePath);
+		returnMessage = storage.setFilePath(filePath);
 		return returnMessage;
 	}
 
 	private static String add(String userInput) {
 		Task taskToAdd = Interpreter.interpretAddOREditParameter(userInput,
 				CommandType.ADD);
-		String userFeedback = Storage.add(taskToAdd);
+		String userFeedback = storage.add(taskToAdd);
 		return userFeedback;
 	}
 
@@ -76,16 +79,16 @@ public class Logic {
 		String userFeedback = "";
 		for (int line : linesToDelete) {
 			if (userFeedback.isEmpty()) {
-				userFeedback = Storage.delete(line);
+				userFeedback = storage.delete(line);
 			} else if (line > 0) {
-				userFeedback += "\n" + Storage.delete(line);
+				userFeedback += "\n" + storage.delete(line);
 			}
 		}
 		return userFeedback;
 	}
 
 	private static String clear(String userInput) {
-		String userFeedback = Storage.deleteAll();
+		String userFeedback = storage.deleteAll();
 		return userFeedback;
 	}
 
@@ -94,31 +97,31 @@ public class Logic {
 		String userFeedback = "";
 		for (int line : linesDone) {
 			if (userFeedback.isEmpty()) {
-				userFeedback = Storage.done(line);
+				userFeedback = storage.done(line);
 			} else if (line > 0) {
-				userFeedback += "\n" + Storage.done(line);
+				userFeedback += "\n" + storage.done(line);
 			}
 		}
 		return userFeedback;
 	}
 
 	private static String display() {
-		return Storage.getTasks();
+		return storage.getTasks();
 	}
 
 	private static String undo() {
-		String userFeedback = Storage.undo();
-		return userFeedback;
+		// undo
+		return "feedback";
 	}
 
 	private static String redo() {
-		String userFeedback = Storage.redo();
-		return userFeedback;
+		// redo
+		return "feedback";
 	}
 
 	private static String search(String userInput) {
 		Task searchParameter = Interpreter.interpretDisplayParameter(userInput);
-		String userFeedback = Storage.search(searchParameter);
+		String userFeedback = storage.search(searchParameter);
 		return userFeedback;
 	}
 
@@ -128,7 +131,7 @@ public class Logic {
 		// user.
 		Task taskToEdit = Interpreter.interpretAddOREditParameter(userInput,
 				CommandType.EDIT);
-		String userFeedback = Storage.update(editTaskID, taskToEdit);
+		String userFeedback = storage.update(editTaskID, taskToEdit);
 		return userFeedback;
 	}
 }
