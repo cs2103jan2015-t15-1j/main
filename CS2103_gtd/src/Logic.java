@@ -62,9 +62,12 @@ public class Logic {
 
 	private static String setDirectory(String userInput) {
 		String returnMessage;
-		String filePath = Interpreter.interpretFilePath(userInput);
-		returnMessage = storage.setFilePath(filePath);
-		return returnMessage;
+		if (userInput.length() > 0) {
+    		String filePath = Interpreter.interpretFilePath(userInput);
+    		returnMessage = storage.setFilePath(filePath);
+    		return returnMessage;
+		}
+		return Constants.MESSAGE_ERROR_SET_DICT;
 	}
 
 	private static String add(String userInput) {

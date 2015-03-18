@@ -20,6 +20,7 @@ public class Storage {
     
     // Public methods
     public String prepareStorage(String fileName) {
+        assert fileName.length() == 0;
         setFilePath(fileName);
         getDataFromFile();
         return String.format(Constants.MESSAGE_WELCOME, fileName);
@@ -111,7 +112,7 @@ public class Storage {
                 }
             }
         }
-        if (searchResult == "") {
+        if (searchResult.equals("")) {
             return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         }
         return searchResult;
