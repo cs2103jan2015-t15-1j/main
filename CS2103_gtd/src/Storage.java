@@ -19,7 +19,7 @@ public class Storage {
     
     // Public methods
     public String prepareStorage(String fileName) {
-        assert fileName.length() == 0;
+        assert fileName.length() > 0;
         setFilePath(fileName);
         getDataFromFile();
         return String.format(Constants.MESSAGE_WELCOME, fileName);
