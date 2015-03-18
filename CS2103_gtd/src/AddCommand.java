@@ -4,7 +4,7 @@ public class AddCommand implements Command {
 	Task taskToAdd;
 	int taskID;
 	public AddCommand(String userInput){
-		taskToAdd = Interpreter.interpretAddOREditParameter(userInput, COMMAND_TYPE.ADD);
+		taskToAdd = Interpreter.interpretAddOREditParameter(userInput, CommandType.ADD);
 	}
 	
 	@Override

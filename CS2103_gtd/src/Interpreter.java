@@ -43,47 +43,47 @@ public class Interpreter {
 	private static final int INT_PARAM_INVALID = -1;
 	
 	
-	public static COMMAND_TYPE interpretCommandType(String usercommand) {
+	public static CommandType interpretCommandType(String usercommand) {
 		return determineCommandType(extractFirstWord(usercommand));
 	}
 	
 	// accommodate different names/abbreviations for the same command
-	static COMMAND_TYPE determineCommandType(String commandTypeString) {
+	static CommandType determineCommandType(String commandTypeString) {
 		//ADD, DISPLAY, DONE, DELETE, EDIT, UNDO, REDO, HELP, SETDIR, EXIT
 		if (commandTypeString.equalsIgnoreCase("ADD")) {
-			return COMMAND_TYPE.ADD;
+			return CommandType.ADD;
 		} else if (commandTypeString.equalsIgnoreCase("DISPLAY") ||
 				commandTypeString.equalsIgnoreCase("SEARCH")) {
-			return COMMAND_TYPE.DISPLAY;
+			return CommandType.DISPLAY;
 		} else if (commandTypeString.equalsIgnoreCase("EDIT")) {
-			return COMMAND_TYPE.EDIT;
+			return CommandType.EDIT;
 		} else if (commandTypeString.equalsIgnoreCase("DELETE")) {
-			return COMMAND_TYPE.DELETE;
+			return CommandType.DELETE;
 		} else if (commandTypeString.equalsIgnoreCase("CLEAR")) {
-            return COMMAND_TYPE.CLEAR;
+            return CommandType.CLEAR;
 		} else if (commandTypeString.equalsIgnoreCase("DONE")) {
-			return COMMAND_TYPE.DONE;
+			return CommandType.DONE;
 		} else if (commandTypeString.equalsIgnoreCase("UNDO")) {
-			return COMMAND_TYPE.UNDO;
+			return CommandType.UNDO;
 		} else if (commandTypeString.equalsIgnoreCase("REDO")) {
-			return COMMAND_TYPE.REDO;
+			return CommandType.REDO;
 		} else if (commandTypeString.equalsIgnoreCase("HELP")) {
-			return COMMAND_TYPE.HELP;
+			return CommandType.HELP;
 		} else if (commandTypeString.equalsIgnoreCase("SETDIR") ||
 				commandTypeString.equalsIgnoreCase("SETDIRECTORY")) {
-			return COMMAND_TYPE.SETDIR;
+			return CommandType.SETDIR;
 		} else if (commandTypeString.equalsIgnoreCase("EXIT")) {
-			return COMMAND_TYPE.EXIT;
+			return CommandType.EXIT;
 		} else {
-			return COMMAND_TYPE.INVALID;
+			return CommandType.INVALID;
 		}
 	}
 	
 	// Difference between Add and Edit: Add will fill in unspecified fields of LocalDateTime by default, whereas
 	// Edit will only fill in fields of LocalDateTime that need to be changed.
-	public static Task interpretAddOREditParameter(String usercommand, COMMAND_TYPE commandType) {
+	public static Task interpretAddOREditParameter(String usercommand, CommandType commandType) {
 		//it doesn't know that it should ignore the id parameter when edit is being executed
-	    if (commandType.equals(COMMAND_TYPE.EDIT)) {
+	    if (commandType.equals(CommandType.EDIT)) {
 	        usercommand = removeFirstWord(usercommand);
 	    }
 		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
@@ -153,7 +153,7 @@ public class Interpreter {
 		return interpretTaskIDs(parameter);
 	}
 	
-	static LocalDateTime interpretDateTimeParam(String param, COMMAND_TYPE commandType) {
+	static LocalDateTime interpretDateTimeParam(String param, CommandType commandType) {
 		// NEED TO BE IMPLEMENTED:
 		// Difference between Add and Edit: Add will fill in unspecified fields of LocalDateTime by default, whereas
 		// Edit will only fill in fields of LocalDateTime that need to be changed.

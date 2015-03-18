@@ -27,8 +27,8 @@ public class InterpreterTest {
 	@Test
 	public void interpretCommandTypeTest() {
 		String testInput = "Edit past, present, and future";
-		COMMAND_TYPE expected = COMMAND_TYPE.EDIT;
-		COMMAND_TYPE actual = Interpreter.interpretCommandType(testInput);
+		CommandType expected = CommandType.EDIT;
+		CommandType actual = Interpreter.interpretCommandType(testInput);
 		assertEquals(expected, actual);
 	}
 
@@ -43,8 +43,8 @@ public class InterpreterTest {
 	@Test
 	public void determineCommandTypeTest() {
 		String testInput = "aDD";
-		COMMAND_TYPE expected = COMMAND_TYPE.ADD;
-		COMMAND_TYPE actual = Interpreter.interpretCommandType(testInput);
+		CommandType expected = CommandType.ADD;
+		CommandType actual = Interpreter.interpretCommandType(testInput);
 		assertEquals(expected, actual);
 	}
 	
@@ -138,7 +138,7 @@ public class InterpreterTest {
 	public void interpretDateTimeParamTest() {
 		String testInput = " on the 20:30 of 03-12-5888 Supernova exploded.";
 		LocalDateTime expected = LocalDateTime.of(5888, 12, 3, 20, 30);
-		LocalDateTime actual = Interpreter.interpretDateTimeParam(testInput, COMMAND_TYPE.ADD);
+		LocalDateTime actual = Interpreter.interpretDateTimeParam(testInput, CommandType.ADD);
 		assertTrue(expected.equals(actual));
 	}
 	

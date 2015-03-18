@@ -9,7 +9,7 @@ public class Logic {
 
 	public static String execute(String userInput) {
 		String returnMessage;
-		COMMAND_TYPE commandType = Interpreter.interpretCommandType(userInput);
+		CommandType commandType = Interpreter.interpretCommandType(userInput);
 
 		switch (commandType) {
 		case ADD:
@@ -66,7 +66,7 @@ public class Logic {
 
 	private static String add(String userInput) {
 		Task taskToAdd = Interpreter.interpretAddOREditParameter(userInput,
-				COMMAND_TYPE.ADD);
+				CommandType.ADD);
 		String userFeedback = Storage.add(taskToAdd);
 		return userFeedback;
 	}
@@ -127,7 +127,7 @@ public class Logic {
 		// TODO: Pull info of the Task of this ID from storage and display to
 		// user.
 		Task taskToEdit = Interpreter.interpretAddOREditParameter(userInput,
-				COMMAND_TYPE.EDIT);
+				CommandType.EDIT);
 		String userFeedback = Storage.update(editTaskID, taskToEdit);
 		return userFeedback;
 	}

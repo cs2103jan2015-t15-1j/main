@@ -1,5 +1,5 @@
 
-public enum COMMAND_TYPE {
+public enum CommandType {
     ADD, DISPLAY, DONE, DELETE, EDIT, UNDO, REDO, HELP, SETDIR, EXIT, INVALID, 
     SEARCH, CLEAR
 }
