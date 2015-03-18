@@ -56,7 +56,7 @@ public class Logic {
 	}
 
 	private static void exit() {
-	    storage.exit();
+	    storage.writeToFile();
 		System.exit(0);
 	}
 

@@ -113,8 +113,33 @@ public class Storage {
         return searchResult;
     }
     
-    public void exit() {
-        writeToFile();
+    public void writeToFile() {
+        JSONObject jsonObj = new JSONObject();
+ 
+        JSONArray jsonArray = new JSONArray();
+        for (Task task : tasks.values()) {
+            JSONObject taskObj = new JSONObject();
+            String desc = task.getDescription();
+            taskObj.put("desc", desc);
+            String startDateTime = task.getStartDateTimeInString();
+            taskObj.put("startDate", startDateTime);
+            String endDateTime = task.getEndDateTimeInString();
+            taskObj.put("endDate", endDateTime);
+            String done = task.getDone() + "";
+            taskObj.put("done", done);
+            jsonArray.put(taskObj);
+        }
+        
+        jsonObj.put("tasks", jsonArray);
+ 
+        try {
+            FileWriter file = new FileWriter(filePath);
+            file.write(jsonObj.toString());
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Private methods
@@ -180,36 +205,6 @@ public class Storage {
     private LocalDateTime converteToDate(String strDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return LocalDateTime.parse(strDate, formatter);
-    }
-    
-    
-    private void writeToFile() {
-        JSONObject jsonObj = new JSONObject();
- 
-        JSONArray jsonArray = new JSONArray();
-        for (Task task : tasks.values()) {
-            JSONObject taskObj = new JSONObject();
-            String desc = task.getDescription();
-            taskObj.put("desc", desc);
-            String startDateTime = task.getStartDateTimeInString();
-            taskObj.put("startDate", startDateTime);
-            String endDateTime = task.getEndDateTimeInString();
-            taskObj.put("endDate", endDateTime);
-            String done = task.getDone() + "";
-            taskObj.put("done", done);
-            jsonArray.put(taskObj);
-        }
-        
-        jsonObj.put("tasks", jsonArray);
- 
-        try {
-            FileWriter file = new FileWriter(filePath);
-            file.write(jsonObj.toString());
-            file.flush();
-            file.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
