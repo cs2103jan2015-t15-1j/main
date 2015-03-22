@@ -40,6 +40,10 @@ public class Storage {
         return String.format(Constants.MESSAGE_FILE_CHANGE, fileName);
     }
     
+    public String getFilePath() {
+        return filePath;
+    }
+    
     public String add(Task newTask) {
     	int taskID = getNextIdNr();
     	newTask.setId(taskID);
