@@ -33,9 +33,9 @@ public class Logic {
 		} catch (Exception e) {
 			return "Invalid Input";
 		}
-		boolean isUndo = c.isInstanceOf(UndoCommand);
-		boolean isRedo = c.isInstanceOf(RedoCommand);
-		boolean isToBeAddedToHistory = !isUndo && !isRedo && !c.isInstanceOf(DisplayCommand) && !c.isInstanceOf(HelpCommand) && !c.isInstanceOf(SearchCommand);
+		boolean isUndo = c.getClass().equals(UndoCommand.class);
+		boolean isRedo = c.getClass().equals(RedoCommand.class);
+		boolean isToBeAddedToHistory = !isUndo && !isRedo && !c.getClass().equals(DisplayCommand.class) && !c.getClass().equals(HelpCommand.class) && !c.getClass().equals(SearchCommand.class);
 		Command cmd;
 		if(isUndo){
 			cmd = history.getUndo();
@@ -51,6 +51,7 @@ public class Logic {
 		if(isToBeAddedToHistory){
 			history.pushUndo(cmd.makeUndo());
 		}
+		return feedback;
 		
 	}
 
