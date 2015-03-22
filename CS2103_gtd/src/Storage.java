@@ -17,9 +17,7 @@ public class Storage {
     private String filePath;
     private int lastIdNumber = 0;
     
-    // Public methods
     public String prepareStorage(String fileName) {
-        assert fileName.length() > 0;
         setFilePath(fileName);
         getDataFromFile();
         return String.format(Constants.MESSAGE_WELCOME, fileName);
@@ -65,7 +63,7 @@ public class Storage {
         return String.format(Constants.MESSAGE_ALL_DELETED);
     }
     
-    //REMOVE THIS ONE WHEN COMMAND PATTERN IMPLEMENTED. DONT USE FOR NEW IMPLEMENTATION!
+    //REMOVE THIS ONE WHEN COMMAND PATTERN IMPLEMENTED. DONT USE FOR NEW IMPLEMENTATIONS!
     public String update(int idToUpdate, Task changes) {
         //int idToUpdate = changes.getId();
         Task taskToUpdate = tasks.get(idToUpdate);
@@ -113,9 +111,9 @@ public class Storage {
         return String.format(Constants.MESSAGE_UPDATED, id);
     }
     
-    public String done(int id) {
+    public String done(int id, boolean setDone) {
         Task doneTask = tasks.get(id);
-        doneTask.setDone(true);
+        doneTask.setDone(setDone);
         tasks.put(id, doneTask);
         writeToFile();
         return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
@@ -185,7 +183,6 @@ public class Storage {
         }
     }
 
-    // Private methods
     private int getNextIdNr() {
         lastIdNumber++;
         return lastIdNumber;
