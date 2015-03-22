@@ -18,7 +18,19 @@ class EditCommand implements Command {
 	public String execute(Storage storage) {
 		int taskId = newTask.getId();
 		oldTask = makeShallowCopyOfOriginalTask(storage, taskId);
-		String feedback = storage.update(taskId, newTask);
+		String feedback = "";
+		if (newTask.getDescription() != null) {
+		    feedback = storage.updateDescription(taskId, newTask.getDescription());
+        }
+        if (newTask.getStartDateTime() != null) {
+            feedback = storage.updateStartDate(taskId, newTask.getStartDateTime());
+        }
+        if (newTask.getEndDateTime() != null) {
+            feedback = storage.updateEndDate(taskId, newTask.getEndDateTime());
+        }
+        if (newTask.getLocation() != null) {
+            feedback = storage.updateLocation(taskId, newTask.getLocation());
+        }
 		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		return feedback;
 	}
