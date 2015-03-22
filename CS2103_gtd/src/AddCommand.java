@@ -16,9 +16,10 @@ public class AddCommand implements Command {
 	}
 
 	@Override
-	public String undo(Storage storage) {
-		String userFeedback = storage.delete(taskID);
-		return userFeedback;
+	public Command makeUndo(Storage storage) {
+		//TO-DO change task id
+		int[] taskId = {1 };
+		return new DeleteCommand(taskId);
 	}
 
 }
