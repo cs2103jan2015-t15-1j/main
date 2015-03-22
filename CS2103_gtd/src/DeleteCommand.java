@@ -19,7 +19,7 @@ public class DeleteCommand implements Command {
     }
 
     @Override
-    public Command makeUndo(Storage storage) {
+    public Command makeUndo() {
         return new AddCommand(deletedTasks);
     }
 

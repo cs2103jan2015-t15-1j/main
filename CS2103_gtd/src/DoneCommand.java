@@ -16,7 +16,7 @@ public class DoneCommand implements Command {
     }
 
     @Override
-    public Command makeUndo(Storage storage) {
+    public Command makeUndo() {
         return new DoneCommand(taskId, !setDone);
     }
 
