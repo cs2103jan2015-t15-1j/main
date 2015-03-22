@@ -101,9 +101,10 @@ public class Translator {
 		//ADD, DISPLAY, DONE, DELETE, EDIT, UNDO, REDO, HELP, SETDIR, EXIT
 		if (commandTypeString.equalsIgnoreCase("ADD")) {
 			return CommandType.ADD;
-		} else if (commandTypeString.equalsIgnoreCase("DISPLAY") ||
-				commandTypeString.equalsIgnoreCase("SEARCH")) {
+		} else if (commandTypeString.equalsIgnoreCase("DISPLAY")) {
 			return CommandType.DISPLAY;
+		} else if (commandTypeString.equalsIgnoreCase("SEARCH")) {
+			return CommandType.SEARCH;
 		} else if (commandTypeString.equalsIgnoreCase("EDIT")) {
 			return CommandType.EDIT;
 		} else if (commandTypeString.equalsIgnoreCase("DELETE")) {
