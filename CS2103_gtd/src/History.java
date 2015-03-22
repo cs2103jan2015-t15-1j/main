@@ -11,10 +11,8 @@ public class History {
     }
     
     public void pushUndo(Command cmd) {
-        undoStack.push(cmd.makeUndo());
+        undoStack.push(cmd);
     }
-    
-    
     
     public Command getUndo() {
         Command lastCmd = undoStack.pop();
