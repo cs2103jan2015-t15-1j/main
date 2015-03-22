@@ -74,8 +74,10 @@ public class Translator {
 			newCommand = createEditCommand(usercommand);
 			break;
 		case UNDO :
+			newCommand = createUndoCommand();
 			break;
 		case REDO :
+			newCommand = createRedoCommand();
 			break;
 		case HELP :
 			newCommand = createHelpCommand();
@@ -159,6 +161,13 @@ public class Translator {
 		return new HelpCommand();
 	}
 	
+	private Command createUndoCommand() {
+		return new UndoCommand();
+	}
+	
+	private Command createRedoCommand() {
+		return new RedoCommand();
+	}
 	
 	private Task interpretAddParameter(String usercommand) {
 		
