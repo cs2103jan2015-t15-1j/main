@@ -123,7 +123,7 @@ public class Translator {
 	}
 	
 	private Command createAddCommand(String usercommand) {
-		Task addInformation = interpretAddParameter(usercommand);
+		Task[] addInformation = {interpretAddParameter(usercommand)};
 		return new AddCommand(addInformation);
 	}
 	
