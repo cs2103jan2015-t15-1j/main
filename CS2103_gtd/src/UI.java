@@ -4,14 +4,16 @@ import java.util.Scanner;
 public class UI {
     
     private static Scanner scanner = new Scanner(System.in);
+    private static Logic mainLogic;
     
     public static void main(String[] args) {
-        String initalizationMessage = Logic.initializeEnvironment();
+    	mainLogic = Logic.getLogicObject();
+        String initalizationMessage = mainLogic.initializeEnvironment();
         showToUser(initalizationMessage);
         while (true) {
             System.out.print("\nEnter command: ");
             String userCommand = scanner.nextLine();
-            String feedback = Logic.execute(userCommand);
+            String feedback = mainLogic.execute(userCommand);
             showToUser(feedback);
         }
     }

@@ -1,8 +1,21 @@
 public class Logic {
+	
+	private static Logic logicObject;
+	
+	private Logic(){
+		
+	}
+	
+	public static Logic getLogicObject(){
+		if (logicObject == null){
+			logicObject = new Logic();
+		}
+		return logicObject;
+	}
     
-    static Storage storage;
+    Storage storage;
 
-	public static String initializeEnvironment() {
+	public String initializeEnvironment() {
 		// Todo: get current file path from a file
 	    storage = new Storage();
 		String filePath = "storage_file.txt";
@@ -10,7 +23,7 @@ public class Logic {
 		return initializationFeedback;
 	}
 
-	public static String execute(String userInput) {
+	public String execute(String userInput) {
 		String returnMessage;
 		CommandType commandType = Interpreter.interpretCommandType(userInput);
 
@@ -55,12 +68,12 @@ public class Logic {
 		}
 	}
 
-	private static void exit() {
+	private void exit() {
 	    storage.writeToFile();
 		System.exit(0);
 	}
 
-	private static String setDirectory(String userInput) {
+	private String setDirectory(String userInput) {
 		String returnMessage;
 		if (userInput.length() > 0) {
     		String filePath = Interpreter.interpretFilePath(userInput);
@@ -70,14 +83,14 @@ public class Logic {
 		return Constants.MESSAGE_ERROR_SET_DICT;
 	}
 
-	private static String add(String userInput) {
+	private String add(String userInput) {
 		Task taskToAdd = Interpreter.interpretAddOREditParameter(userInput,
 				CommandType.ADD);
 		String userFeedback = storage.add(taskToAdd);
 		return userFeedback;
 	}
 
-	private static String delete(String userInput) {
+	private String delete(String userInput) {
 		int[] linesToDelete = Interpreter.interpretDeleteParameter(userInput);
 		String userFeedback = "";
 		for (int line : linesToDelete) {
@@ -90,12 +103,12 @@ public class Logic {
 		return userFeedback;
 	}
 
-	private static String clear(String userInput) {
+	private String clear(String userInput) {
 		String userFeedback = storage.deleteAll();
 		return userFeedback;
 	}
 
-	private static String done(String userInput) {
+	private String done(String userInput) {
 		int[] linesDone = Interpreter.interpretDoneParameter(userInput);
 		String userFeedback = "";
 		for (int line : linesDone) {
@@ -108,27 +121,27 @@ public class Logic {
 		return userFeedback;
 	}
 
-	private static String display() {
+	private String display() {
 		return storage.getTasks();
 	}
 
-	private static String undo() {
+	private String undo() {
 		// undo something
 		return "feedback";
 	}
 
-	private static String redo() {
+	private String redo() {
 		// redo
 		return "feedback";
 	}
 
-	private static String search(String userInput) {
+	private String search(String userInput) {
 		Task searchParameter = Interpreter.interpretDisplayParameter(userInput);
 		String userFeedback = storage.search(searchParameter);
 		return userFeedback;
 	}
 
-	private static String edit(String userInput) {
+	private String edit(String userInput) {
 		int editTaskID = Interpreter.interpretEditParameter(userInput);
 		// TODO: Pull info of the Task of this ID from storage and display to
 		// user.
