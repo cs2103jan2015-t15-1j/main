@@ -6,6 +6,7 @@ public class Logic {
 		
 	}
 	
+	@org.junit.Test
 	public static Logic getLogicObject(){
 		if (logicObject == null){
 			logicObject = new Logic();
@@ -18,7 +19,7 @@ public class Logic {
 	public String initializeEnvironment() {
 		// Todo: get current file path from a file
 	    storage = new Storage();
-		String filePath = "storage_file.txt";
+		String filePath = "storage_file.json";
 		String initializationFeedback = storage.prepareStorage(filePath);
 		return initializationFeedback;
 	}
