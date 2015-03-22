@@ -3,30 +3,26 @@ import java.util.ArrayList;
 public class DeleteCommand implements Command {
     
     int[] taskIds;
-    ArrayList<Task> deletedTasks = new ArrayList<Task>();
+    Task[] deletedTasks;
     
     public DeleteCommand(int[] _taskIds) {
         taskIds = _taskIds;
+        deletedTasks = new Task[taskIds.length];
     }
     
     @Override
     public String execute(Storage storage) {
         String userFeedback = "";
-        for (int id : taskIds) {
-            deletedTasks.add(storage.getTask(id));
-            userFeedback += storage.delete(id) + "\n";
+        for (int i=0; i<taskIds.length; i++) {
+            deletedTasks[i] = storage.getTask(taskIds[i]);
+            userFeedback += storage.delete(taskIds[i]);
         }
         return userFeedback;
     }
 
     @Override
-    public String undo(Storage storage) {
-        String userFeedback = "Recovered tasks";
-        for (Task task : deletedTasks) {
-            storage.add(task);
-            userFeedback += "\n" + task.getUserFormat();
-        }
-        return userFeedback;
+    public Command makeUndo(Storage storage) {
+        return new AddCommand(deletedTasks);
     }
 
 }

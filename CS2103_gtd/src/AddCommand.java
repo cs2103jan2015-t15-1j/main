@@ -1,25 +1,27 @@
 
 public class AddCommand implements Command {
 
-	Task taskToAdd;
-	int taskID;
+	Task[] tasksToAdd;
+	int[] taskIds;
 	
-	public AddCommand(Task task){
-		taskToAdd = task;
+	public AddCommand(Task[] tasks){
+		tasksToAdd = tasks;
+		taskIds = new int[tasksToAdd.length];
 	}
 	
 	@Override
 	public String execute(Storage storage) {
-		String userFeedback = storage.add(taskToAdd);
-		taskID = taskToAdd.getId();
+		String userFeedback = "";
+		for (int i=0; i<tasksToAdd.length; i++) {
+		    userFeedback += storage.add(tasksToAdd[i]);
+		    taskIds[i] = tasksToAdd[i].getId();
+		}
 		return userFeedback;
 	}
 
 	@Override
 	public Command makeUndo(Storage storage) {
-		//TO-DO change task id
-		int[] taskId = {1 };
-		return new DeleteCommand(taskId);
+		return new DeleteCommand(taskIds);
 	}
 
 }
