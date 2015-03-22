@@ -7,7 +7,6 @@ public class Logic {
 		
 	}
 	
-	@org.junit.Test
 	public static Logic getLogicObject(){
 		if (logicObject == null){
 			logicObject = new Logic();
