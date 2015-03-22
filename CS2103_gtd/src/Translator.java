@@ -62,8 +62,10 @@ public class Translator {
 			newCommand = createAddCommand(usercommand);
 			break;
 		case DISPLAY :
+			newCommand = createDisplayCommand();
 			break;
 		case DONE :
+			newCommand = createDoneCommand(usercommand);
 			break;
 		case DELETE :
 			newCommand = createDeleteCommand(usercommand);
@@ -76,12 +78,14 @@ public class Translator {
 		case REDO :
 			break;
 		case HELP :
+			newCommand = createHelpCommand();
 			break;
 		case SETDIR :
 			break;
 		case EXIT :
 			break;
 		case SEARCH :
+			newCommand = createSearchCommand(usercommand);
 			break;
 		case CLEAR :
 			break;
@@ -137,6 +141,23 @@ public class Translator {
 		return new DeleteCommand(deleteInformation);
 	}
 	
+	private Command createDoneCommand(String usercommand) {
+		int[] doneInformation = interpretDoneParameter(usercommand);
+		return new DoneCommand(doneInformation, true);
+	}
+	
+	private Command createSearchCommand(String usercommand) {
+		Task searchInformation = interpretSearchParameter(usercommand);
+		return new SearchCommand(searchInformation);
+	}
+	
+	private Command createDisplayCommand() {
+		return new DisplayCommand();
+	}
+	
+	private Command createHelpCommand() {
+		return new HelpCommand();
+	}
 	
 	
 	private Task interpretAddParameter(String usercommand) {
@@ -239,16 +260,21 @@ public class Translator {
 		return taskID;
 	}
 	
-	private Task interpretDisplayParameter(String usercommand) {
+	private Task interpretSearchParameter(String usercommand) {
+		/*
 		KeywordInfoList kList = new KeywordInfoList(usercommand, displayParameterKeywords);
 		String paramDue = kList.getParameter(KEYWORD_DISPLAY_DUE);
 		String paramAfter = kList.getParameter(KEYWORD_DISPLAY_AFTER);
 		String paramBefore = kList.getParameter(KEYWORD_DISPLAY_BEFORE);
 		String paramOn = kList.getParameter(KEYWORD_DISPLAY_ON);
+		*/
 		
 		Task newTask = new Task();
 		// Storage can take advantage of LocalDateTime.isAfter, LocalDateTime.isBefore.
 		// Convention must be set up on how to tell Storage that this Display wants before/after/due/on.
+		
+		String searchKeyword = removeFirstWord(usercommand);
+		newTask.setDescription(searchKeyword);
 		return newTask;
 	}
 	
