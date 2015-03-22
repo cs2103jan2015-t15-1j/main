@@ -1,6 +1,7 @@
 public class Logic {
 	
 	private static Logic logicObject;
+    private Storage storage;
 	
 	private Logic(){
 		
@@ -13,8 +14,6 @@ public class Logic {
 		}
 		return logicObject;
 	}
-    
-    Storage storage;
 
 	public String initializeEnvironment() {
 		// Todo: get current file path from a file
