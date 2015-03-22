@@ -11,13 +11,22 @@ public class History {
     }
     
     public void pushUndo(Command cmd) {
-        undoStack.push(cmd);
+        undoStack.push(cmd.makeUndo());
     }
     
-    public Command getLastCommand() {
+    
+    
+    public Command getUndo() {
         Command lastCmd = undoStack.pop();
         Command reversedCmd = lastCmd.makeUndo();
         redoStack.push(reversedCmd);
+        return lastCmd;
+    }
+    
+    public Command getRedo() {
+        Command lastCmd = redoStack.pop();
+        Command reversedCmd = lastCmd.makeUndo();
+        undoStack.push(reversedCmd);
         return lastCmd;
     }
 
