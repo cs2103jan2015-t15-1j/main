@@ -61,6 +61,7 @@ public class Storage {
         return String.format(Constants.MESSAGE_ALL_DELETED);
     }
     
+    //REMOVE THIS ONE WHEN COMMAND PATTERN IMPLEMENTED. DONT USE FOR NEW IMPLEMENTATION!
     public String update(int idToUpdate, Task changes) {
         //int idToUpdate = changes.getId();
         Task taskToUpdate = tasks.get(idToUpdate);
@@ -73,6 +74,30 @@ public class Storage {
         if (changes.getEndDateTime() != null) {
             taskToUpdate.setEndDateTime(changes.getEndDateTime());
         }
+        tasks.put(idToUpdate, taskToUpdate);
+        writeToFile();
+        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
+    }
+    
+    public String updateDescription(int idToUpdate, String newDesc) {
+        Task taskToUpdate = tasks.get(idToUpdate);
+        taskToUpdate.setDescription(newDesc);
+        tasks.put(idToUpdate, taskToUpdate);
+        writeToFile();
+        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
+    }
+    
+    public String updateStartDate(int idToUpdate, LocalDateTime startDate) {
+        Task taskToUpdate = tasks.get(idToUpdate);
+        taskToUpdate.setStartDateTime(startDate);
+        tasks.put(idToUpdate, taskToUpdate);
+        writeToFile();
+        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
+    }
+    
+    public String updateEndDate(int idToUpdate, LocalDateTime endDate) {
+        Task taskToUpdate = tasks.get(idToUpdate);
+        taskToUpdate.setEndDateTime(endDate);
         tasks.put(idToUpdate, taskToUpdate);
         writeToFile();
         return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
