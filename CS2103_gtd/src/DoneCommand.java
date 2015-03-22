@@ -1,23 +1,26 @@
 
 public class DoneCommand implements Command {
     
-    int taskId;
+    int[] taskIds;
     boolean setDone;
     
-    public DoneCommand(int _id, boolean _setDone){
-        taskId = _id;
+    public DoneCommand(int[] _ids, boolean _setDone){
+        taskIds = _ids;
         setDone = _setDone;
     }
     
     @Override
     public String execute(Storage storage) {
-        String userFeedback = storage.done(taskId);
+        String userFeedback = "";
+        for (int id : taskIds) {
+            userFeedback += storage.done(id, setDone);
+        }
         return userFeedback;
     }
 
     @Override
     public Command makeUndo() {
-        return new DoneCommand(taskId, !setDone);
+        return new DoneCommand(taskIds, !setDone);
     }
 
 }

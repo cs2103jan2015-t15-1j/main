@@ -111,9 +111,9 @@ public class Storage {
         return String.format(Constants.MESSAGE_UPDATED, id);
     }
     
-    public String done(int id) {
+    public String done(int id, boolean setDone) {
         Task doneTask = tasks.get(id);
-        doneTask.setDone(true);
+        doneTask.setDone(setDone);
         tasks.put(id, doneTask);
         writeToFile();
         return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
