@@ -244,7 +244,7 @@ public class Translator {
 				}
 				if (paramEventEnd != null) {
 					LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
-					newTask.setStartDateTime(eventEnd);
+					newTask.setEndDateTime(eventEnd);
 					doesParameterExists = true;
 				}
 			}
