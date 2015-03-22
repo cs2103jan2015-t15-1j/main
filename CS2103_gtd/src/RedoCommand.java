@@ -1,19 +1,18 @@
 
 public class RedoCommand implements Command {
         
-        public RedoCommand() {
-            
-        }
+    public RedoCommand() {
         
-        @Override
-        public String execute(Storage storage) {
-            return "";
-        }
-
-        @Override
-        public Command makeUndo() {
-            return new RedoCommand();
-        }
-
     }
+    
+    @Override
+    public String execute(Storage storage) {
+        return "";
+    }
+
+    @Override
+    public Command makeUndo() {
+        return new RedoCommand();
+    }
+
 }
