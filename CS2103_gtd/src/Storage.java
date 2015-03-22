@@ -83,28 +83,34 @@ public class Storage {
         return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
     }
     
-    public String updateDescription(int idToUpdate, String newDesc) {
-        Task taskToUpdate = tasks.get(idToUpdate);
+    public String updateDescription(int id, String newDesc) {
+        Task taskToUpdate = tasks.get(id);
         taskToUpdate.setDescription(newDesc);
-        tasks.put(idToUpdate, taskToUpdate);
-        writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
+        return updateTask(id, taskToUpdate);
     }
     
-    public String updateStartDate(int idToUpdate, LocalDateTime startDate) {
-        Task taskToUpdate = tasks.get(idToUpdate);
+    public String updateStartDate(int id, LocalDateTime startDate) {
+        Task taskToUpdate = tasks.get(id);
         taskToUpdate.setStartDateTime(startDate);
-        tasks.put(idToUpdate, taskToUpdate);
-        writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
+        return updateTask(id, taskToUpdate);
     }
     
-    public String updateEndDate(int idToUpdate, LocalDateTime endDate) {
-        Task taskToUpdate = tasks.get(idToUpdate);
+    public String updateEndDate(int id, LocalDateTime endDate) {
+        Task taskToUpdate = tasks.get(id);
         taskToUpdate.setEndDateTime(endDate);
-        tasks.put(idToUpdate, taskToUpdate);
+        return updateTask(id, taskToUpdate);
+    }
+    
+    public String updateLocation(int id, String location) {
+        Task taskToUpdate = tasks.get(id);
+        taskToUpdate.setLocation(location);
+        return updateTask(id, taskToUpdate);
+    }
+    
+    private String updateTask(int id, Task updatedTask) {
+        tasks.put(id, updatedTask);
         writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
+        return String.format(Constants.MESSAGE_UPDATED, id);
     }
     
     public String done(int id) {
