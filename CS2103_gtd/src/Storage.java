@@ -52,9 +52,12 @@ public class Storage {
     
     public String delete(int id) {
         Task removedTask = tasks.get(id);
-        tasks.remove(id);
-        writeToFile();
-        return String.format(Constants.MESSAGE_DELETED, removedTask.getId());
+        if (removedTask != null) {
+            tasks.remove(id);
+            writeToFile();
+            return String.format(Constants.MESSAGE_DELETED, removedTask.getId());
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     public String deleteAll() {
@@ -83,44 +86,65 @@ public class Storage {
     
     public String updateDescription(int id, String newDesc) {
         Task taskToUpdate = tasks.get(id);
-        taskToUpdate.setDescription(newDesc);
-        return updateTask(id, taskToUpdate);
+        if (taskToUpdate != null) {
+            taskToUpdate.setDescription(newDesc);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     public String updateStartDate(int id, LocalDateTime startDate) {
         Task taskToUpdate = tasks.get(id);
-        taskToUpdate.setStartDateTime(startDate);
-        return updateTask(id, taskToUpdate);
+        if (taskToUpdate != null) {
+            taskToUpdate.setStartDateTime(startDate);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     public String updateEndDate(int id, LocalDateTime endDate) {
         Task taskToUpdate = tasks.get(id);
-        taskToUpdate.setEndDateTime(endDate);
-        return updateTask(id, taskToUpdate);
+        if (taskToUpdate != null) {
+            taskToUpdate.setEndDateTime(endDate);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     public String updateLocation(int id, String location) {
         Task taskToUpdate = tasks.get(id);
-        taskToUpdate.setLocation(location);
-        return updateTask(id, taskToUpdate);
+        if (taskToUpdate != null) {
+            taskToUpdate.setLocation(location);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     private String updateTask(int id, Task updatedTask) {
-        tasks.put(id, updatedTask);
-        writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, id);
+        if (tasks.get(id) != null) {
+            tasks.put(id, updatedTask);
+            writeToFile();
+            return String.format(Constants.MESSAGE_UPDATED, id);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     public String done(int id, boolean setDone) {
-        Task doneTask = tasks.get(id);
-        doneTask.setDone(setDone);
-        tasks.put(id, doneTask);
-        writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
+        if (tasks.get(id) != null) {
+            Task doneTask = tasks.get(id);
+            doneTask.setDone(setDone);
+            tasks.put(id, doneTask);
+            writeToFile();
+            return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
     }
     
     public Task getTask(int id) {
-        return tasks.get(id);
+        if (tasks.get(id) != null) {
+            return tasks.get(id);
+        }
+        return null;
     }
     
     public String getTasks() {

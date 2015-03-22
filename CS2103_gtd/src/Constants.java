@@ -14,6 +14,7 @@ public final class Constants {
 	public static final String MESSAGE_COMMAND_EXECUTION_ERROR = "TaskWaltz was not able to execute the following command: ";
 	public static final String MESSAGE_FILE_CHANGE = "The file %1$s is now used for storing tasks";
 	public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
+	public static final String MESSAGE_INCORRECT_ID = "No thask with that id was found";
 	
 	public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";

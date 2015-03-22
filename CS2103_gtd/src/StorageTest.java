@@ -1,4 +1,5 @@
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.containsString;
 
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ public class StorageTest {
     String fileName = "file_path_for_test.txt";
 
     @Test
+    // Need to try out to be able to use it in other tests
     public void setAndGetFilePath() {
         storage.setFilePath(fileName);
         String newFilePath = storage.getFilePath();
@@ -17,6 +19,8 @@ public class StorageTest {
     }
     
     @Test
+    // Only floating tasks working right now
+    // - later do tests for event and deadline tasks as well
     public void addTask() {
         storage.setFilePath(fileName);
         Task testTask = new Task();
@@ -41,6 +45,7 @@ public class StorageTest {
     }
     
     @Test
+    //No separate partitions and therefore no need to try out different values
     public void deleteTask() {
         storage.setFilePath(fileName);
         storage.deleteAll();
@@ -53,10 +58,11 @@ public class StorageTest {
         assertEquals("Check that delete(id) deletes the task\n", 
                 getTasksFeedback, Constants.MESSAGE_NO_TASKS);
     }
-
     
     @Test
-    public void updateTask() {
+    // Only floating tasks working right now
+    // - later do tests for event and deadline tasks as well
+    public void updateTaskDescription() {
         storage.setFilePath(fileName);
         Task testTask = new Task();
         testTask.setDescription("test task");
@@ -67,6 +73,23 @@ public class StorageTest {
         String acctualNewDesc = storage.getTask(taskId).getDescription();
         assertEquals("Check that the description can be updated\n", 
                 newDesc, acctualNewDesc);
+    }
+    
+    @Test
+    // Could try out to both set to done and undone, but the implementation 
+    // is the same and therefore not efficient to try both
+    public void setToDone() {
+        storage.setFilePath(fileName);
+        storage.deleteAll();
+        Task testTask = new Task();
+        String desc = "test task";
+        testTask.setDescription(desc);
+        storage.add(testTask);
+        int taskId = testTask.getId();
+        storage.done(taskId, true);
+        String displayFeedback = storage.getTasks();
+        assertEquals("Check that done(id) removes the task from display\n", 
+                displayFeedback, Constants.MESSAGE_NO_TASKS);
     }
     
 }
