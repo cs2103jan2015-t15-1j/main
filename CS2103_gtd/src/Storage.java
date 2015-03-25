@@ -169,7 +169,7 @@ public class Storage {
         LocalDateTime startDate = searchObj.getStartDateTime();
         LocalDateTime endDate = searchObj.getEndDateTime();
         
-        int[] foundTasks = new int[tasks.size()];
+        int[] foundTasks = new int[lastIdNumber];
         foundTasks = searchOnKeyword(keyword, foundTasks);
         foundTasks = searchOnDate(startDate, endDate, foundTasks);
 
