@@ -327,8 +327,7 @@ public class Storage {
     }
     
     private LocalDateTime converteToDate(String strDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return LocalDateTime.parse(strDate, formatter);
+        return LocalDateTime.parse(strDate, Constants.FORMAT_STORAGE_DATETIME);
     }
 
 
