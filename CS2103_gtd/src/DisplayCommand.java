@@ -7,7 +7,7 @@ public class DisplayCommand implements Command {
     
     @Override
     public String execute(Storage storage) {
-        String displayFeedback = storage.getTasks();
+        String displayFeedback = storage.getTasksAsString();
         return displayFeedback;
     }
 

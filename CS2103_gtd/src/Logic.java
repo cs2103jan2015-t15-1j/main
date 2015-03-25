@@ -129,7 +129,7 @@ public class Logic {
 	}
 
 	private String display() {
-		return storage.getTasks();
+		return storage.getTasksAsString();
 	}
 
 	private String undo() {

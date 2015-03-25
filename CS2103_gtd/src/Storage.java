@@ -149,7 +149,17 @@ public class Storage {
         return null;
     }
     
-    public String getTasks() {
+    public Task[] getAllTasks() {
+        Task[] taskArray = new Task[tasks.size()];
+        int i = 0;
+        for (Task task : tasks.values()) {
+            taskArray[i] = task;
+            i++;
+        }
+        return taskArray;
+    }
+    
+    public String getTasksAsString() {
         if (tasks.isEmpty()) {
             return Constants.MESSAGE_NO_TASKS;
         }
