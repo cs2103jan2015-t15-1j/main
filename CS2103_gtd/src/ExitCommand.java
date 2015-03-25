@@ -16,4 +16,10 @@ public class ExitCommand implements Command {
 		return null;
 	}
 
+	@Override
+	public boolean isToBeAddedToHistory() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
