@@ -24,4 +24,19 @@ public class AddCommand implements Command {
 		return new DeleteCommand(taskIds);
 	}
 
+	@Override
+	public boolean isUndo() {
+		return false;
+	}
+
+	@Override
+	public boolean isRedo() {
+		return false;
+	}
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return true;
+	}
+
 }

@@ -15,4 +15,19 @@ public class RedoCommand implements Command {
         return new RedoCommand();
     }
 
+	@Override
+	public boolean isUndo() {
+		return false;
+	}
+
+	@Override
+	public boolean isRedo() {
+		return true;
+	}
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }
