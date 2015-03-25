@@ -3,9 +3,5 @@ interface Command {
 
 	public Command makeUndo();
 	
-	public boolean isUndo();
-	
-	public boolean isRedo();
-	
 	public boolean isToBeAddedToHistory();
 }
