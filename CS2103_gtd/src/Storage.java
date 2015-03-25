@@ -173,18 +173,19 @@ public class Storage {
         foundTasks = searchOnKeyword(keyword, foundTasks);
         foundTasks = searchOnDate(startDate, endDate, foundTasks);
 
-        String searchResult = "";
+        String searchResult = Constants.DISPLAY_TABLE_HEADERS;
         for (int i=0; i<foundTasks.length; i++) {
+//            System.out.print(foundTasks[i]+", ");
             if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
-                Task task = tasks.get(i);
+                Task task = tasks.get(i+1);
                 searchResult += "\n" + task.getUserFormat();
             }
         }
         
-        if (searchResult.equals("")) {
+        if (searchResult.equals(Constants.DISPLAY_TABLE_HEADERS)) {
             return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         }
-        return searchResult;
+        return "\n"+searchResult;
     }
     
     private int[] searchOnKeyword(String keyword, int[] foundTasks) {
@@ -192,25 +193,43 @@ public class Storage {
             if (!task.getDone()) { 
                 String taskDesc = task.getDescription();
                 if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                    int index = task.getId();
+                    int index = task.getId()-1;
                     foundTasks[index] = Constants.INCLUDED_IN_SEARCH;
                 }
+//                System.out.print(foundTasks[task.getId()-1]+", ");
             }
         }
         return foundTasks;
     }
     
     private int[] searchOnDate(LocalDateTime startDate, LocalDateTime endDate, int[] foundTasks) {
+//        System.out.println("length: "+foundTasks.length);
         for (Task task : tasks.values()) {
             if (!task.getDone()) { 
                 LocalDateTime taskStartDate = task.getStartDateTime();
                 LocalDateTime taskEndDate = task.getEndDateTime();
-//                long startDiff = Duration.between(startDate, taskStartDate).toMinutes();
-//                long endDiff = Duration.between(endDate, taskEndDate).toMinutes();
-                boolean startIsAfter = taskStartDate.isAfter(startDate);
-                boolean endIsBefore = taskEndDate.isBefore(endDate);
-                if (!startIsAfter || !endIsBefore) {
-                    int index = task.getId();
+//                System.out.println("taskStartDate: "+taskStartDate);
+//                System.out.println("startDate: "+startDate);
+                boolean startIsAfter = true;
+                boolean startIsOn = false;
+                boolean endIsBefore = true;
+                boolean endIsOn = false;
+                if (taskStartDate != null) {
+//                    System.out.println("taskStartDate != null");
+                    startIsAfter = taskStartDate.isAfter(startDate);
+                    startIsOn = taskStartDate.equals(startDate);
+                }
+                if (taskEndDate != null) {
+//                    System.out.println("taskEndDate != null");
+                    endIsBefore = taskEndDate.isBefore(endDate);
+                    endIsOn = taskEndDate.equals(endDate);
+                }
+//                System.out.println("startIsAfter: "+startIsAfter);
+//                System.out.println("startIsOn: "+startIsOn);
+//                System.out.println("endIsBefore: "+endIsBefore);
+//                System.out.println("endIsOn: "+endIsOn);
+                if (!((startIsAfter || startIsOn) && (endIsBefore || endIsOn))) {
+                    int index = task.getId()-1;
                     foundTasks[index] = Constants.NOT_INCLUDED_IN_SEARCH;
                 }
             }

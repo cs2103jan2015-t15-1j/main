@@ -13,7 +13,7 @@ public class DeleteCommand implements Command {
         String userFeedback = "";
         for (int i=0; i<taskIds.length; i++) {
             deletedTasks[i] = storage.getTask(taskIds[i]);
-            userFeedback += storage.delete(taskIds[i]);
+            userFeedback += storage.delete(taskIds[i]) + "\n";
         }
         return userFeedback;
     }
