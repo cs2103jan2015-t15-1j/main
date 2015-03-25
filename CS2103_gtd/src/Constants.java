@@ -24,7 +24,7 @@ public final class Constants {
 	public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-70s%-17s%-17s", "ID", "Description", "Start Time", "End Time");
 	
 	// Numbers
-	public static final int NO_ID_GIVEN = 0;
+	public static final int NO_ID_GIVEN = -1;
 	public static final int INCLUDED_IN_SEARCH = 1;
 	public static final int NOT_INCLUDED_IN_SEARCH = 0;
 }
