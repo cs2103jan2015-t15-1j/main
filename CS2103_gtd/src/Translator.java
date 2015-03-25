@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -98,6 +101,7 @@ public class Translator {
 			newCommand = createHelpCommand();
 			break;
 		case SETDIR :
+			//newCommand = createSetDirectoryCommand(usercommand);
 			break;
 		case EXIT :
 			newCommand = createExitCommand();
@@ -191,12 +195,10 @@ public class Translator {
 		return new HelpCommand();
 	}
 	
-	/*
 	private Command createSetDirectoryCommand(String usercommand) {
-		// interpretFilePath
-		return new SetDirectoryCommand()
+		Path setDirInformation = interpretFilePath(usercommand);
+		return new SetDirectoryCommand(setDirInformation);
 	}
-	*/
 	
 	private Command createExitCommand() {
 		return new ExitCommand();
@@ -453,7 +455,6 @@ public class Translator {
 		}
 	 }
 	
-	// return int array of -1's if the input is not valid (all args must be integer)
 	private int[] interpretTaskIDs(String param) {
 		String[] paramsBeforeParse = param.split(WHITESPACE);
 		int[] paramsAfterParse = new int[paramsBeforeParse.length];
@@ -461,22 +462,22 @@ public class Translator {
 			try {
 				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
 			} catch (NumberFormatException paramNotInt) {
-				//INVALID!
-				//Luqman->Hanbin: Why are you making it all invalid?
-				//Is it possible that some of the uer inputs are valid?
-				/*for (int j = 0; j < paramsAfterParse.length; j++) {
-					paramsAfterParse[j] = INT_PARAM_INVALID;
-				}
-				break;*/
-				paramsAfterParse[i] = INT_PARAM_INVALID;
+				return new int[]{INT_PARAM_INVALID};
 			}
 		}
 		return paramsAfterParse;
 	}
 	
-	private String interpretFilePath(String userInput) {
-		// TODO Auto-generated method stub
-		return null;
+	private Path interpretFilePath(String userInput) {
+		String pathString = extractSecondWord(userInput);
+		Path pathCandidate = Paths.get(pathString);
+		Path path;
+		try {
+			path = pathCandidate.toRealPath();
+			return path;
+		} catch (IOException e) {
+			return null;
+		}
 	}
 	
 }

@@ -34,7 +34,13 @@ public class KeywordInfo implements Comparable<KeywordInfo> {
 
 	// Setters and getters
 	public void setKeyword(String _keyword) {
-		keyword = _keyword;
+		if (keyword == null) {
+			keyword = _keyword;
+		} else {
+			keyword = _keyword;
+			position = KEYWORD_DOES_NOT_EXIST;
+			parameter = PARAMETER_DOES_NOT_EXIST;
+		}
 	}
 
 	public String getKeyword() {
@@ -43,6 +49,7 @@ public class KeywordInfo implements Comparable<KeywordInfo> {
 
 	public void setPosition(int index) {
 		position = index;
+		parameter = PARAMETER_DOES_NOT_EXIST;
 	}
 
 	public int getPosition() {
@@ -60,7 +67,6 @@ public class KeywordInfo implements Comparable<KeywordInfo> {
 	@Override
 	public int compareTo(KeywordInfo otherKeywordInfo) {
 		if (this.getPosition() == KEYWORD_DOES_NOT_EXIST) {
-			//System.err.println("Keyword " + this.keyword + " does not exist");
 			return THIS_AFTER_OTHER;
 		}
 		if (this.getPosition() < otherKeywordInfo.getPosition() ||

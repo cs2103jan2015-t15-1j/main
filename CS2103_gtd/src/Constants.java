@@ -15,7 +15,7 @@ public final class Constants {
 	public static final String MESSAGE_COMMAND_EXECUTION_ERROR = "TaskWaltz was not able to execute the following command: ";
 	public static final String MESSAGE_FILE_CHANGE = "The file %1$s is now used for storing tasks";
 	public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
-	public static final String MESSAGE_INCORRECT_ID = "No thask with that id was found";
+	public static final String MESSAGE_INCORRECT_ID = "Provided Task ID(s) was(were) either non-existent or in invalid format";
 	public static final String MESSAGE_INVALID_INPUT = "Invalid Input";
 	
 	// Formatting
