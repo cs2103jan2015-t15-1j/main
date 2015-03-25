@@ -31,7 +31,7 @@ public class Logic {
 		try {
 			c = translator.createCommand(userInput);
 		} catch (Exception e) {
-			return "Invalid Input";
+			return Constants.MESSAGE_INVALID_INPUT;
 		}
 		
 		boolean isUndo = c instanceof UndoCommand;

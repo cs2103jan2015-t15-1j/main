@@ -173,7 +173,7 @@ public class Storage {
         foundTasks = searchOnKeyword(keyword, foundTasks);
         foundTasks = searchOnDate(startDate, endDate, foundTasks);
 
-        String searchResult = Constants.DISPLAY_TABLE_HEADERS;
+        String searchResult = "";
         for (int i=0; i<foundTasks.length; i++) {
 //            System.out.print(foundTasks[i]+", ");
             if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
@@ -182,10 +182,10 @@ public class Storage {
             }
         }
         
-        if (searchResult.equals(Constants.DISPLAY_TABLE_HEADERS)) {
+        if (searchResult.equals("")) {
             return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         }
-        return "\n"+searchResult;
+        return Constants.DISPLAY_TABLE_HEADERS+"\n"+searchResult;
     }
     
     private int[] searchOnKeyword(String keyword, int[] foundTasks) {
@@ -203,34 +203,35 @@ public class Storage {
     }
     
     private int[] searchOnDate(LocalDateTime startDate, LocalDateTime endDate, int[] foundTasks) {
-//        System.out.println("length: "+foundTasks.length);
-        for (Task task : tasks.values()) {
-            if (!task.getDone()) { 
-                LocalDateTime taskStartDate = task.getStartDateTime();
-                LocalDateTime taskEndDate = task.getEndDateTime();
-//                System.out.println("taskStartDate: "+taskStartDate);
-//                System.out.println("startDate: "+startDate);
-                boolean startIsAfter = true;
-                boolean startIsOn = false;
-                boolean endIsBefore = true;
-                boolean endIsOn = false;
-                if (taskStartDate != null) {
-//                    System.out.println("taskStartDate != null");
-                    startIsAfter = taskStartDate.isAfter(startDate);
-                    startIsOn = taskStartDate.equals(startDate);
-                }
-                if (taskEndDate != null) {
-//                    System.out.println("taskEndDate != null");
-                    endIsBefore = taskEndDate.isBefore(endDate);
-                    endIsOn = taskEndDate.equals(endDate);
-                }
-//                System.out.println("startIsAfter: "+startIsAfter);
-//                System.out.println("startIsOn: "+startIsOn);
-//                System.out.println("endIsBefore: "+endIsBefore);
-//                System.out.println("endIsOn: "+endIsOn);
-                if (!((startIsAfter || startIsOn) && (endIsBefore || endIsOn))) {
-                    int index = task.getId()-1;
-                    foundTasks[index] = Constants.NOT_INCLUDED_IN_SEARCH;
+        if (!(startDate.equals(LocalDateTime.MIN) && endDate.equals(LocalDateTime.MAX))) {
+            for (Task task : tasks.values()) {
+                if (!task.getDone()) { 
+                    LocalDateTime taskStartDate = task.getStartDateTime();
+                    LocalDateTime taskEndDate = task.getEndDateTime();
+    //                System.out.println("taskStartDate: "+taskStartDate);
+    //                System.out.println("startDate: "+startDate);
+                    boolean startIsAfter = true;
+                    boolean startIsOn = false;
+                    boolean endIsBefore = false;
+                    boolean endIsOn = false;
+                    if (taskStartDate != null) {
+    //                    System.out.println("taskStartDate != null");
+                        startIsAfter = taskStartDate.isAfter(startDate);
+                        startIsOn = taskStartDate.equals(startDate);
+                    }
+                    if (taskEndDate != null) {
+    //                    System.out.println("taskEndDate != null");
+                        endIsBefore = taskEndDate.isBefore(endDate);
+                        endIsOn = taskEndDate.equals(endDate);
+                    }
+    //                System.out.println("startIsAfter: "+startIsAfter);
+    //                System.out.println("startIsOn: "+startIsOn);
+    //                System.out.println("endIsBefore: "+endIsBefore);
+    //                System.out.println("endIsOn: "+endIsOn);
+                    if (!((startIsAfter || startIsOn) && (endIsBefore || endIsOn))) {
+                        int index = task.getId()-1;
+                        foundTasks[index] = Constants.NOT_INCLUDED_IN_SEARCH;
+                    }
                 }
             }
         }
