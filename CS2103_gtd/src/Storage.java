@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,21 +165,57 @@ public class Storage {
     }
     
     public String search(Task searchObj) {
-        // Use Task object to access not only keyword, but also constraints for startDate, endDate...etc.
         String keyword = searchObj.getDescription();
+        LocalDateTime startDate = searchObj.getStartDateTime();
+        LocalDateTime endDate = searchObj.getEndDateTime();
+        
+        int[] foundTasks = new int[tasks.size()];
+        foundTasks = searchOnKeyword(keyword, foundTasks);
+        foundTasks = searchOnDate(startDate, endDate, foundTasks);
+
         String searchResult = "";
-        for (Task task : tasks.values()) {
-            if (!task.getDone()) { 
-                String taskDesc = task.getDescription();
-                if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                    searchResult += "\n" + task.getUserFormat();
-                }
+        for (int i=0; i<foundTasks.length; i++) {
+            if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
+                Task task = tasks.get(i);
+                searchResult += "\n" + task.getUserFormat();
             }
         }
+        
         if (searchResult.equals("")) {
             return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         }
         return searchResult;
+    }
+    
+    private int[] searchOnKeyword(String keyword, int[] foundTasks) {
+        for (Task task : tasks.values()) {
+            if (!task.getDone()) { 
+                String taskDesc = task.getDescription();
+                if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
+                    int index = task.getId();
+                    foundTasks[index] = Constants.INCLUDED_IN_SEARCH;
+                }
+            }
+        }
+        return foundTasks;
+    }
+    
+    private int[] searchOnDate(LocalDateTime startDate, LocalDateTime endDate, int[] foundTasks) {
+        for (Task task : tasks.values()) {
+            if (!task.getDone()) { 
+                LocalDateTime taskStartDate = task.getStartDateTime();
+                LocalDateTime taskEndDate = task.getEndDateTime();
+//                long startDiff = Duration.between(startDate, taskStartDate).toMinutes();
+//                long endDiff = Duration.between(endDate, taskEndDate).toMinutes();
+                boolean startIsAfter = taskStartDate.isAfter(startDate);
+                boolean endIsBefore = taskEndDate.isBefore(endDate);
+                if (!startIsAfter || !endIsBefore) {
+                    int index = task.getId();
+                    foundTasks[index] = Constants.NOT_INCLUDED_IN_SEARCH;
+                }
+            }
+        }
+        return foundTasks;
     }
     
     public void writeToFile() {

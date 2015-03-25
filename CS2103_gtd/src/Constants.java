@@ -25,4 +25,6 @@ public final class Constants {
 	
 	// Numbers
 	public static final int NO_ID_GIVEN = 0;
+	public static final int INCLUDED_IN_SEARCH = 1;
+	public static final int NOT_INCLUDED_IN_SEARCH = 0;
 }
