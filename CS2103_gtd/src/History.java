@@ -12,6 +12,7 @@ public class History {
     
     public void pushUndo(Command cmd) {
         undoStack.push(cmd);
+        redoStack = new Stack<Command>();
     }
     
     public Command getUndo() {
