@@ -4,8 +4,6 @@ import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.joestelmach.natty.*;
-
 public class Translator {
 	
 	private static final String INVALID_COMMAND = "%1$s is not a valid command!";
@@ -17,12 +15,12 @@ public class Translator {
 	private static final String[] addParameterKeywords = 
 		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_LOCATION, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
 	
-	private static final String KEYWORD_DISPLAY_DUE = "((due)|(DUE))";
-	private static final String KEYWORD_DISPLAY_AFTER = "((after)|(AFTER))";
-	private static final String KEYWORD_DISPLAY_BEFORE = "((before)|(BEFORE))";
-	private static final String KEYWORD_DISPLAY_ON = "((on)|(ON))";
-	private static final String[] displayParameterKeywords = 
-		{KEYWORD_DISPLAY_DUE, KEYWORD_DISPLAY_AFTER, KEYWORD_DISPLAY_BEFORE, KEYWORD_DISPLAY_ON};
+	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
+	private static final String KEYWORD_SEARCH_AFTER = "((after)|(AFTER))";
+	private static final String KEYWORD_SEARCH_BEFORE = "((before)|(BEFORE))";
+	private static final String KEYWORD_SEARCH_ON = "((on)|(ON))";
+	private static final String[] searchParameterKeywords = 
+		{KEYWORD_SEARCH_DUE, KEYWORD_SEARCH_AFTER, KEYWORD_SEARCH_BEFORE, KEYWORD_SEARCH_ON};
 	
 	private static final String KEYWORD_EDIT_DEADLINE = "((deadline)|(DEADLINE))";
 	private static final String KEYWORD_EDIT_LOCATION = "((location)|(LOCATION))";
@@ -85,6 +83,7 @@ public class Translator {
 		case SETDIR :
 			break;
 		case EXIT :
+			newCommand = createExitCommand();
 			break;
 		case SEARCH :
 			newCommand = createSearchCommand(usercommand);
@@ -168,6 +167,10 @@ public class Translator {
 	
 	private Command createRedoCommand() {
 		return new RedoCommand();
+	}
+	
+	private Command createExitCommand() {
+		return new ExitCommand();
 	}
 	
 	private Task interpretAddParameter(String usercommand) {
@@ -271,20 +274,36 @@ public class Translator {
 	}
 	
 	private Task interpretSearchParameter(String usercommand) {
-		/*
-		KeywordInfoList kList = new KeywordInfoList(usercommand, displayParameterKeywords);
-		String paramDue = kList.getParameter(KEYWORD_DISPLAY_DUE);
-		String paramAfter = kList.getParameter(KEYWORD_DISPLAY_AFTER);
-		String paramBefore = kList.getParameter(KEYWORD_DISPLAY_BEFORE);
-		String paramOn = kList.getParameter(KEYWORD_DISPLAY_ON);
-		*/
 		
 		Task newTask = new Task();
+		KeywordInfoList kList = new KeywordInfoList(usercommand, searchParameterKeywords);
+		//String paramDue = kList.getParameter(KEYWORD_SEARCH_DUE);
+		String paramAfter = kList.getParameter(KEYWORD_SEARCH_AFTER);
+		String paramBefore = kList.getParameter(KEYWORD_SEARCH_BEFORE);
+		//String paramOn = kList.getParameter(KEYWORD_DISPLAY_ON);
+		String paramDescription = kList.getDescription();
+		
 		// Storage can take advantage of LocalDateTime.isAfter, LocalDateTime.isBefore.
 		// Convention must be set up on how to tell Storage that this Display wants before/after/due/on.
 		
-		String searchKeyword = removeFirstWord(usercommand);
-		newTask.setDescription(searchKeyword);
+		if (paramDescription == null) {
+			newTask.setDescription(EMPTY_STRING);
+		} else {
+			newTask.setDescription(paramDescription);
+		}
+		if (paramAfter == null) {
+			newTask.setStartDateTime(LocalDateTime.MIN);
+		} else {
+			LocalDateTime lowerBoundaryTime = interpretDateTimeParam(paramAfter);
+			newTask.setStartDateTime(lowerBoundaryTime);
+		}
+		if (paramBefore == null) {
+			newTask.setEndDateTime(LocalDateTime.MAX);
+		} else {
+			LocalDateTime upperBoundaryTime = interpretDateTimeParam(paramBefore);
+			newTask.setEndDateTime(upperBoundaryTime);
+		}
+		
 		return newTask;
 	}
 	
