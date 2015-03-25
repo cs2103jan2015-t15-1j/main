@@ -15,4 +15,10 @@ public class RedoCommand implements Command {
         return new RedoCommand();
     }
 
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }

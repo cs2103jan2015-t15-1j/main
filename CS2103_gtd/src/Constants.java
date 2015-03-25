@@ -1,7 +1,8 @@
 import java.time.format.DateTimeFormatter;
 
 public final class Constants {
-
+    
+    // Feedback messages
 	public static final String MESSAGE_ADDED = "The task %1$d. %2$s, has been added";
 	public static final String MESSAGE_DELETED = "Task nr %1$d has been deleted";
 	public static final String MESSAGE_UPDATED = "Task nr %1$d has been updated";
@@ -16,9 +17,12 @@ public final class Constants {
 	public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
 	public static final String MESSAGE_INCORRECT_ID = "No thask with that id was found";
 	
+	// TODO: Name this group
 	public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 	public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-70s%-17s%-17s", "ID", "Description", "Start Time", "End Time");
-
+	
+	// Numbers
+	public static final int NO_ID_GIVEN = 0;
 }

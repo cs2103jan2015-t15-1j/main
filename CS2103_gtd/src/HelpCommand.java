@@ -15,4 +15,10 @@ public class HelpCommand implements Command {
         return null;
     }
 
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }

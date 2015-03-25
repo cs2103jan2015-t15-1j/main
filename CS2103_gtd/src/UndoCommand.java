@@ -15,4 +15,9 @@ public class UndoCommand implements Command {
         return new UndoCommand();
     }
 
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }

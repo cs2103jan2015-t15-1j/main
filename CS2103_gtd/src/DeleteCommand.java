@@ -23,4 +23,10 @@ public class DeleteCommand implements Command {
         return new AddCommand(deletedTasks);
     }
 
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return true;
+	}
+
 }

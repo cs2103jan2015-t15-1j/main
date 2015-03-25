@@ -43,9 +43,12 @@ public class Storage {
     }
     
     public String add(Task newTask) {
-    	int taskID = getNextIdNr();
-    	newTask.setId(taskID);
-        tasks.put(taskID, newTask);
+        int taskId = newTask.getId();
+        if (taskId == Constants.NO_ID_GIVEN) {
+            taskId = getNextIdNo();
+            newTask.setId(taskId);
+        }
+        tasks.put(taskId, newTask);
         writeToFile();
         return String.format(Constants.MESSAGE_ADDED, newTask.getId(), newTask.getDescription());
     }
@@ -207,7 +210,7 @@ public class Storage {
         }
     }
 
-    private int getNextIdNr() {
+    private int getNextIdNo() {
         lastIdNumber++;
         return lastIdNumber;
     }
@@ -260,7 +263,7 @@ public class Storage {
                 endDate = converteToDate(endDateString);
             }
             boolean done = currentObj.getBoolean("done");
-            int taskId = getNextIdNr();
+            int taskId = getNextIdNo();
             Task newTask = new Task(taskId, desc, startDate, endDate, done);
             tasks.put(taskId, newTask);
         }

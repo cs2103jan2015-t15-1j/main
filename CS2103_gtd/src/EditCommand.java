@@ -52,4 +52,10 @@ class EditCommand implements Command {
 		return oldTask;
 	}
 
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }

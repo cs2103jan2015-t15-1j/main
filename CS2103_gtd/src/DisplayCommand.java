@@ -16,4 +16,10 @@ public class DisplayCommand implements Command {
         return null;
     }
 
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }

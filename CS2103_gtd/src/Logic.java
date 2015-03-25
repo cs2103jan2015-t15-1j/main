@@ -34,9 +34,7 @@ public class Logic {
 			return "Invalid Input";
 		}
 		
-		//boolean isUndo = c.getClass().equals(UndoCommand.class);
 		boolean isUndo = c instanceof UndoCommand;
-		//boolean isRedo = c.getClass().equals(RedoCommand.class);
 		boolean isRedo = c instanceof RedoCommand;
 		boolean isToBeAddedToHistory = !isUndo && !isRedo && !c.getClass().equals(DisplayCommand.class) && !c.getClass().equals(HelpCommand.class) && !c.getClass().equals(SearchCommand.class);
 		Command cmd;

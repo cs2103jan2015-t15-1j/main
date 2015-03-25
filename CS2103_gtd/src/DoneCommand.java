@@ -23,4 +23,10 @@ public class DoneCommand implements Command {
         return new DoneCommand(taskIds, !setDone);
     }
 
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return true;
+	}
+
 }

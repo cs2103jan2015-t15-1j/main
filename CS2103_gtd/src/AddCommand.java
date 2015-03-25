@@ -24,4 +24,9 @@ public class AddCommand implements Command {
 		return new DeleteCommand(taskIds);
 	}
 
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return true;
+	}
+
 }
