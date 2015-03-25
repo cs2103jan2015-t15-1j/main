@@ -52,4 +52,19 @@ class EditCommand implements Command {
 		return oldTask;
 	}
 
+	@Override
+	public boolean isUndo() {
+		return false;
+	}
+
+	@Override
+	public boolean isRedo() {
+		return false;
+	}
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }

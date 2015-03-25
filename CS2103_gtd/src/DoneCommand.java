@@ -23,4 +23,19 @@ public class DoneCommand implements Command {
         return new DoneCommand(taskIds, !setDone);
     }
 
+	@Override
+	public boolean isUndo() {
+		return false;
+	}
+
+	@Override
+	public boolean isRedo() {
+		return false;
+	}
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return true;
+	}
+
 }

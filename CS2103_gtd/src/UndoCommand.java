@@ -15,4 +15,19 @@ public class UndoCommand implements Command {
         return new UndoCommand();
     }
 
+	@Override
+	public boolean isUndo() {
+		return true;
+	}
+
+	@Override
+	public boolean isRedo() {
+		return false;
+	}
+
+	@Override
+	public boolean isToBeAddedToHistory() {
+		return false;
+	}
+
 }
