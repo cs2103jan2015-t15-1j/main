@@ -4,8 +4,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -175,7 +173,6 @@ public class Storage {
 
         String searchResult = "";
         for (int i=0; i<foundTasks.length; i++) {
-//            System.out.print(foundTasks[i]+", ");
             if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
                 Task task = tasks.get(i+1);
                 searchResult += "\n" + task.getUserFormat();
@@ -196,46 +193,69 @@ public class Storage {
                     int index = task.getId()-1;
                     foundTasks[index] = Constants.INCLUDED_IN_SEARCH;
                 }
-//                System.out.print(foundTasks[task.getId()-1]+", ");
             }
         }
         return foundTasks;
     }
     
-    private int[] searchOnDate(LocalDateTime startDate, LocalDateTime endDate, int[] foundTasks) {
-        if (!(startDate.equals(LocalDateTime.MIN) && endDate.equals(LocalDateTime.MAX))) {
+    private int[] searchOnDate(LocalDateTime startDate, LocalDateTime endDate, 
+            int[] foundTasks) {
+        if (isDateSearch(startDate, endDate)) {
             for (Task task : tasks.values()) {
-                if (!task.getDone()) { 
-                    LocalDateTime taskStartDate = task.getStartDateTime();
-                    LocalDateTime taskEndDate = task.getEndDateTime();
-    //                System.out.println("taskStartDate: "+taskStartDate);
-    //                System.out.println("startDate: "+startDate);
-                    boolean startIsAfter = true;
-                    boolean startIsOn = false;
-                    boolean endIsBefore = false;
-                    boolean endIsOn = false;
-                    if (taskStartDate != null) {
-    //                    System.out.println("taskStartDate != null");
-                        startIsAfter = taskStartDate.isAfter(startDate);
-                        startIsOn = taskStartDate.equals(startDate);
-                    }
-                    if (taskEndDate != null) {
-    //                    System.out.println("taskEndDate != null");
-                        endIsBefore = taskEndDate.isBefore(endDate);
-                        endIsOn = taskEndDate.equals(endDate);
-                    }
-    //                System.out.println("startIsAfter: "+startIsAfter);
-    //                System.out.println("startIsOn: "+startIsOn);
-    //                System.out.println("endIsBefore: "+endIsBefore);
-    //                System.out.println("endIsOn: "+endIsOn);
-                    if (!((startIsAfter || startIsOn) && (endIsBefore || endIsOn))) {
-                        int index = task.getId()-1;
-                        foundTasks[index] = Constants.NOT_INCLUDED_IN_SEARCH;
-                    }
+                if (!task.getDone()) {
+                    int index = task.getId()-1;
+                    foundTasks[index] = isTaskInInterval(task, startDate, 
+                            endDate, foundTasks[index]);
                 }
             }
         }
         return foundTasks;
+    }
+    
+    private int isTaskInInterval(Task task, LocalDateTime searchStartDate, 
+            LocalDateTime searchEndDate, int originalValue) {
+        LocalDateTime taskStartDate = task.getStartDateTime();
+        LocalDateTime taskEndDate = task.getEndDateTime();
+        boolean startIsAfter = false;
+        boolean startIsOn = false;
+        boolean endIsBefore = false;
+        boolean endIsOn = false;
+        
+        if (isFloatingTask(taskEndDate)) {
+            return Constants.NOT_INCLUDED_IN_SEARCH;
+        } else if (isDeadlineTask(taskStartDate)) {
+            startIsAfter = taskEndDate.isAfter(searchStartDate);
+            startIsOn = taskEndDate.equals(searchStartDate);
+            endIsBefore = taskEndDate.isBefore(searchEndDate);
+            endIsOn = taskEndDate.equals(searchEndDate);
+        } else {
+            startIsAfter = taskStartDate.isAfter(searchStartDate);
+            startIsOn = taskStartDate.equals(searchStartDate);
+            endIsBefore = taskEndDate.isBefore(searchEndDate);
+            endIsOn = taskEndDate.equals(searchEndDate);
+        }
+        
+        if (isNotInInterval(startIsAfter, startIsOn, endIsBefore, endIsOn)) {
+            return Constants.NOT_INCLUDED_IN_SEARCH;
+        }
+        return originalValue;
+    }
+    
+    private boolean isDateSearch(LocalDateTime startDate, LocalDateTime endDate) {
+        return !(startDate.equals(LocalDateTime.MIN) && endDate.equals(LocalDateTime.MAX));
+    }
+    
+    private boolean isFloatingTask(LocalDateTime taskEndDate) {
+        return taskEndDate == null;
+    }
+    
+    private boolean isDeadlineTask(LocalDateTime taskStartDate) {
+        return taskStartDate == null;
+    }
+    
+    private boolean isNotInInterval(boolean startIsAfter, boolean startIsOn, 
+            boolean endIsBefore, boolean endIsOn) {
+        return !((startIsAfter || startIsOn) && (endIsBefore || endIsOn));
     }
     
     public void writeToFile() {
