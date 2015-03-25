@@ -210,20 +210,27 @@ public class Storage {
                     LocalDateTime taskEndDate = task.getEndDateTime();
     //                System.out.println("taskStartDate: "+taskStartDate);
     //                System.out.println("startDate: "+startDate);
-                    boolean startIsAfter = true;
+                    boolean startIsAfter = false;
                     boolean startIsOn = false;
                     boolean endIsBefore = false;
                     boolean endIsOn = false;
-                    if (taskStartDate != null) {
-    //                    System.out.println("taskStartDate != null");
-                        startIsAfter = taskStartDate.isAfter(startDate);
-                        startIsOn = taskStartDate.equals(startDate);
-                    }
                     if (taskEndDate != null) {
-    //                    System.out.println("taskEndDate != null");
+                    	// Not a floating task.
+                        // System.out.println("taskEndDate != null");
                         endIsBefore = taskEndDate.isBefore(endDate);
                         endIsOn = taskEndDate.equals(endDate);
+	                    if (taskStartDate != null) {
+	                    	// Event
+	    //                    System.out.println("taskStartDate != null");
+	                        startIsAfter = taskStartDate.isAfter(startDate);
+	                        startIsOn = taskStartDate.equals(startDate);
+	                    } else {
+	                    	// Deadline
+	                    	startIsAfter = taskEndDate.isAfter(startDate);
+	                    	startIsOn = taskEndDate.equals(startDate);
+	                    }
                     }
+                    
     //                System.out.println("startIsAfter: "+startIsAfter);
     //                System.out.println("startIsOn: "+startIsOn);
     //                System.out.println("endIsBefore: "+endIsBefore);
