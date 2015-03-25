@@ -37,6 +37,11 @@ public class Translator {
 	private static final String DELIMITTER_TIME = "(:)";
 	private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME + "([0-5])\\d";
 	
+	private static final String TIME_SEARCH_DEFAULT = " 12:00 ";
+	private static final int DATETIME_HOUR_MINIMUM = 0;
+	private static final int DATETIME_MINUTE_MINIMUM = 0;
+	private static final int DATETIME_HOUR_MAXIMUM = 23;
+	private static final int DATETIME_MINUTE_MAXIMUM = 59;
 	
 	private static final String EMPTY_STRING = "";
 	private static final String SINGLE_SPACE = " ";
@@ -282,6 +287,7 @@ public class Translator {
 		String paramBefore = kList.getParameter(KEYWORD_SEARCH_BEFORE);
 		//String paramOn = kList.getParameter(KEYWORD_DISPLAY_ON);
 		String paramDescription = kList.getDescription();
+		String paramOn = kList.getParameter(KEYWORD_SEARCH_ON);
 		
 		// Storage can take advantage of LocalDateTime.isAfter, LocalDateTime.isBefore.
 		// Convention must be set up on how to tell Storage that this Display wants before/after/due/on.
@@ -291,20 +297,41 @@ public class Translator {
 		} else {
 			newTask.setDescription(paramDescription);
 		}
-		if (paramAfter == null) {
-			newTask.setStartDateTime(LocalDateTime.MIN);
+		if (paramOn == null) {
+			if (paramAfter == null) {
+				newTask.setStartDateTime(LocalDateTime.MIN);
+			} else {
+				LocalDateTime lowerBoundaryTime = interpretDateTimeParam(paramAfter);
+				newTask.setStartDateTime(lowerBoundaryTime);
+			}
+			if (paramBefore == null) {
+				newTask.setEndDateTime(LocalDateTime.MAX);
+			} else {
+				LocalDateTime upperBoundaryTime = interpretDateTimeParam(paramBefore);
+				newTask.setEndDateTime(upperBoundaryTime);
+			}
 		} else {
-			LocalDateTime lowerBoundaryTime = interpretDateTimeParam(paramAfter);
-			newTask.setStartDateTime(lowerBoundaryTime);
-		}
-		if (paramBefore == null) {
-			newTask.setEndDateTime(LocalDateTime.MAX);
-		} else {
-			LocalDateTime upperBoundaryTime = interpretDateTimeParam(paramBefore);
-			newTask.setEndDateTime(upperBoundaryTime);
+			// Assuming the user only inputs DD/MM/YYYY but no HH:mm
+			paramOn += TIME_SEARCH_DEFAULT;
+			LocalDateTime dayToSearch = interpretDateTimeParam(paramOn);
+			newTask.setStartDateTime(getBeginningOfDay(dayToSearch));
+			newTask.setEndDateTime(getEndOfDay(dayToSearch));
 		}
 		
 		return newTask;
+	}
+
+	
+	private LocalDateTime getBeginningOfDay(LocalDateTime dateTime) {
+		LocalDateTime alteredHour = dateTime.withHour(DATETIME_HOUR_MINIMUM);
+		LocalDateTime alteredHourAndMinute = alteredHour.withMinute(DATETIME_MINUTE_MINIMUM);
+		return alteredHourAndMinute;
+	}
+	
+	private LocalDateTime getEndOfDay(LocalDateTime dateTime) {
+		LocalDateTime alteredHour = dateTime.withHour(DATETIME_HOUR_MAXIMUM);
+		LocalDateTime alteredHourAndMinute = alteredHour.withMinute(DATETIME_MINUTE_MAXIMUM);
+		return alteredHourAndMinute;
 	}
 	
 	private int[] interpretDeleteParameter(String usercommand) {
