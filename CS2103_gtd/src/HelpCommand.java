@@ -15,15 +15,6 @@ public class HelpCommand implements Command {
         return null;
     }
 
-	@Override
-	public boolean isUndo() {
-		return false;
-	}
-
-	@Override
-	public boolean isRedo() {
-		return false;
-	}
 
 	@Override
 	public boolean isToBeAddedToHistory() {

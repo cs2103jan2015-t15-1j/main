@@ -23,15 +23,6 @@ public class DeleteCommand implements Command {
         return new AddCommand(deletedTasks);
     }
 
-	@Override
-	public boolean isUndo() {
-		return false;
-	}
-
-	@Override
-	public boolean isRedo() {
-		return false;
-	}
 
 	@Override
 	public boolean isToBeAddedToHistory() {

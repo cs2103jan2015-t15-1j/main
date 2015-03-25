@@ -25,16 +25,6 @@ public class AddCommand implements Command {
 	}
 
 	@Override
-	public boolean isUndo() {
-		return false;
-	}
-
-	@Override
-	public boolean isRedo() {
-		return false;
-	}
-
-	@Override
 	public boolean isToBeAddedToHistory() {
 		return true;
 	}
