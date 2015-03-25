@@ -226,14 +226,12 @@ public class Storage {
         } else if (isDeadlineTask(taskStartDate)) {
             startIsAfter = taskEndDate.isAfter(searchStartDate);
             startIsOn = taskEndDate.equals(searchStartDate);
-            endIsBefore = taskEndDate.isBefore(searchEndDate);
-            endIsOn = taskEndDate.equals(searchEndDate);
         } else {
             startIsAfter = taskStartDate.isAfter(searchStartDate);
             startIsOn = taskStartDate.equals(searchStartDate);
-            endIsBefore = taskEndDate.isBefore(searchEndDate);
-            endIsOn = taskEndDate.equals(searchEndDate);
         }
+        endIsBefore = taskEndDate.isBefore(searchEndDate);
+        endIsOn = taskEndDate.equals(searchEndDate);
         
         if (isNotInInterval(startIsAfter, startIsOn, endIsBefore, endIsOn)) {
             return Constants.NOT_INCLUDED_IN_SEARCH;

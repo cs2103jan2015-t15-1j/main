@@ -10,7 +10,7 @@ class EditCommand implements Command {
 
 	public EditCommand(Task _newTask) {
 		newTask = _newTask;
-		logger.log(Level.CONFIG, newTask.getUserFormat());
+//		logger.log(Level.CONFIG, newTask.getUserFormat());
 
 	}
 
@@ -31,7 +31,9 @@ class EditCommand implements Command {
         if (newTask.getLocation() != null) {
             feedback = storage.updateLocation(taskId, newTask.getLocation());
         }
-		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+        Task realTask = storage.getTask(taskId);
+        feedback += "\n" + realTask.getUserFormat();
+//		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		return feedback;
 	}
 
