@@ -13,7 +13,13 @@ public class DoneCommand implements Command {
     public String execute(Storage storage) {
         String userFeedback = "";
         for (int id : taskIds) {
-            userFeedback += storage.done(id, setDone);
+        	if(userFeedback.equals("")){
+        		userFeedback += storage.done(id, setDone);
+        	}
+        	else{
+        		userFeedback += "\n" + storage.done(id, setDone);
+        	}
+            
         }
         return userFeedback;
     }

@@ -18,7 +18,6 @@ public class ExitCommand implements Command {
 
 	@Override
 	public boolean isToBeAddedToHistory() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
