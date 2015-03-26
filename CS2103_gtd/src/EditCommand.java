@@ -57,7 +57,7 @@ class EditCommand implements Command {
 
 	@Override
 	public boolean isToBeAddedToHistory() {
-		return false;
+		return true;
 	}
 
 }
