@@ -8,8 +8,9 @@ public class UI {
     
     public static void main(String[] args) {
     	mainLogic = Logic.getLogicObject();
-        String initalizationMessage = mainLogic.initializeEnvironment();
-        showToUser(initalizationMessage);
+        String initializationMessage = mainLogic.initializeEnvironment();
+        initializationMessage += "\n" + mainLogic.execute("display");
+        showToUser(initializationMessage);
         while (true) {
             System.out.print("\nEnter command: ");
             String userCommand = scanner.nextLine();
