@@ -19,6 +19,7 @@ public class DoneCommand implements Command {
         	else{
         		userFeedback += "\n" + storage.done(id, setDone);
         	}
+        	
         }
         return userFeedback;
     }

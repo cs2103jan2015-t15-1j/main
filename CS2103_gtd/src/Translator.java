@@ -71,6 +71,10 @@ public class Translator {
 	}
 	
 	public Command createCommand(String usercommand) throws Exception {
+		if (usercommand == null) {
+			throw new NullPointerException();
+		}
+		
 		Command newCommand = null;
 		String inputCommandTypeString = extractFirstWord(usercommand);
 		CommandType inputCommandType = determineCommandType(inputCommandTypeString);
@@ -101,7 +105,7 @@ public class Translator {
 			newCommand = createHelpCommand();
 			break;
 		case SETDIR :
-			//newCommand = createSetDirectoryCommand(usercommand);
+			newCommand = createSetDirectoryCommand(usercommand);
 			break;
 		case EXIT :
 			newCommand = createExitCommand();
@@ -120,7 +124,9 @@ public class Translator {
 	}
 	
 	private CommandType determineCommandType(String commandTypeString) {
-		if (commandTypeString.equalsIgnoreCase("ADD")) {
+		if (commandTypeString == null) {
+			return CommandType.INVALID;
+		} else if (commandTypeString.equalsIgnoreCase("ADD")) {
 			return CommandType.ADD;
 		} else if (commandTypeString.equalsIgnoreCase("DISPLAY")) {
 			return CommandType.DISPLAY;
@@ -385,62 +391,83 @@ public class Translator {
 		return LocalDateTime.of(date, time);
 	}
 	
-	private LocalDate extractLocalDate(String param) {		
-		Pattern datePattern = Pattern.compile(DD_MM_YYYY);
-		Matcher datePatternMatcher = datePattern.matcher(param);
-		if (datePatternMatcher.find()) {
-			String dateString = datePatternMatcher.group();
-			String[] dateSegments = dateString.split(DELIMITTER_DATE);
-			try {
-				int day = Integer.parseInt(dateSegments[0]);
-				int month = Integer.parseInt(dateSegments[1]);
-				int year = Integer.parseInt(dateSegments[2]);
-				return LocalDate.of(year, month, day);
-			} catch (NumberFormatException e) {
-				// Program should never reach here.
-				// Suggest using assert to check that dateSegments are all parse-able?
+	private LocalDate extractLocalDate(String param) {
+		if (param == null) {
+			return null;
+		} else {
+			Pattern datePattern = Pattern.compile(DD_MM_YYYY);
+			Matcher datePatternMatcher = datePattern.matcher(param);
+			if (datePatternMatcher.find()) {
+				String dateString = datePatternMatcher.group();
+				String[] dateSegments = dateString.split(DELIMITTER_DATE);
+				try {
+					int day = Integer.parseInt(dateSegments[0]);
+					int month = Integer.parseInt(dateSegments[1]);
+					int year = Integer.parseInt(dateSegments[2]);
+					return LocalDate.of(year, month, day);
+				} catch (NumberFormatException e) {
+					// Program should never reach here.
+					// Suggest using assert to check that dateSegments are all parse-able?
+					return null;
+				}
+			} else {
 				return null;
 			}
-		} else {
-			return null;
 		}
 	}
 	
-	private LocalTime extractLocalTime(String param) {		
-		Pattern timePattern = Pattern.compile(HH_MM);
-		Matcher timePatternMatcher = timePattern.matcher(param);
-		if (timePatternMatcher.find()) {
-			String timeString = timePatternMatcher.group();
-			String[] timeSegments = timeString.split(DELIMITTER_TIME);
-			try {
-				int hour = Integer.parseInt(timeSegments[0]);
-				int minute = Integer.parseInt(timeSegments[1]);
-				return LocalTime.of(hour, minute);
-			} catch (NumberFormatException e) {
-				// Program should never reach here.
-				// Suggest using assert to check that timeSegments are all parse-able?
+	private LocalTime extractLocalTime(String param) {
+		if (param == null) {
+			return null;
+		} else {
+			Pattern timePattern = Pattern.compile(HH_MM);
+			Matcher timePatternMatcher = timePattern.matcher(param);
+			if (timePatternMatcher.find()) {
+				String timeString = timePatternMatcher.group();
+				String[] timeSegments = timeString.split(DELIMITTER_TIME);
+				try {
+					int hour = Integer.parseInt(timeSegments[0]);
+					int minute = Integer.parseInt(timeSegments[1]);
+					return LocalTime.of(hour, minute);
+				} catch (NumberFormatException e) {
+					// Program should never reach here.
+					// Suggest using assert to check that timeSegments are all parse-able?
+					return null;
+				}
+			} else {
 				return null;
 			}
-		} else {
-			return null;
 		}
 	}
 	
 	private String extractFirstWord(String str) {
-		str = str.trim();
-		if (str.equals(EMPTY_STRING)) {
-			return EMPTY_STRING;
+		if (str == null) {
+			return null;
 		} else {
-			return str.split(WHITESPACE)[ARRAY_POSITION_FIRST];
+			str = str.trim();
+			if (str.equals(EMPTY_STRING)) {
+				return EMPTY_STRING;
+			} else {
+				return str.split(WHITESPACE)[ARRAY_POSITION_FIRST];
+			}
 		}
 	}
 	
 	private String extractSecondWord(String str) {
-		str = str.trim();
-		if (str.equals(EMPTY_STRING)) {
-			return EMPTY_STRING;
+		if (str == null) {
+			return null;
 		} else {
-			return str.split(WHITESPACE)[ARRAY_POSITION_SECOND];
+			str = str.trim();
+			if (str.equals(EMPTY_STRING)) {
+				return EMPTY_STRING;
+			} else {
+				String[] words = str.split(WHITESPACE);
+				if (words.length < 2) {
+					return EMPTY_STRING;
+				} else {
+					return words[ARRAY_POSITION_SECOND];
+				}
+			}
 		}
 	}
 	
