@@ -16,14 +16,24 @@ public class History {
     }
     
     public Command getUndo() {
-        Command lastCmd = undoStack.pop();
+        Command lastCmd;
+		try {
+			lastCmd = undoStack.pop();
+		} catch (Exception e) {
+			return null;
+		}
         Command reversedCmd = lastCmd.makeUndo();
         redoStack.push(reversedCmd);
         return lastCmd;
     }
     
     public Command getRedo() {
-        Command lastCmd = redoStack.pop();
+        Command lastCmd;
+		try {
+			lastCmd = redoStack.pop();
+		} catch (Exception e) {
+			return null;
+		}
         Command reversedCmd = lastCmd.makeUndo();
         undoStack.push(reversedCmd);
         return lastCmd;
