@@ -160,16 +160,16 @@ public class Storage {
     }
     
     public String getTasksAsString() {
-        if (tasks.isEmpty()) {
-            return Constants.MESSAGE_NO_TASKS;
-        }
-        String allTasks = "\n" + Constants.DISPLAY_TABLE_HEADERS;
+        String allTasks = "";
         for (Task task : tasks.values()) {
             if (!task.getDone()) { 
                 allTasks += "\n" + task.getUserFormat();
             }
         }
-        return allTasks;
+        if (allTasks.equals("")) {
+            return Constants.MESSAGE_NO_TASKS;
+        }
+        return "\n" + Constants.DISPLAY_TABLE_HEADERS + allTasks;
     }
     
     public String search(Task searchObj) {
