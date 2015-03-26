@@ -126,23 +126,35 @@ public class Translator {
 	private CommandType determineCommandType(String commandTypeString) {
 		if (commandTypeString == null) {
 			return CommandType.INVALID;
-		} else if (commandTypeString.equalsIgnoreCase("ADD")) {
+		} else if (commandTypeString.equalsIgnoreCase("ADD") ||
+				commandTypeString.equalsIgnoreCase("a")) {
 			return CommandType.ADD;
-		} else if (commandTypeString.equalsIgnoreCase("DISPLAY")) {
+		} else if (commandTypeString.equalsIgnoreCase("DISPLAY") ||
+				commandTypeString.equalsIgnoreCase("show") ||
+				commandTypeString.equalsIgnoreCase("dis") || 
+				commandTypeString.equalsIgnoreCase("ls")) {
 			return CommandType.DISPLAY;
-		} else if (commandTypeString.equalsIgnoreCase("SEARCH")) {
+		} else if (commandTypeString.equalsIgnoreCase("SEARCH") ||
+				commandTypeString.equalsIgnoreCase("s")) {
 			return CommandType.SEARCH;
-		} else if (commandTypeString.equalsIgnoreCase("EDIT")) {
+		} else if (commandTypeString.equalsIgnoreCase("EDIT") ||
+				commandTypeString.equalsIgnoreCase("e")) {
 			return CommandType.EDIT;
-		} else if (commandTypeString.equalsIgnoreCase("DELETE")) {
+		} else if (commandTypeString.equalsIgnoreCase("DELETE") ||
+				commandTypeString.equalsIgnoreCase("remove") ||
+				commandTypeString.equalsIgnoreCase("rm") ||
+				commandTypeString.equalsIgnoreCase("del")) {
 			return CommandType.DELETE;
 		} else if (commandTypeString.equalsIgnoreCase("CLEAR")) {
             return CommandType.CLEAR;
-		} else if (commandTypeString.equalsIgnoreCase("DONE")) {
+		} else if (commandTypeString.equalsIgnoreCase("DONE") ||
+				commandTypeString.equalsIgnoreCase("do")) {
 			return CommandType.DONE;
-		} else if (commandTypeString.equalsIgnoreCase("UNDO")) {
+		} else if (commandTypeString.equalsIgnoreCase("UNDO") ||
+				commandTypeString.equalsIgnoreCase("u")) {
 			return CommandType.UNDO;
-		} else if (commandTypeString.equalsIgnoreCase("REDO")) {
+		} else if (commandTypeString.equalsIgnoreCase("REDO") ||
+				commandTypeString.equalsIgnoreCase("r")) {
 			return CommandType.REDO;
 		} else if (commandTypeString.equalsIgnoreCase("HELP")) {
 			return CommandType.HELP;
