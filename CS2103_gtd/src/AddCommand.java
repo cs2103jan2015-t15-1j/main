@@ -1,16 +1,18 @@
 
 public class AddCommand implements Command {
 
+    Storage storage;
 	Task[] tasksToAdd;
 	int[] taskIds;
 	
-	public AddCommand(Task[] tasks){
-		tasksToAdd = tasks;
+	public AddCommand(Storage _storage, Task[] _tasks) {
+	    storage = _storage;
+		tasksToAdd = _tasks;
 		taskIds = new int[tasksToAdd.length];
 	}
 	
 	@Override
-	public String execute(Storage storage) {
+	public String execute() {
 		String userFeedback = "";
 		for (int i=0; i<tasksToAdd.length; i++) {
 		    userFeedback += storage.add(tasksToAdd[i]);

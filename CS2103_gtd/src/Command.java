@@ -1,5 +1,5 @@
 interface Command {
-	public String execute(Storage storage);
+	public String execute();
 
 	public Command makeUndo();
 	

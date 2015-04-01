@@ -1,18 +1,22 @@
 
 public class UndoCommand implements Command {
     
-    public UndoCommand() {
-        
+    History history;
+    
+    public UndoCommand(History _history) {
+        history = _history;
     }
     
     @Override
-    public String execute(Storage storage) {
-        return "";
+    public String execute() {
+        Command cmdToUndo = history.getUndo();
+        String feedback = cmdToUndo.execute();
+        return feedback;
     }
 
     @Override
     public Command makeUndo() {
-        return new UndoCommand();
+        return new UndoCommand(history);
     }
 
 	@Override
