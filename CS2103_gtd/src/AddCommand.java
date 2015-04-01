@@ -2,10 +2,11 @@
 public class AddCommand implements Command {
 
     Storage storage;
+    History history;
 	Task[] tasksToAdd;
 	int[] taskIds;
 	
-	public AddCommand(Storage _storage, Task[] _tasks) {
+	public AddCommand(Storage _storage, History _history, Task[] _tasks) {
 	    storage = _storage;
 		tasksToAdd = _tasks;
 		taskIds = new int[tasksToAdd.length];
@@ -18,17 +19,13 @@ public class AddCommand implements Command {
 		    userFeedback += storage.add(tasksToAdd[i]);
 		    taskIds[i] = tasksToAdd[i].getId();
 		}
+		makeUndo();
 		return userFeedback;
 	}
 
-	@Override
-	public Command makeUndo() {
-		return new DeleteCommand(taskIds);
-	}
-
-	@Override
-	public boolean isToBeAddedToHistory() {
-		return true;
+	private void makeUndo() {
+		Command reversedCommand = new DeleteCommand(taskIds);
+		history.pushUndo(reversedCommand);
 	}
 
 }
