@@ -42,25 +42,32 @@ public class Translator {
 	private static final String DELIMITTER_DATE = "(\\s|-|/)";
 	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
 			DELIMITTER_DATE + "\\d\\d\\d\\d";
-	/*
-	private static final String DD_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "([1-9])" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
-	private static final String D_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "([1-9])\\d" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
-	private static final String D_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String DD_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String D_MM_YYYY = "\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String D_M_YYYY = "\\d" + DELIMITTER_DATE + "\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";
 	private static final String DD_MM_YY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
-	private static final String DD_MM = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
-	private static final String DD_M = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
-	private static final String D_M = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
-			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+			DELIMITTER_DATE + "\\d\\d";
+	private static final String DD_M_YY = "\\d\\d" + DELIMITTER_DATE + "\\d" +
+			DELIMITTER_DATE + "\\d\\d";
+	private static final String D_MM_YY = "\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d";
+	private static final String D_M_YY = "\\d" + DELIMITTER_DATE + "\\d" +
+			DELIMITTER_DATE + "\\d\\d";
+//	private static final String[] FORMATS_DAY_MONTH_YEAR = {DD_MM_YYYY, DD_M_YYYY, D_MM_YYYY,
+//		D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY};
+	
+	private static final String DD_MM = "\\d\\d" + DELIMITTER_DATE + "\\d\\d";
+	private static final String DD_M = "\\d\\d" + DELIMITTER_DATE + "\\d";
+	private static final String D_MM = "\\d" + DELIMITTER_DATE + "\\d\\d";
+	private static final String D_M = "\\d" + DELIMITTER_DATE + "\\d";
+//	private static final String[] FORMATS_DAY_MONTH = {DD_MM, DD_M, D_MM, D_M};
 	private static final String[] FORMATS_DAY_MONTH_YEAR = {DD_MM_YYYY, DD_M_YYYY, D_MM_YYYY,
-		DD_MM_YY, DD_MM, DD_M, D_M};
-	*/
-
+		D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY, DD_MM, DD_M, D_MM, D_M};
+	private static final int MAX_YY_VALUE = 99;
+	private static final int CURRENT_MILLENIUM = 2000;
 	
 	private static final String DELIMITTER_TIME = "(:)";
 	private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME + "([0-5])\\d";
@@ -455,32 +462,50 @@ public class Translator {
 		LocalDate date = extractLocalDate(param);
 		// Time format: HH:mm
 		LocalTime time = extractLocalTime(param);
+		if (date == null && time != null) {
+			date = provideDefaultDate(time);
+		}
 		return LocalDateTime.of(date, time);
 	}
 	
-	private LocalDate extractLocalDate(String param) {
-		if (param == null) {
-			return null;
+	private LocalDate provideDefaultDate(LocalTime time) {
+		if (time != null) {
+			LocalDate defaultDate = LocalDate.now();
+			LocalTime currentTime = LocalTime.now();
+			if (time.isBefore(currentTime)) {
+				defaultDate = defaultDate.plusDays(1);
+			}
+			return defaultDate;
 		} else {
-			Pattern datePattern = Pattern.compile(DD_MM_YYYY);
-			Matcher datePatternMatcher = datePattern.matcher(param);
-			if (datePatternMatcher.find()) {
-				String dateString = datePatternMatcher.group();
-				String[] dateSegments = dateString.split(DELIMITTER_DATE);
-				try {
-					int day = Integer.parseInt(dateSegments[0]);
-					int month = Integer.parseInt(dateSegments[1]);
-					int year = Integer.parseInt(dateSegments[2]);
+			return null;
+		}
+	}
+	
+	private LocalDate extractLocalDate(String param) {
+		if (param != null) {			
+			for (int i = 0; i < FORMATS_DAY_MONTH_YEAR.length; i++) {
+				Pattern datePattern = Pattern.compile(FORMATS_DAY_MONTH_YEAR[i]);
+				Matcher datePatternMatcher = datePattern.matcher(param);
+				if (datePatternMatcher.find()) {
+					String dateString = datePatternMatcher.group();
+					LocalDate today = LocalDate.now();
+					int year = today.getYear();
+					int month = today.getMonthValue();
+					int day = today.getDayOfMonth();
+					String[] dateSegments = dateString.split(DELIMITTER_DATE);
+					day = Integer.parseInt(dateSegments[0]);
+					month = Integer.parseInt(dateSegments[1]);
+					if (dateSegments.length == 3) {
+						year = Integer.parseInt(dateSegments[2]);
+						if (year <= MAX_YY_VALUE) {
+							year += CURRENT_MILLENIUM;
+						}
+					}
 					return LocalDate.of(year, month, day);
-				} catch (NumberFormatException e) {
-					// Program should never reach here.
-					// Suggest using assert to check that dateSegments are all parse-able?
-					return null;
 				}
-			} else {
-				return null;
 			}
 		}
+		return null;
 	}
 	
 	private LocalTime extractLocalTime(String param) {
