@@ -4,7 +4,7 @@ public class SearchCommand implements Command {
     Task searchObj;
     Storage _storage;
     
-    public SearchCommand(Task _searchObj, Storage storage) {
+    public SearchCommand(Storage storage, Task _searchObj) {
         searchObj = _searchObj;
         _storage = storage;
     }

@@ -7,7 +7,7 @@ public class SetDirectoryCommand implements Command {
 	Storage _storage;
 	History _history;
 	
-	public SetDirectoryCommand(Path path, Storage storage, History history) {
+	public SetDirectoryCommand(Storage storage, History history, Path path) {
 		newDirToSet = path;
 		//oldDir = _storage.get
 		_storage = storage;
@@ -24,7 +24,7 @@ public class SetDirectoryCommand implements Command {
 
 	@Override
 	public Command makeUndo() {
-		return new SetDirectoryCommand(oldDir, _storage, _history);
+		return new SetDirectoryCommand(_storage, _history, oldDir);
 	}
 
 	@Override

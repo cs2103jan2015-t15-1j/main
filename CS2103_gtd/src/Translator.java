@@ -7,6 +7,8 @@ import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 public class Translator {
 	//==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
@@ -40,8 +42,33 @@ public class Translator {
 	private static final String DELIMITTER_DATE = "(\\s|-|/)";
 	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
 			DELIMITTER_DATE + "\\d\\d\\d\\d";
+	/*
+	private static final String DD_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "([1-9])" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String D_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "([1-9])\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String D_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String DD_MM_YY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String DD_MM = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String DD_M = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String D_M = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+			DELIMITTER_DATE + "\\d\\d\\d\\d";;
+	private static final String[] FORMATS_DAY_MONTH_YEAR = {DD_MM_YYYY, DD_M_YYYY, D_MM_YYYY,
+		DD_MM_YY, DD_MM, DD_M, D_M};
+	*/
+
+	
 	private static final String DELIMITTER_TIME = "(:)";
 	private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME + "([0-5])\\d";
+	private static final String H_MM = "\\d" + DELIMITTER_TIME + "([0-5])\\d";
+	private static final String HH = "(0|1|2)\\d";
+	private static final String H = "\\d";
+	private static final String PM = "(p|P)(m|M)";
+	private static final String[] FORMATS_HOUR_MINUTE = {HH_MM, H_MM, HH, H};
 	
 	
 	// Default values for Date-Time variables.
@@ -82,6 +109,16 @@ public class Translator {
 	public void setHistory(History history) {
 		// any guard?
 		commandHistory = history;
+	}
+	
+	public Storage getStorage() {
+		// Guard against null?
+		return taskStorage;
+	}
+	
+	public History getHistory() {
+		// Guard against null?
+		return commandHistory;
 	}
 	
 	public Command createCommand(String usercommand) throws Exception {
@@ -184,43 +221,43 @@ public class Translator {
 	
 	private Command createAddCommand(String usercommand) {
 		Task[] addInformation = {interpretAddParameter(usercommand)};
-		return new AddCommand(addInformation);
+		return new AddCommand(this.getStorage(), this.getHistory(), addInformation);
 	}
 
 	private Command createDisplayCommand() {
-		return new DisplayCommand();
+		return new DisplayCommand(this.getStorage());
 	}
 	
 	private Command createSearchCommand(String usercommand) {
 		Task searchInformation = interpretSearchParameter(usercommand);
-		return new SearchCommand(searchInformation);
+		return new SearchCommand(this.getStorage(), searchInformation);
 	}
 	
 	private Command createEditCommand(String usercommand) {
 		Task editInformation = interpretEditParameter(usercommand);
-		return new EditCommand(editInformation);
+		return new EditCommand(this.getStorage(), this.getHistory(), editInformation);
 	}
 	
 	private Command createDeleteCommand(String usercommand) {
 		int[] deleteInformation = interpretDeleteParameter(usercommand);
-		return new DeleteCommand(deleteInformation);
+		return new DeleteCommand(this.getStorage(), this.getHistory(), deleteInformation);
 	}
 	
 	private Command createClearCommand() {
-		return new ClearCommand();
+		return new ClearCommand(this.getStorage(), this.getHistory());
 	}
 	
 	private Command createDoneCommand(String usercommand) {
 		int[] doneInformation = interpretDoneParameter(usercommand);
-		return new DoneCommand(doneInformation, true);
+		return new DoneCommand(this.getStorage(), this.getHistory(), doneInformation, true);
 	}
 	
 	private Command createUndoCommand() {
-		return new UndoCommand();
+		return new UndoCommand(this.getStorage(), this.getHistory());
 	}
 	
 	private Command createRedoCommand() {
-		return new RedoCommand();
+		return new RedoCommand(this.getStorage(), this.getHistory());
 	}
 
 	private Command createHelpCommand() {
@@ -229,7 +266,7 @@ public class Translator {
 	
 	private Command createSetDirectoryCommand(String usercommand) {
 		Path setDirInformation = interpretFilePath(usercommand);
-		return new SetDirectoryCommand(setDirInformation);
+		return new SetDirectoryCommand(this.getStorage(), this.getHistory(), setDirInformation);
 	}
 	
 	private Command createExitCommand() {
@@ -447,27 +484,29 @@ public class Translator {
 	}
 	
 	private LocalTime extractLocalTime(String param) {
-		if (param == null) {
-			return null;
-		} else {
-			Pattern timePattern = Pattern.compile(HH_MM);
-			Matcher timePatternMatcher = timePattern.matcher(param);
-			if (timePatternMatcher.find()) {
-				String timeString = timePatternMatcher.group();
-				String[] timeSegments = timeString.split(DELIMITTER_TIME);
-				try {
-					int hour = Integer.parseInt(timeSegments[0]);
-					int minute = Integer.parseInt(timeSegments[1]);
+		if (param != null) {
+			for (int i = 0; i < FORMATS_HOUR_MINUTE.length; i++) {
+				Pattern timePattern = Pattern.compile(FORMATS_HOUR_MINUTE[i]);
+				Matcher timePatternMatcher = timePattern.matcher(param);
+				if (timePatternMatcher.find()) {
+					String timeString = timePatternMatcher.group();
+					int hour;
+					int minute;
+					Pattern delimitterPattern = Pattern.compile(DELIMITTER_TIME);
+					Matcher delimitterMatcher = delimitterPattern.matcher(timeString);
+					if (delimitterMatcher.find()) {
+						String[] timeSegments = timeString.split(DELIMITTER_TIME);
+						hour = Integer.parseInt(timeSegments[0]);
+						minute = Integer.parseInt(timeSegments[1]);
+					} else {
+						hour = Integer.parseInt(timeString);
+						minute = DATETIME_MINUTE_MINIMUM;
+					}
 					return LocalTime.of(hour, minute);
-				} catch (NumberFormatException e) {
-					// Program should never reach here.
-					// Suggest using assert to check that timeSegments are all parse-able?
-					return null;
 				}
-			} else {
-				return null;
 			}
 		}
+		return null;
 	}
 	
 	private String extractFirstWord(String str) {
@@ -478,7 +517,8 @@ public class Translator {
 			if (str.equals(EMPTY_STRING)) {
 				return EMPTY_STRING;
 			} else {
-				return str.split(WHITESPACE)[ARRAY_POSITION_FIRST];
+				String[] words = str.split(WHITESPACE);
+				return words[ARRAY_POSITION_FIRST];
 			}
 		}
 	}

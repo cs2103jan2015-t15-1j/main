@@ -10,7 +10,7 @@ class EditCommand implements Command {
 	private static final Logger logger = Logger.getLogger(EditCommand.class
 			.getName());
 
-	public EditCommand(Task _newTask, Storage storage, History history) {
+	public EditCommand(Storage storage, History history, Task _newTask) {
 		newTask = _newTask;
 		_storage = storage;
 		_history = history;
@@ -44,7 +44,7 @@ class EditCommand implements Command {
 
 	@Override
 	public Command makeUndo() {
-		return new EditCommand(oldTask, _storage, _history);
+		return new EditCommand(_storage, _history, oldTask);
 	}
 
 	private Task makeShallowCopyOfOriginalTask(Storage storage, int TaskId) {

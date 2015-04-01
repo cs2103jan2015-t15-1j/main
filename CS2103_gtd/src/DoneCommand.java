@@ -6,7 +6,7 @@ public class DoneCommand implements Command {
     Storage _storage;
     History _history;
     
-    public DoneCommand(int[] _ids, boolean _setDone, History history, Storage storage){
+    public DoneCommand(Storage storage, History history, int[] _ids, boolean _setDone){
         taskIds = _ids;
         setDone = _setDone;
         _history = history;
@@ -31,7 +31,7 @@ public class DoneCommand implements Command {
 
     @Override
     public Command makeUndo() {
-        return new DoneCommand(taskIds, !setDone, _history, _storage);
+        return new DoneCommand(_storage, _history, taskIds, !setDone);
     }
 
 	@Override

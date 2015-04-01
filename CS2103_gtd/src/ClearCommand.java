@@ -5,7 +5,7 @@ public class ClearCommand implements Command {
     History history;
     Task[] deletedTasks;
     
-    public ClearCommand(Storage _storage, History _history, Task[] _tasks) {
+    public ClearCommand(Storage _storage, History _history) {
         storage = _storage;
         history = _history;
     }
