@@ -3,36 +3,44 @@ public class DoneCommand implements Command {
     
     int[] taskIds;
     boolean setDone;
+    Storage _storage;
+    History _history;
     
-    public DoneCommand(int[] _ids, boolean _setDone){
+    public DoneCommand(int[] _ids, boolean _setDone, History history, Storage storage){
         taskIds = _ids;
         setDone = _setDone;
+        _history = history;
+        _storage = storage;
     }
     
     @Override
-    public String execute(Storage storage) {
+    public String execute() {
         String userFeedback = "";
         for (int id : taskIds) {
         	if(userFeedback.equals("")){
-        		userFeedback += storage.done(id, setDone);
+        		userFeedback += _storage.done(id, setDone);
         	}
         	else{
-        		userFeedback += "\n" + storage.done(id, setDone);
+        		userFeedback += "\n" + _storage.done(id, setDone);
         	}
         	
         }
+        updateHistory();
         return userFeedback;
     }
 
     @Override
     public Command makeUndo() {
-        return new DoneCommand(taskIds, !setDone);
+        return new DoneCommand(taskIds, !setDone, _history, _storage);
     }
 
-
 	@Override
-	public boolean isToBeAddedToHistory() {
-		return true;
+	public void updateHistory() {
+		_history.pushUndo(makeUndo());
+		
 	}
+
+
+
 
 }
