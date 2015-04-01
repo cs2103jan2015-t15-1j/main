@@ -4,42 +4,47 @@ import java.util.logging.Logger;
 class EditCommand implements Command {
 	Task newTask;
 	Task oldTask;
+	Storage _storage;
+	History _history;
 
 	private static final Logger logger = Logger.getLogger(EditCommand.class
 			.getName());
 
-	public EditCommand(Task _newTask) {
+	public EditCommand(Task _newTask, Storage storage, History history) {
 		newTask = _newTask;
+		_storage = storage;
+		_history = history;
 //		logger.log(Level.CONFIG, newTask.getUserFormat());
 
 	}
 
 	@Override
-	public String execute(Storage storage) {
+	public String execute() {
 		int taskId = newTask.getId();
-		oldTask = makeShallowCopyOfOriginalTask(storage, taskId);
+		oldTask = makeShallowCopyOfOriginalTask(_storage, taskId);
 		String feedback = "";
 		if (newTask.getDescription() != null) {
-		    feedback = storage.updateDescription(taskId, newTask.getDescription());
+		    feedback = _storage.updateDescription(taskId, newTask.getDescription());
         }
         if (newTask.getStartDateTime() != null) {
-            feedback = storage.updateStartDate(taskId, newTask.getStartDateTime());
+            feedback = _storage.updateStartDate(taskId, newTask.getStartDateTime());
         }
         if (newTask.getEndDateTime() != null) {
-            feedback = storage.updateEndDate(taskId, newTask.getEndDateTime());
+            feedback = _storage.updateEndDate(taskId, newTask.getEndDateTime());
         }
         if (newTask.getLocation() != null) {
-            feedback = storage.updateLocation(taskId, newTask.getLocation());
+            feedback = _storage.updateLocation(taskId, newTask.getLocation());
         }
-        Task realTask = storage.getTask(taskId);
+        Task realTask = _storage.getTask(taskId);
         feedback += "\n" + realTask.getUserFormat();
 //		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+        updateHistory();
 		return feedback;
 	}
 
 	@Override
 	public Command makeUndo() {
-		return new EditCommand(oldTask);
+		return new EditCommand(oldTask, _storage, _history);
 	}
 
 	private Task makeShallowCopyOfOriginalTask(Storage storage, int TaskId) {
@@ -54,10 +59,12 @@ class EditCommand implements Command {
 		return oldTask;
 	}
 
-
 	@Override
-	public boolean isToBeAddedToHistory() {
-		return true;
+	public void updateHistory() {
+		_history.pushUndo(makeUndo());
+		
 	}
+
+
 
 }

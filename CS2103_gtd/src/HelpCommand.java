@@ -6,19 +6,20 @@ public class HelpCommand implements Command {
     }
     
     @Override
-    public String execute(Storage storage) {
+    public String execute() {
         return Constants.MESSAGE_HELP;
     }
 
-    @Override
-    public Command makeUndo() {
-        return null;
-    }
-
+	@Override
+	public Command makeUndo() {
+		return null;
+	}
 
 	@Override
-	public boolean isToBeAddedToHistory() {
-		return false;
+	public void updateHistory() {
+		
 	}
+
+
 
 }

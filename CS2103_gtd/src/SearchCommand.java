@@ -2,14 +2,16 @@
 public class SearchCommand implements Command {
     
     Task searchObj;
+    Storage _storage;
     
-    public SearchCommand(Task _searchObj) {
+    public SearchCommand(Task _searchObj, Storage storage) {
         searchObj = _searchObj;
+        _storage = storage;
     }
     
     @Override
-    public String execute(Storage storage) {
-        String searchFeedback = storage.search(searchObj);
+    public String execute() {
+        String searchFeedback = _storage.search(searchObj);
         return searchFeedback;
     }
 
@@ -18,10 +20,11 @@ public class SearchCommand implements Command {
         return null;
     }
 
-
 	@Override
-	public boolean isToBeAddedToHistory() {
-		return false;
+	public void updateHistory() {
+		
 	}
+
+
 
 }

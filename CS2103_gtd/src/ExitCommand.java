@@ -6,7 +6,7 @@ public class ExitCommand implements Command {
 	}
 	
 	@Override
-	public String execute(Storage storage) {
+	public String execute() {
 		System.exit(0);
 		return null;
 	}
@@ -17,8 +17,10 @@ public class ExitCommand implements Command {
 	}
 
 	@Override
-	public boolean isToBeAddedToHistory() {
-		return false;
+	public void updateHistory() {
+		
 	}
+
+
 
 }
