@@ -1,32 +1,31 @@
 public class DeleteCommand implements Command {
     
+    Storage storage;
+    History history;
     int[] taskIds;
     Task[] deletedTasks;
     
-    public DeleteCommand(int[] _taskIds) {
+    public DeleteCommand(Storage _storage, History _history, int[] _taskIds) {
+        storage = _storage;
+        history = _history;
         taskIds = _taskIds;
         deletedTasks = new Task[taskIds.length];
     }
     
     @Override
-    public String execute(Storage storage) {
+    public String execute() {
         String userFeedback = "";
         for (int i=0; i<taskIds.length; i++) {
             deletedTasks[i] = storage.getTask(taskIds[i]);
             userFeedback += storage.delete(taskIds[i]) + "\n";
         }
+        makeUndo();
         return userFeedback;
     }
 
-    @Override
-    public Command makeUndo() {
-        return new AddCommand(deletedTasks);
+    private void makeUndo() {
+        Command reversedCommand = new AddCommand(storage, history, deletedTasks);
+        history.pushUndo(reversedCommand);
     }
-
-
-	@Override
-	public boolean isToBeAddedToHistory() {
-		return true;
-	}
 
 }
