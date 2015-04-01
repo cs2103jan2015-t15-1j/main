@@ -1,13 +1,14 @@
 
 public class DisplayCommand implements Command {
     
-    public DisplayCommand() {
-        
+	Storage _storage;
+    public DisplayCommand(Storage storage) {
+        _storage = storage;
     }
     
     @Override
-    public String execute(Storage storage) {
-        String displayFeedback = storage.getTasksAsString();
+    public String execute() {
+        String displayFeedback = _storage.getTasksAsString();
         return displayFeedback;
     }
 
@@ -16,10 +17,11 @@ public class DisplayCommand implements Command {
         return null;
     }
 
-
 	@Override
-	public boolean isToBeAddedToHistory() {
-		return false;
+	public void updateHistory() {
+		
 	}
+
+
 
 }

@@ -19,13 +19,19 @@ public class DeleteCommand implements Command {
             deletedTasks[i] = storage.getTask(taskIds[i]);
             userFeedback += storage.delete(taskIds[i]) + "\n";
         }
-        makeUndo();
+        updateHistory();
         return userFeedback;
     }
 
-    private void makeUndo() {
+    public Command makeUndo() {
         Command reversedCommand = new AddCommand(storage, history, deletedTasks);
-        history.pushUndo(reversedCommand);
+        return reversedCommand;
     }
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+		
+	}
 
 }

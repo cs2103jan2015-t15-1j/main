@@ -14,13 +14,22 @@ public class ClearCommand implements Command {
     public String execute() {
         deletedTasks = storage.getAllTasks();
         String feedback = storage.deleteAll();
-        makeUndo();
+        updateHistory();
         return feedback;
     }
     
-    private void makeUndo() {
-        Command reversedCommand = new AddCommand(storage, history, deletedTasks);
-        history.pushUndo(reversedCommand);
-    }
+
+	@Override
+	public Command makeUndo() {
+		Command reversedCommand = new AddCommand(storage, history, deletedTasks);
+		return reversedCommand;
+	}
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+		
+	}
+    
 
 }

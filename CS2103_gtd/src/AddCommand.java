@@ -20,13 +20,19 @@ public class AddCommand implements Command {
 		    userFeedback += storage.add(tasksToAdd[i]);
 		    taskIds[i] = tasksToAdd[i].getId();
 		}
-		makeUndo();
+		updateHistory();
 		return userFeedback;
 	}
 
-	private void makeUndo() {
+	public Command makeUndo() {
 		Command reversedCommand = new DeleteCommand(storage, history, taskIds);
-		history.pushUndo(reversedCommand);
+		return reversedCommand;
+	}
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+		
 	}
 
 }
