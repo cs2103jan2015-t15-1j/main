@@ -12,7 +12,7 @@ public class StorageTest {
     @Test
     // Need to try out to be able to use it in other tests
     public void setAndGetFilePath() {
-        storage.setFilePath(fileName);
+        storage.prepareStorage(fileName);
         String newFilePath = storage.getFilePath();
         assertEquals("Check that setFilePath() updates the filePath\n", 
                 System.getProperty("user.dir") + "/" + fileName, newFilePath);
@@ -22,7 +22,7 @@ public class StorageTest {
     // Only floating tasks working right now
     // - later do tests for event and deadline tasks as well
     public void addTask() {
-        storage.setFilePath(fileName);
+        storage.prepareStorage(fileName);
         Task testTask = new Task();
         String theDesc = "test task";
         testTask.setDescription(theDesc);
@@ -35,7 +35,7 @@ public class StorageTest {
     
     @Test
     public void deleteAllTasks() {
-        storage.setFilePath(fileName);
+        storage.prepareStorage(fileName);
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.deleteAll();
@@ -45,7 +45,7 @@ public class StorageTest {
     }
     
     private void initialize() {
-        storage.setFilePath(fileName);
+        storage.prepareStorage(fileName);
         storage.deleteAll();
     }
     
@@ -67,7 +67,7 @@ public class StorageTest {
     // Only floating tasks working right now
     // - later do tests for event and deadline tasks as well
     public void updateTaskDescription() {
-        storage.setFilePath(fileName);
+        storage.prepareStorage(fileName);
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.add(testTask);
