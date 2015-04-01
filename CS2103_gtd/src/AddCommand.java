@@ -8,6 +8,7 @@ public class AddCommand implements Command {
 	
 	public AddCommand(Storage _storage, History _history, Task[] _tasks) {
 	    storage = _storage;
+	    history = _history;
 		tasksToAdd = _tasks;
 		taskIds = new int[tasksToAdd.length];
 	}
@@ -24,7 +25,7 @@ public class AddCommand implements Command {
 	}
 
 	private void makeUndo() {
-		Command reversedCommand = new DeleteCommand(taskIds);
+		Command reversedCommand = new DeleteCommand(storage, history, taskIds);
 		history.pushUndo(reversedCommand);
 	}
 
