@@ -51,32 +51,12 @@ public class Logic {
 		Command c;
 		try {
 			c = translator.createCommand(userInput);
+			String feedback = c.execute();
+			return feedback;
 		} catch (Exception e) {
 			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
 		}
 
-		boolean isUndo = c instanceof UndoCommand;
-		boolean isRedo = c instanceof RedoCommand;
-		boolean isToBeAddedToHistory = c.isToBeAddedToHistory();
-		Command cmd;
-		if (isUndo) {
-			cmd = history.getUndo();
-		} else if (isRedo) {
-			cmd = history.getRedo();
-		} else {
-			cmd = c;
-		}
-		String feedback;
-		try {
-			feedback = cmd.execute(storage);
-		} catch (Exception e) {
-			feedback = Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
-		}
-
-		if (isToBeAddedToHistory) {
-			history.pushUndo(cmd.makeUndo());
-		}
-		return feedback;
 
 	}
 
