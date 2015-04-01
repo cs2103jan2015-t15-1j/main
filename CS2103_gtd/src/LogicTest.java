@@ -27,6 +27,10 @@ public class LogicTest {
 	/*@Test
 	public void clearCommand() {//to-do
 		logic.initializeEnvironment();
+		logic.execute("clear");
+		logic.execute("add task buffer");
+		logic.execute("add another task");
+		assertEquals("tasks added",,logic.execute("display"));
 		String feedback = logic.execute("clear");
 		assertEquals("Check that the clear command is working\n", feedback,
 				Constants.MESSAGE_ALL_DELETED);
@@ -294,5 +298,25 @@ public class LogicTest {
 		String expectedRedoFeedback = ;
 		assertEquals("Check that redo undo of done of multiple tasks(some not integer) works",redoFeedback,expectedRedoFeedback);
 	}*/
+	@Test
+	public void addEmpty(){
+		String addEmpty = "add       ";
+		logic.initializeEnvironment();
+		String feedback = logic.execute(addEmpty);
+		assertEquals("Check that adding of task with empty description is not executed",Constants.MESSAGE_COMMAND_EXECUTION_ERROR+addEmpty,feedback);
+	}
+	
+	public void executeEmpty(){
+		String empty = "";
+		logic.initializeEnvironment();
+		String feedback = logic.execute(empty);
+		assertEquals("Check that adding of task with empty description is not executed",Constants.MESSAGE_COMMAND_EXECUTION_ERROR+empty,feedback);
+	}
+	
+	public void executeNull(){
+		logic.initializeEnvironment();
+		String feedback = logic.execute(null);
+		assertEquals("Check that adding of task with empty description is not executed",Constants.MESSAGE_COMMAND_EXECUTION_ERROR,feedback);
+	}
 
 }

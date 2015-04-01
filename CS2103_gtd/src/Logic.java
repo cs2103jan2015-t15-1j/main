@@ -24,7 +24,7 @@ public class Logic {
 		storage = new Storage();
 		String filePath = "storage_file.json";//to be replaced with getFilePath
 		history = new History();
-		translator = new Translator();
+		translator = new Translator(storage,history);
 		String initializationFeedback = storage.prepareStorage(filePath);
 		return initializationFeedback;
 	}
