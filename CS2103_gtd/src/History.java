@@ -11,32 +11,34 @@ public class History {
     }
     
     public void pushUndo(Command cmd) {
+    	//cmd should already be in its undo state
         undoStack.push(cmd);
         redoStack.clear();
+    }
+    
+    public void pushRedo(Command cmd) {
+    	//cmd should already be in its undo state
+        redoStack.push(cmd);
     }
     
     public Command getUndo() {
         Command lastCmd;
 		try {
 			lastCmd = undoStack.pop();
+			return lastCmd;
 		} catch (Exception e) {
-			return null;
+			throw new NullPointerException("No commmands to undo");
 		}
-        Command reversedCmd = lastCmd.makeUndo();
-        redoStack.push(reversedCmd);
-        return lastCmd;
     }
     
     public Command getRedo() {
         Command lastCmd;
 		try {
 			lastCmd = redoStack.pop();
+			return lastCmd;
 		} catch (Exception e) {
-			return null;
+			throw new NullPointerException("No commands to redo");
 		}
-        Command reversedCmd = lastCmd.makeUndo();
-        undoStack.push(reversedCmd);
-        return lastCmd;
     }
 
 }
