@@ -14,10 +14,6 @@ public class StorageIO {
     
     String filePath;
     
-    public StorageIO(String _filePath) {
-        filePath = _filePath;
-    }
-    
     public String getFilePath() {
         return filePath;
     }

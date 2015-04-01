@@ -1,14 +1,6 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.*; //download: http://mvnrepository.com/artifact/org.json/json
-
 
 public class Storage {
     
@@ -17,8 +9,8 @@ public class Storage {
     private int lastIdNumber;
     
     public String prepareStorage(String fileName) {
-        String filePath = setFilePath(fileName);
-        storageIO = new StorageIO(filePath);
+        storageIO = new StorageIO();
+        String filePath = storageIO.setFilePath(fileName);
         storageIO.getDataFromFile(tasks);
         return String.format(Constants.MESSAGE_WELCOME, filePath);
     }

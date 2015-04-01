@@ -20,7 +20,6 @@ public class Logic {
 	}
 
 	public String initializeEnvironment() {
-
 		storage = new Storage();
 		String filePath = "storage_file.json";//to be replaced with getFilePath
 		history = new History();
