@@ -11,11 +11,11 @@ public class Translator {
 	//==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
-	private static final String KEYWORD_ADD_LOCATION = "((at)|(AT)|(@))";
+	private static final String KEYWORD_ADD_EVENT_ONEHOUR = "((at)|(AT)|(@))";
 	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START))";
-	private static final String KEYWORD_ADD_EVENTEND = "((to)|(TO)|(end)|(END))";
+	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = 
-		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_LOCATION, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
+		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENT_ONEHOUR, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
 	
 	// Keywords for SEARCH command
 	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
@@ -66,8 +66,22 @@ public class Translator {
 	private static final int INVALID_TASK_ID = -1;
 	//==========Constants for Translator class Section End================//
 	
-	public Translator() {
-		
+	private Storage taskStorage;
+	private History commandHistory;
+	
+	public Translator(Storage storage, History history) {
+		taskStorage = storage;
+		commandHistory = history;
+	}
+	
+	public void setStorage(Storage storage) {
+		// any guard?
+		taskStorage = storage;
+	}
+	
+	public void setHistory(History history) {
+		// any guard?
+		commandHistory = history;
 	}
 	
 	public Command createCommand(String usercommand) throws Exception {
@@ -228,7 +242,7 @@ public class Translator {
 		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
 
 		String paramDescription = kList.getDescription();
-		String paramLocation = kList.getParameter(KEYWORD_ADD_LOCATION);
+		String paramEventOneHour = kList.getParameter(KEYWORD_ADD_EVENT_ONEHOUR);
 		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
 		String paramEventStart = kList.getParameter(KEYWORD_ADD_EVENTSTART);
 		String paramEventEnd = kList.getParameter(KEYWORD_ADD_EVENTEND);
@@ -236,9 +250,13 @@ public class Translator {
 		if (paramDescription != EMPTY_STRING) {
 			newTask.setDescription(paramDescription);
 
-			if (paramLocation != PARAMETER_DOES_NOT_EXIST) {
-				newTask.setLocation(paramLocation);
+			/*
+			if (paramEventOneHour != PARAMETER_DOES_NOT_EXIST) {
+				LocalDateTime eventOneHourStart = interpretDateTimeParam(paramEventOneHour);
+				if (eventOneHourStart.)
+				newTask.setLocation(paramEventOneHour);
 			}
+			*/
 
 			if (paramDeadline != PARAMETER_DOES_NOT_EXIST) {
 				// The task type is "deadline"
