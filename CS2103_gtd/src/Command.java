@@ -1,7 +1,5 @@
 interface Command {
 	public String execute();
 
-	public Command makeUndo();
-	
-	public boolean isToBeAddedToHistory();
+	public void makeUndo();
 }
