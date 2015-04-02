@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -12,27 +13,53 @@ import org.json.JSONObject;
 
 public class StorageIO {
     
-    private String filePath;
+    private String storageFilePath;
+    private String configFilePath;
     private int lastIdNumber = 0;
     
     public String getFilePath() {
-        return filePath;
+        return storageFilePath;
     }
     
-    public String setFilePath(String fileName) {
-        //TODO: check if file/filename is valid
-        //TODO: delete data from old file
-        //TODO: save filepath
-        filePath = System.getProperty("user.dir") + "/" + fileName;
-        File file = new File(filePath);
+    public String initializeConfigFile() {
+        configFilePath = System.getProperty("user.dir") + "/config.txt";
+        File file = new File(configFilePath);
+        String path = "";
         try {
             if (!file.exists()) {
                 file.createNewFile();
+                path = System.getProperty("user.dir") + "/" + Constants.DEFAULT_STORAGE_PATH;
+            } else {
+                BufferedReader br = new BufferedReader(new FileReader(configFilePath));
+                path = br.readLine();
+                br.close();
+                if (path == null) {
+                    path = System.getProperty("user.dir") + "/" + Constants.DEFAULT_STORAGE_PATH;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return String.format(Constants.MESSAGE_FILE_CHANGE, fileName);
+        return path;
+    }
+    
+    public String setFilePath(String path) {
+        //TODO: check if file/filename is valid
+        //TODO: delete data from old file
+        storageFilePath = path;
+        File file = new File(storageFilePath);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            File configFile = new File(configFilePath);
+            BufferedWriter output = new BufferedWriter(new FileWriter(configFile));
+            output.write(path);
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return String.format(Constants.MESSAGE_FILE_CHANGE, storageFilePath);
     }
     
     public int getLastIdNumber() {
@@ -59,7 +86,7 @@ public class StorageIO {
         jsonObj.put("tasks", jsonArray);
  
         try {
-            FileWriter file = new FileWriter(filePath);
+            FileWriter file = new FileWriter(storageFilePath);
             file.write(jsonObj.toString());
             file.flush();
             file.close();
@@ -71,7 +98,7 @@ public class StorageIO {
     public void getDataFromFile(Map<Integer, Task> tasks) {
         String jsonStr = "";
         try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
+            BufferedReader br = new BufferedReader(new FileReader(storageFilePath));
             String line = br.readLine();
             while (line != null) {
                 jsonStr += " " + line;

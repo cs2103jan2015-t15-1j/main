@@ -9,7 +9,7 @@ public final class Constants {
 	public static final String MESSAGE_ALL_DELETED = "All tasks are now deleted";
 	public static final String MESSAGE_NO_TASKS = "You have currently no tasks.";
 	public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks containing your keyword was found";
-	public static final String MESSAGE_WELCOME = "Welcome to TaskWaltz!\nThe file %1$s is ready for storing your tasks";
+	public static final String MESSAGE_WELCOME = "Welcome to TaskWaltz!";
 	public static final String MESSAGE_HELP = "Available commands:\nadd <description> <start time (if any)> <end time(if any)>\n  equivalent: a\n\ndisplay\n  equivalent: dis, show, ls\n\ndone <task identification number(s)>\n  equivalent: do\n\ndelete <task identification number(s)>\n  equivalent: remove, rm, del\n\nedit <task identification number> <new parameters>\n  equivalent: e\n\nundo\n  equivalent: u\n\nredo\n  equivalent: r\n\nsearch <Keyword>\n  equivalent: s\n\nhelp\nsetdir <file path>";
 	public static final String MESSAGE_INITIALIZATION_ERROR = "There was a problem opening TaskWaltz";
 	public static final String MESSAGE_COMMAND_EXECUTION_ERROR = "TaskWaltz was not able to execute the following command: ";
@@ -30,4 +30,7 @@ public final class Constants {
 	public static final int NO_ID_GIVEN = -1;
 	public static final int INCLUDED_IN_SEARCH = 1;
 	public static final int NOT_INCLUDED_IN_SEARCH = 0;
+	
+	//Default values
+	public static final String DEFAULT_STORAGE_PATH = "storage_file.json";
 }

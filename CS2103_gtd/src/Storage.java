@@ -9,17 +9,18 @@ public class Storage {
     private StorageSearch storageSearch;
     private int lastIdNumber;
     
-    public String prepareStorage(String fileName) {
+    public String prepareStorage() {
         storageSearch = new StorageSearch();
         storageIO = new StorageIO();
-        String filePath = storageIO.setFilePath(fileName);
+        String path = storageIO.initializeConfigFile();
+        String feedback = storageIO.setFilePath(path);
         storageIO.getDataFromFile(tasks);
         lastIdNumber = storageIO.getLastIdNumber();
-        return String.format(Constants.MESSAGE_WELCOME, filePath);
+        return feedback;
     }
     
-    public String setFilePath(String fileName) {
-        String feedback = storageIO.setFilePath(fileName);
+    public String setFilePath(String path) {
+        String feedback = storageIO.setFilePath(path);
         return feedback;
     }
     
