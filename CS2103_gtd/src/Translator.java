@@ -165,6 +165,9 @@ public class Translator {
 		case SETDIR :
 			newCommand = createSetDirectoryCommand(usercommand);
 			break;
+		case GETDIR :
+            newCommand = createGetDirectoryCommand(usercommand);
+            break;
 		case EXIT :
 			newCommand = createExitCommand();
 			break;
@@ -219,6 +222,9 @@ public class Translator {
 		} else if (commandTypeString.equalsIgnoreCase("SETDIR") ||
 				commandTypeString.equalsIgnoreCase("SETDIRECTORY")) {
 			return CommandType.SETDIR;
+		} else if (commandTypeString.equalsIgnoreCase("GETDIR") ||
+                commandTypeString.equalsIgnoreCase("GETDIRECTORY")) {
+            return CommandType.GETDIR;
 		} else if (commandTypeString.equalsIgnoreCase("EXIT")) {
 			return CommandType.EXIT;
 		} else {
@@ -272,9 +278,13 @@ public class Translator {
 	}
 	
 	private Command createSetDirectoryCommand(String usercommand) {
-		Path setDirInformation = interpretFilePath(usercommand);
+	    String setDirInformation = extractSecondWord(usercommand);
 		return new SetDirectoryCommand(this.getStorage(), this.getHistory(), setDirInformation);
 	}
+	
+	private Command createGetDirectoryCommand(String usercommand) {
+        return new GetDirectoryCommand(this.getStorage());
+    }
 	
 	private Command createExitCommand() {
 		return new ExitCommand();
@@ -585,7 +595,7 @@ public class Translator {
 	}
 	
 	private Path interpretFilePath(String userInput) {
-		String pathString = extractSecondWord(userInput);
+	    String pathString = extractSecondWord(userInput);
 		Path pathCandidate = Paths.get(pathString);
 		Path path;
 		try {
