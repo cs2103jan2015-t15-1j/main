@@ -1,14 +1,10 @@
-import java.nio.file.Path;
-
 
 public class GetDirectoryCommand implements Command {
     
     Storage storage;
-    History history;
     
-    public GetDirectoryCommand(Storage _storage, History _history, Path path) {
+    public GetDirectoryCommand(Storage _storage) {
         storage = _storage;
-        history = _history;
     }
     
     @Override

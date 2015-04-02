@@ -22,6 +22,7 @@ public class StorageIO {
     public String setFilePath(String fileName) {
         //TODO: check if file/filename is valid
         //TODO: delete data from old file
+        //TODO: save filepath
         filePath = System.getProperty("user.dir") + "/" + fileName;
         File file = new File(filePath);
         try {
