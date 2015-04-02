@@ -24,23 +24,29 @@ public class LogicTest {
 				Constants.MESSAGE_COMMAND_EXECUTION_ERROR + "SOmething",feedback);
 	}
 
-	/*@Test
+	@Test
 	public void clearCommand() {//to-do
 		logic.initializeEnvironment();
 		logic.execute("clear");
 		logic.execute("add task buffer");
 		logic.execute("add another task");
-		assertEquals("tasks added",,logic.execute("display"));
-		String feedback = logic.execute("clear");
-		assertEquals("Check that the clear command is working\n", feedback,
-				Constants.MESSAGE_ALL_DELETED);
-		String undoFeedback = logic.execute("Undo");
-		String expectedUndoFeedback = ;
-		assertEquals("Check that undo clear command works",undoFeedback,expectedUndoFeedback);
-		String redoFeedback = logic.execute("Redo");
-		String expectedRedoFeedback = ;
-		assertEquals("Check that redo undo of clear command works",redoFeedback,expectedRedoFeedback);
-	}*/
+		String actual = logic.execute("display");
+		String expected = "\n" + Constants.DISPLAY_TABLE_HEADERS+"\n"+String.format("%-4d%-70s%-17s%-17s", 1, "task buffer", "", "")+"\n"+String.format("%-4d%-70s%-17s%-17s", 2, "another task", "", "");
+		assertEquals("tasks added",expected,actual);
+		logic.execute("clear");
+		actual = logic.execute("display");
+		expected = Constants.MESSAGE_NO_TASKS;
+		assertEquals("Check that the clear command is working\n", expected,
+				actual);
+		logic.execute("Undo");
+		actual = logic.execute("display");
+		expected = "\n" + Constants.DISPLAY_TABLE_HEADERS+"\n"+String.format("%-4d%-70s%-17s%-17s", 1, "task buffer", "", "")+"\n"+String.format("%-4d%-70s%-17s%-17s", 2, "another task", "", "");
+		assertEquals("Check that undo clear command works",expected,actual);
+		logic.execute("Redo");
+		actual = logic.execute("display");
+		expected = Constants.MESSAGE_NO_TASKS;
+		assertEquals("Check that redo undo of clear command works",expected,actual);
+	}
 	
 	/*@Test
 	public void deleteCommandEmptyFile(){//to-do
