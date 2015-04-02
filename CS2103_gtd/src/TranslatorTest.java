@@ -776,6 +776,16 @@ public class TranslatorTest {
 		LocalDate expectedOutput = today.plusDays(1);
 		assertEquals(actualOutput, expectedOutput);
 	}
+//	
+//	@Test
+//		public void interpretFilePathTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+//		Method methodIFP = translatorClass.getDeclaredMethod("interpretFilePath", String.class);
+//		methodIFP.setAccessible(true);
+//		String testInput = ".";
+//		Path actualOutput = (Path) methodIFP.invoke(trans, testInput);
+//		Path expectedOutput = Paths.get(".");
+//		assertEquals(expectedOutput, actualOutput);
+//	}
 	
 	/*
 	@Test

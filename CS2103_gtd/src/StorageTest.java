@@ -1,28 +1,35 @@
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
+
 import java.time.LocalDateTime;
+
 import org.junit.Test;
 
 
 public class StorageTest {
 
     Storage storage = new Storage();
-    String fileName = "file_path_for_test.txt";
-
+    String fileName = System.getProperty("user.dir") + "/file_path_for_test.txt";
+    
+    private void initialize() {
+        storage.prepareStorage();
+        storage.setFilePath(fileName);
+        storage.deleteAll();
+    }
+    
     @Test
     // Need to try out to be able to use it in other tests
     public void setAndGetFilePath() {
-        storage.prepareStorage(fileName);
+        initialize();
         String newFilePath = storage.getFilePath();
-        assertEquals("Check that setFilePath() updates the filePath\n", 
-                System.getProperty("user.dir") + "/" + fileName, newFilePath);
+        assertEquals("Check that setFilePath() updates the filePath\n", fileName, newFilePath);
     }
     
     @Test
     // Only floating tasks working right now
     // - later do tests for event and deadline tasks as well
     public void addTask() {
-        storage.prepareStorage(fileName);
+        initialize();
         Task testTask = new Task();
         String theDesc = "test task";
         testTask.setDescription(theDesc);
@@ -35,18 +42,13 @@ public class StorageTest {
     
     @Test
     public void deleteAllTasks() {
-        storage.prepareStorage(fileName);
+        initialize();
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.deleteAll();
         String tasksFeedback = storage.getTasksAsString();
         assertEquals("Check that deleteAll() deletes all tasks\n", 
                 Constants.MESSAGE_NO_TASKS, tasksFeedback);
-    }
-    
-    private void initialize() {
-        storage.prepareStorage(fileName);
-        storage.deleteAll();
     }
     
     @Test
@@ -67,7 +69,7 @@ public class StorageTest {
     // Only floating tasks working right now
     // - later do tests for event and deadline tasks as well
     public void updateTaskDescription() {
-        storage.prepareStorage(fileName);
+        storage.prepareStorage();
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.add(testTask);

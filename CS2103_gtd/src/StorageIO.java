@@ -15,7 +15,7 @@ public class StorageIO {
     
     private String storageFilePath;
     private String configFilePath;
-    private int lastIdNumber = 0;
+    private int lastIdNumber;
     
     public String getFilePath() {
         return storageFilePath;
@@ -132,6 +132,7 @@ public class StorageIO {
     private void createTasksFromJson(String jsonStr, Map<Integer, Task> tasks) {
         JSONObject jsonObj = new JSONObject(jsonStr);
         JSONArray jsonArr = jsonObj.getJSONArray("tasks");
+        lastIdNumber = 0;
         for (int i = 0; i < jsonArr.length(); i++)  {
             JSONObject currentObj = jsonArr.getJSONObject(i);
             String desc = currentObj.getString("desc");
