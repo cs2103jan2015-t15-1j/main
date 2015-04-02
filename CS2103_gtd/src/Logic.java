@@ -23,8 +23,7 @@ public class Logic {
 
 	public String initializeEnvironment() {
 		storage = new Storage();
-		String filePath = "storage_file.json";//to be replaced with getFilePath
-		String initializationFeedback = storage.prepareStorage(filePath);
+		String initializationFeedback = storage.prepareStorage();
 		history = new History();
 		translator = new Translator(storage,history);
 		return initializationFeedback;

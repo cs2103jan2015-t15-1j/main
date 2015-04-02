@@ -7,7 +7,7 @@ public class SetDirectoryCommand implements Command {
 	private String oldDir;
 	
 	public SetDirectoryCommand(Storage _storage, History _history, String path) {
-		newDir = path;
+		newDir = System.getProperty("user.dir") + "/" + path;
 		storage = _storage;
 		history = _history;
 	}

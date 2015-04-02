@@ -4,23 +4,30 @@ import java.util.Map;
 
 public class Storage {
     
-    private Map<Integer, Task> tasks = new HashMap<Integer, Task>();
+    private Map<Integer, Task> tasks;
     private StorageIO storageIO;
     private StorageSearch storageSearch;
     private int lastIdNumber;
     
-    public String prepareStorage(String fileName) {
+    public String prepareStorage() {
         storageSearch = new StorageSearch();
         storageIO = new StorageIO();
-        String filePath = storageIO.setFilePath(fileName);
-        storageIO.getDataFromFile(tasks);
-        lastIdNumber = storageIO.getLastIdNumber();
-        return String.format(Constants.MESSAGE_WELCOME, filePath);
+        String configFilePath = storageIO.initializeConfigFile();
+        String setStorageFileFeedback = storageIO.setFilePath(configFilePath);
+        initializeTaskList();
+        return setStorageFileFeedback;
     }
     
-    public String setFilePath(String fileName) {
-        String feedback = storageIO.setFilePath(fileName);
+    public String setFilePath(String path) {
+        String feedback = storageIO.setFilePath(path);
+        initializeTaskList();
         return feedback;
+    }
+    
+    private void initializeTaskList() {
+        tasks = new HashMap<Integer, Task>();
+        storageIO.getDataFromFile(tasks);
+        lastIdNumber = storageIO.getLastIdNumber();
     }
     
     public String getFilePath() {
