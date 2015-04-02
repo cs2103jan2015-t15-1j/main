@@ -451,9 +451,10 @@ public class Translator {
 	
 	private LocalDateTime interpretDateTimeParam(String param) {
 		// Date format: dd-MM-yyyy
-		LocalDate date = extractLocalDate(param);
+		StringBuilder dateTimeStr = new StringBuilder(param);
+		LocalDate date = extractLocalDate(dateTimeStr);
 		// Time format: HH:mm
-		LocalTime time = extractLocalTime(param);
+		LocalTime time = extractLocalTime(dateTimeStr);
 		if (date == null && time != null) {
 			date = provideDefaultDate(time);
 		}
@@ -473,7 +474,7 @@ public class Translator {
 		}
 	}
 	
-	private LocalDate extractLocalDate(String param) {
+	private LocalDate extractLocalDate(StringBuilder param) {
 		if (param != null) {			
 			for (int i = 0; i < FORMATS_DAY_MONTH_YEAR.length; i++) {
 				Pattern datePattern = Pattern.compile(FORMATS_DAY_MONTH_YEAR[i]);
@@ -493,6 +494,7 @@ public class Translator {
 							year += CURRENT_MILLENIUM;
 						}
 					}
+					param.replace(datePatternMatcher.start(), datePatternMatcher.end() + 1, EMPTY_STRING);
 					return LocalDate.of(year, month, day);
 				}
 			}
@@ -500,7 +502,7 @@ public class Translator {
 		return null;
 	}
 	
-	private LocalTime extractLocalTime(String param) {
+	private LocalTime extractLocalTime(StringBuilder param) {
 		if (param != null) {
 			for (int i = 0; i < FORMATS_HOUR_MINUTE.length; i++) {
 				Pattern timePattern = Pattern.compile(FORMATS_HOUR_MINUTE[i]);
