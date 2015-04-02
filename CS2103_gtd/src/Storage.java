@@ -13,7 +13,7 @@ public class Storage {
         storageSearch = new StorageSearch();
         storageIO = new StorageIO();
         String filePath = storageIO.setFilePath(fileName);
-        storageIO.getDataFromFile(tasks);
+        lastIdNumber = storageIO.getDataFromFile(tasks);
         return String.format(Constants.MESSAGE_WELCOME, filePath);
     }
     

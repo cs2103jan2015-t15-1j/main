@@ -62,7 +62,8 @@ public class StorageIO {
         }
     }
     
-    public void getDataFromFile(Map<Integer, Task> tasks) {
+    public int getDataFromFile(Map<Integer, Task> tasks) {
+    	int lastIdNumber = 0;
         String jsonStr = "";
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -76,8 +77,10 @@ public class StorageIO {
             e.printStackTrace();
         }
         if (jsonStr.length() > 0) {
-            createTasksFromJson(jsonStr, tasks);
+            lastIdNumber = createTasksFromJson(jsonStr, tasks);
         }
+        return lastIdNumber;
+        
     }
     
     /* JSON example:
@@ -93,7 +96,7 @@ public class StorageIO {
      *      ...]
      *  }
      */
-    private void createTasksFromJson(String jsonStr, Map<Integer, Task> tasks) {
+    private int createTasksFromJson(String jsonStr, Map<Integer, Task> tasks) {
         JSONObject jsonObj = new JSONObject(jsonStr);
         JSONArray jsonArr = jsonObj.getJSONArray("tasks");
         int lastIdNumber = 0;
@@ -115,6 +118,7 @@ public class StorageIO {
             Task newTask = new Task(lastIdNumber, desc, startDate, endDate, done);
             tasks.put(lastIdNumber, newTask);
         }
+        return lastIdNumber;
     }
     
     private LocalDateTime converteToDate(String strDate) {
