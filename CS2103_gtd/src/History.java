@@ -27,7 +27,7 @@ public class History {
 			lastCmd = undoStack.pop();
 			return lastCmd;
 		} catch (Exception e) {
-			throw new NullPointerException("No commmands to undo");
+			throw new NullPointerException("No commands to undo");
 		}
     }
     
