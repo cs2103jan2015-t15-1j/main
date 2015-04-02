@@ -1,24 +1,23 @@
-import java.nio.file.Path;
 
 public class SetDirectoryCommand implements Command {
+
+    Storage storage;
+    History history;
+    private String newDir;
+	private String oldDir;
 	
-	private Path oldDir;
-	private Path newDirToSet;
-	Storage storage;
-	History history;
-	
-	public SetDirectoryCommand(Storage _storage, History _history, Path path) {
-		newDirToSet = path;
+	public SetDirectoryCommand(Storage _storage, History _history, String path) {
+		newDir = path;
 		storage = _storage;
 		history = _history;
 	}
 
 	@Override
 	public String execute() {
-		// TODO Auto-generated method stub
-		// Call methods in Storage to set to new dir.
+	    oldDir = storage.getFilePath();
+		String feedback = storage.setFilePath(newDir);
 		updateHistory();
-		return null;
+		return feedback;
 	}
 
 	@Override
