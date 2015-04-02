@@ -14,6 +14,7 @@ public class Storage {
         storageIO = new StorageIO();
         String filePath = storageIO.setFilePath(fileName);
         storageIO.getDataFromFile(tasks);
+        lastIdNumber = storageIO.getLastIdNumber();
         return String.format(Constants.MESSAGE_WELCOME, filePath);
     }
     

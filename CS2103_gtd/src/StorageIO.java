@@ -12,7 +12,8 @@ import org.json.JSONObject;
 
 public class StorageIO {
     
-    String filePath;
+    private String filePath;
+    private int lastIdNumber = 0;
     
     public String getFilePath() {
         return filePath;
@@ -31,6 +32,10 @@ public class StorageIO {
             e.printStackTrace();
         }
         return String.format(Constants.MESSAGE_FILE_CHANGE, fileName);
+    }
+    
+    public int getLastIdNumber() {
+        return lastIdNumber;
     }
     
     public void writeToFile(Map<Integer, Task> tasks) {
@@ -96,7 +101,6 @@ public class StorageIO {
     private void createTasksFromJson(String jsonStr, Map<Integer, Task> tasks) {
         JSONObject jsonObj = new JSONObject(jsonStr);
         JSONArray jsonArr = jsonObj.getJSONArray("tasks");
-        int lastIdNumber = 0;
         for (int i = 0; i < jsonArr.length(); i++)  {
             JSONObject currentObj = jsonArr.getJSONObject(i);
             String desc = currentObj.getString("desc");
