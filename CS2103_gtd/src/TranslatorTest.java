@@ -346,9 +346,9 @@ public class TranslatorTest {
 
 	@Test
 	public void extractLocalDateTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = null;
+		StringBuilder testInput = null;
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = null;
 		assertEquals(actualOutput, expectedOutput);
@@ -356,9 +356,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "";
+		StringBuilder testInput = new StringBuilder("");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = null;
 		assertEquals(actualOutput, expectedOutput);
@@ -366,9 +366,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "12:00";
+		StringBuilder testInput = new StringBuilder("12:00");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = null;
 		assertEquals(actualOutput, expectedOutput);
@@ -376,9 +376,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "22#11#3333";
+		StringBuilder testInput = new StringBuilder("22#11#3333");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = null;
 		assertEquals(actualOutput, expectedOutput);
@@ -386,9 +386,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "22-11-3333";
+		StringBuilder testInput = new StringBuilder("22-11-3333");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
 		assertEquals(actualOutput, expectedOutput);
@@ -396,9 +396,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_6() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "22/11/3333";
+		StringBuilder testInput = new StringBuilder("22/11/3333");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
 		assertEquals(actualOutput, expectedOutput);
@@ -406,9 +406,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "22 11 3333";
+		StringBuilder testInput = new StringBuilder("22 11 3333");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
 		assertEquals(actualOutput, expectedOutput);
@@ -416,9 +416,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_8() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "22/11/3333 01/02/3000";
+		StringBuilder testInput = new StringBuilder("22/11/3333 01/02/3000");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
 		assertEquals(actualOutput, expectedOutput);
@@ -426,9 +426,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_9() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "12:00 once upon a time 22/11/3333 some other time 01/02/3000";
+		StringBuilder testInput = new StringBuilder("12:00 once upon a time 22/11/3333 some other time 01/02/3000");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
 		assertEquals(actualOutput, expectedOutput);
@@ -436,9 +436,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_10() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "12/1/1999";
+		StringBuilder testInput = new StringBuilder("12/1/1999");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(1999, 1, 12);
 		assertEquals(actualOutput, expectedOutput);
@@ -446,9 +446,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_11() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "1/12/1999";
+		StringBuilder testInput = new StringBuilder("1/12/1999");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(1999, 12, 1);
 		assertEquals(actualOutput, expectedOutput);
@@ -456,9 +456,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_12() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "1/2/1999";
+		StringBuilder testInput = new StringBuilder("1/2/1999");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(1999, 2, 1);
 		assertEquals(actualOutput, expectedOutput);
@@ -466,9 +466,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_13() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "11/12/16";
+		StringBuilder testInput = new StringBuilder("11/12/16");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2016, 12, 11);
 		assertEquals(actualOutput, expectedOutput);
@@ -476,9 +476,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_14() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "11/2/16";
+		StringBuilder testInput = new StringBuilder("11/2/16");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2016, 2, 11);
 		assertEquals(actualOutput, expectedOutput);
@@ -486,9 +486,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_15() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "1/12/16";
+		StringBuilder testInput = new StringBuilder("1/12/16");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2016, 12, 1);
 		assertEquals(actualOutput, expectedOutput);
@@ -496,9 +496,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_16() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "1/2/16";
+		StringBuilder testInput = new StringBuilder("1/2/16");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2016, 2, 1);
 		assertEquals(actualOutput, expectedOutput);
@@ -506,9 +506,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_17() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "11/12";
+		StringBuilder testInput = new StringBuilder("11/12");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2015, 12, 11);
 		assertEquals(actualOutput, expectedOutput);
@@ -516,9 +516,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_18() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "11/2";
+		StringBuilder testInput = new StringBuilder("11/2");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2015, 2, 11);
 		assertEquals(actualOutput, expectedOutput);
@@ -526,9 +526,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_19() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "1/12";
+		StringBuilder testInput = new StringBuilder("1/12");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2015, 12, 1);
 		assertEquals(actualOutput, expectedOutput);
@@ -536,9 +536,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalDateTest_20() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", String.class);
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
-		String testInput = "1/2";
+		StringBuilder testInput = new StringBuilder("1/2");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
 		LocalDate expectedOutput = LocalDate.of(2015, 2, 1);
 		assertEquals(actualOutput, expectedOutput);
@@ -677,9 +677,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = "10:15";
+		StringBuilder testInput = new StringBuilder("10:15");
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = LocalTime.of(10, 15);
 		assertEquals(actualOutput, expectedOutput);
@@ -687,9 +687,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = "3:45";
+		StringBuilder testInput = new StringBuilder("3:45");
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = LocalTime.of(3, 45);
 		assertEquals(actualOutput, expectedOutput);
@@ -697,9 +697,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = "11";
+		StringBuilder testInput = new StringBuilder("11");
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = LocalTime.of(11, 0);
 		assertEquals(actualOutput, expectedOutput);
@@ -707,9 +707,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = "7";
+		StringBuilder testInput = new StringBuilder("7");
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = LocalTime.of(7, 0);
 		assertEquals(actualOutput, expectedOutput);
@@ -717,9 +717,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = "10:15";
+		StringBuilder testInput = new StringBuilder("10:15");
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = LocalTime.of(10, 15);
 		assertEquals(actualOutput, expectedOutput);
@@ -727,9 +727,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_6() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = null;
+		StringBuilder testInput = null;
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = null;
 		assertEquals(actualOutput, expectedOutput);
@@ -737,9 +737,9 @@ public class TranslatorTest {
 	
 	@Test
 	public void extractLocalTimeTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", String.class);
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
 		methodELT.setAccessible(true);
-		String testInput = "";
+		StringBuilder testInput = new StringBuilder("");
 		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
 		LocalTime expectedOutput = null;
 		assertEquals(actualOutput, expectedOutput);
