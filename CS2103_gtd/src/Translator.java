@@ -13,11 +13,11 @@ public class Translator {
 	//==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
-	private static final String KEYWORD_ADD_EVENT_ONEHOUR = "((at)|(AT)|(@))";
+	//private static final String KEYWORD_ADD_EVENT_ONEHOUR = "((at)|(AT)|(@))";
 	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = 
-		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENT_ONEHOUR, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
+		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
 	
 	// Keywords for SEARCH command
 	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
