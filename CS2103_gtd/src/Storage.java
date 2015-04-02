@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class Storage {
     
-    private Map<Integer, Task> tasks = new HashMap<Integer, Task>();
+    private Map<Integer, Task> tasks;
     private StorageIO storageIO;
     private StorageSearch storageSearch;
     private int lastIdNumber;
@@ -12,16 +12,22 @@ public class Storage {
     public String prepareStorage() {
         storageSearch = new StorageSearch();
         storageIO = new StorageIO();
-        String path = storageIO.initializeConfigFile();
-        String feedback = storageIO.setFilePath(path);
-        storageIO.getDataFromFile(tasks);
-        lastIdNumber = storageIO.getLastIdNumber();
-        return feedback;
+        String configFilePath = storageIO.initializeConfigFile();
+        String setStorageFileFeedback = storageIO.setFilePath(configFilePath);
+        initializeTaskList();
+        return setStorageFileFeedback;
     }
     
     public String setFilePath(String path) {
         String feedback = storageIO.setFilePath(path);
+        initializeTaskList();
         return feedback;
+    }
+    
+    private void initializeTaskList() {
+        tasks = new HashMap<Integer, Task>();
+        storageIO.getDataFromFile(tasks);
+        lastIdNumber = storageIO.getLastIdNumber();
     }
     
     public String getFilePath() {

@@ -24,28 +24,30 @@ public class StorageIO {
     public String initializeConfigFile() {
         configFilePath = System.getProperty("user.dir") + "/config.txt";
         File file = new File(configFilePath);
-        String path = "";
+        String storageFilePath = "";
         try {
             if (!file.exists()) {
                 file.createNewFile();
-                path = System.getProperty("user.dir") + "/" + Constants.DEFAULT_STORAGE_PATH;
+                storageFilePath = getDefaultStoragePath();
             } else {
                 BufferedReader br = new BufferedReader(new FileReader(configFilePath));
-                path = br.readLine();
+                storageFilePath = br.readLine();
                 br.close();
-                if (path == null) {
-                    path = System.getProperty("user.dir") + "/" + Constants.DEFAULT_STORAGE_PATH;
+                if (storageFilePath == null) {
+                    storageFilePath = getDefaultStoragePath();
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return path;
+        return storageFilePath;
+    }
+    
+    private String getDefaultStoragePath() {
+        return System.getProperty("user.dir") + "/" + Constants.DEFAULT_STORAGE_PATH;
     }
     
     public String setFilePath(String path) {
-        //TODO: check if file/filename is valid
-        //TODO: delete data from old file
         storageFilePath = path;
         File file = new File(storageFilePath);
         try {
