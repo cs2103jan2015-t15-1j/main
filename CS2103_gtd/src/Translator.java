@@ -14,7 +14,7 @@ public class Translator {
 	// Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
 	private static final String KEYWORD_ADD_EVENT_ONEHOUR = "((at)|(AT)|(@))";
-	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START))";
+	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = 
 		{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENT_ONEHOUR, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
@@ -29,12 +29,11 @@ public class Translator {
 	
 	// Keywords for EDIT command
 	private static final String KEYWORD_EDIT_DEADLINE = "((deadline)|(DEADLINE))";
-	private static final String KEYWORD_EDIT_LOCATION = "((location)|(LOCATION))";
-	private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START))";
+	private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_EDIT_EVENTEND = "((end)|(END))";
 	private static final String KEYWORD_EDIT_DESCRIPTION = "((desc)|(DESC)|(description)|(DESCRIPTION))";
 	private static final String[] editParameterKeywords = 
-		{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_LOCATION, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
+		{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
 		KEYWORD_EDIT_DESCRIPTION};
 	
 	
@@ -84,6 +83,7 @@ public class Translator {
 	private static final int DATETIME_MINUTE_MINIMUM = 0;
 	private static final int DATETIME_HOUR_MAXIMUM = 23;
 	private static final int DATETIME_MINUTE_MAXIMUM = 59;
+	private static final int EXTRA_TIME_DAY = 1;
 	
 	// Miscellaneous default values.
 	private static final String EMPTY_STRING = "";
@@ -286,21 +286,12 @@ public class Translator {
 		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
 
 		String paramDescription = kList.getDescription();
-		String paramEventOneHour = kList.getParameter(KEYWORD_ADD_EVENT_ONEHOUR);
 		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
 		String paramEventStart = kList.getParameter(KEYWORD_ADD_EVENTSTART);
 		String paramEventEnd = kList.getParameter(KEYWORD_ADD_EVENTEND);
 
 		if (paramDescription != EMPTY_STRING) {
 			newTask.setDescription(paramDescription);
-
-			/*
-			if (paramEventOneHour != PARAMETER_DOES_NOT_EXIST) {
-				LocalDateTime eventOneHourStart = interpretDateTimeParam(paramEventOneHour);
-				if (eventOneHourStart.)
-				newTask.setLocation(paramEventOneHour);
-			}
-			*/
 
 			if (paramDeadline != PARAMETER_DOES_NOT_EXIST) {
 				// The task type is "deadline"
@@ -311,6 +302,9 @@ public class Translator {
 				// The task type is "event"
 				LocalDateTime eventStart = interpretDateTimeParam(paramEventStart);
 				LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
+				if (eventEnd.isBefore(eventStart)) {
+					eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
+				}
 				newTask.setStartDateTime(eventStart);
 				newTask.setEndDateTime(eventEnd);
 
@@ -334,7 +328,6 @@ public class Translator {
 			boolean doesEditParameterExist = false;
 
 			String paramDescription = kList.getParameter(KEYWORD_EDIT_DESCRIPTION);
-			String paramLocation = kList.getParameter(KEYWORD_EDIT_LOCATION);
 			String paramDeadline = kList.getParameter(KEYWORD_EDIT_DEADLINE);
 			String paramEventStart = kList.getParameter(KEYWORD_EDIT_EVENTSTART);
 			String paramEventEnd = kList.getParameter(KEYWORD_EDIT_EVENTEND);
@@ -344,25 +337,24 @@ public class Translator {
 				doesEditParameterExist = true;
 			}
 			
-			if (paramLocation != PARAMETER_DOES_NOT_EXIST) {
-				newTask.setLocation(paramLocation);
-				doesEditParameterExist = true;
-			}
-			
 			if (paramDeadline != PARAMETER_DOES_NOT_EXIST) {
 				LocalDateTime deadline = interpretDateTimeParam(paramDeadline);
 				newTask.setEndDateTime(deadline);
 				doesEditParameterExist = true;
 				
 			} else {
+				LocalDateTime eventStart = null;
 				if (paramEventStart != PARAMETER_DOES_NOT_EXIST) {
-					LocalDateTime eventStart = interpretDateTimeParam(paramEventStart);
+					eventStart = interpretDateTimeParam(paramEventStart);
 					newTask.setStartDateTime(eventStart);
 					doesEditParameterExist = true;
 				}
 				
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
 					LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
+					if (eventStart != null & eventEnd.isBefore(eventStart)) {
+						eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
+					}
 					newTask.setEndDateTime(eventEnd);
 					doesEditParameterExist = true;
 				}
@@ -459,9 +451,10 @@ public class Translator {
 	
 	private LocalDateTime interpretDateTimeParam(String param) {
 		// Date format: dd-MM-yyyy
-		LocalDate date = extractLocalDate(param);
+		StringBuilder dateTimeStr = new StringBuilder(param);
+		LocalDate date = extractLocalDate(dateTimeStr);
 		// Time format: HH:mm
-		LocalTime time = extractLocalTime(param);
+		LocalTime time = extractLocalTime(dateTimeStr);
 		if (date == null && time != null) {
 			date = provideDefaultDate(time);
 		}
@@ -473,7 +466,7 @@ public class Translator {
 			LocalDate defaultDate = LocalDate.now();
 			LocalTime currentTime = LocalTime.now();
 			if (time.isBefore(currentTime)) {
-				defaultDate = defaultDate.plusDays(1);
+				defaultDate = defaultDate.plusDays(EXTRA_TIME_DAY);
 			}
 			return defaultDate;
 		} else {
@@ -481,7 +474,7 @@ public class Translator {
 		}
 	}
 	
-	private LocalDate extractLocalDate(String param) {
+	private LocalDate extractLocalDate(StringBuilder param) {
 		if (param != null) {			
 			for (int i = 0; i < FORMATS_DAY_MONTH_YEAR.length; i++) {
 				Pattern datePattern = Pattern.compile(FORMATS_DAY_MONTH_YEAR[i]);
@@ -501,6 +494,7 @@ public class Translator {
 							year += CURRENT_MILLENIUM;
 						}
 					}
+					param.replace(datePatternMatcher.start(), datePatternMatcher.end() + 1, EMPTY_STRING);
 					return LocalDate.of(year, month, day);
 				}
 			}
@@ -508,7 +502,7 @@ public class Translator {
 		return null;
 	}
 	
-	private LocalTime extractLocalTime(String param) {
+	private LocalTime extractLocalTime(StringBuilder param) {
 		if (param != null) {
 			for (int i = 0; i < FORMATS_HOUR_MINUTE.length; i++) {
 				Pattern timePattern = Pattern.compile(FORMATS_HOUR_MINUTE[i]);
