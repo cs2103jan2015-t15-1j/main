@@ -28,7 +28,6 @@ public class ClearCommand implements Command {
 	@Override
 	public void updateHistory() {
 		history.pushUndo(makeUndo());
-		
 	}
     
 

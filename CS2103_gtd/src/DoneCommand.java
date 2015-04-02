@@ -3,14 +3,14 @@ public class DoneCommand implements Command {
     
     int[] taskIds;
     boolean setDone;
-    Storage _storage;
-    History _history;
+    Storage storage;
+    History history;
     
-    public DoneCommand(Storage storage, History history, int[] _ids, boolean _setDone){
+    public DoneCommand(Storage _storage, History _history, int[] _ids, boolean _setDone){
         taskIds = _ids;
         setDone = _setDone;
-        _history = history;
-        _storage = storage;
+        history = _history;
+        storage = _storage;
     }
     
     @Override
@@ -18,10 +18,10 @@ public class DoneCommand implements Command {
         String userFeedback = "";
         for (int id : taskIds) {
         	if(userFeedback.equals("")){
-        		userFeedback += _storage.done(id, setDone);
+        		userFeedback += storage.done(id, setDone);
         	}
         	else{
-        		userFeedback += "\n" + _storage.done(id, setDone);
+        		userFeedback += "\n" + storage.done(id, setDone);
         	}
         	
         }
@@ -31,12 +31,12 @@ public class DoneCommand implements Command {
 
     @Override
     public Command makeUndo() {
-        return new DoneCommand(_storage, _history, taskIds, !setDone);
+        return new DoneCommand(storage, history, taskIds, !setDone);
     }
 
 	@Override
 	public void updateHistory() {
-		_history.pushUndo(makeUndo());
+		history.pushUndo(makeUndo());
 		
 	}
 

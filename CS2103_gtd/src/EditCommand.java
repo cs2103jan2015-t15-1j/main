@@ -4,16 +4,16 @@ import java.util.logging.Logger;
 class EditCommand implements Command {
 	Task newTask;
 	Task oldTask;
-	Storage _storage;
-	History _history;
+	Storage storage;
+	History history;
 
 	private static final Logger logger = Logger.getLogger(EditCommand.class
 			.getName());
 
-	public EditCommand(Storage storage, History history, Task _newTask) {
+	public EditCommand(Storage _storage, History _history, Task _newTask) {
 		newTask = _newTask;
-		_storage = storage;
-		_history = history;
+		storage = _storage;
+		history = _history;
 //		logger.log(Level.CONFIG, newTask.getUserFormat());
 
 	}
@@ -21,21 +21,21 @@ class EditCommand implements Command {
 	@Override
 	public String execute() {
 		int taskId = newTask.getId();
-		oldTask = makeShallowCopyOfOriginalTask(_storage, taskId);
+		oldTask = makeShallowCopyOfOriginalTask(storage, taskId);
 		String feedback = "";
 		if (newTask.getDescription() != null) {
-		    feedback = _storage.updateDescription(taskId, newTask.getDescription());
+		    feedback = storage.updateDescription(taskId, newTask.getDescription());
         }
         if (newTask.getStartDateTime() != null) {
-            feedback = _storage.updateStartDate(taskId, newTask.getStartDateTime());
+            feedback = storage.updateStartDate(taskId, newTask.getStartDateTime());
         }
         if (newTask.getEndDateTime() != null) {
-            feedback = _storage.updateEndDate(taskId, newTask.getEndDateTime());
+            feedback = storage.updateEndDate(taskId, newTask.getEndDateTime());
         }
         if (newTask.getLocation() != null) {
-            feedback = _storage.updateLocation(taskId, newTask.getLocation());
+            feedback = storage.updateLocation(taskId, newTask.getLocation());
         }
-        Task realTask = _storage.getTask(taskId);
+        Task realTask = storage.getTask(taskId);
         feedback += "\n" + realTask.getUserFormat();
 //		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
         updateHistory();
@@ -44,7 +44,7 @@ class EditCommand implements Command {
 
 	@Override
 	public Command makeUndo() {
-		return new EditCommand(_storage, _history, oldTask);
+		return new EditCommand(storage, history, oldTask);
 	}
 
 	private Task makeShallowCopyOfOriginalTask(Storage storage, int TaskId) {
@@ -61,7 +61,7 @@ class EditCommand implements Command {
 
 	@Override
 	public void updateHistory() {
-		_history.pushUndo(makeUndo());
+		history.pushUndo(makeUndo());
 		
 	}
 

@@ -1,19 +1,19 @@
 
 public class RedoCommand implements Command {
-	Storage _storage;
-	History _history;
+	Storage storage;
+	History history;
 	Command cmd;
         
-    public RedoCommand(Storage storage, History history) {
-        _storage = storage;
-        _history = history;
+    public RedoCommand(Storage _storage, History _history) {
+        storage = _storage;
+        history = _history;
     }
     
     @Override
     public String execute() {
     	String feedback;
         try {
-			cmd = _history.getRedo();
+			cmd = history.getRedo();
 			feedback = cmd.execute();
 			updateHistory();
 			
@@ -30,7 +30,7 @@ public class RedoCommand implements Command {
 
 	@Override
 	public void updateHistory() {
-		_history.pushUndo(makeUndo());
+		history.pushUndo(makeUndo());
 		
 	}
 

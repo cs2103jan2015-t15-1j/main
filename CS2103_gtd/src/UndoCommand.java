@@ -1,19 +1,19 @@
 
 public class UndoCommand implements Command {
-	Storage _storage;
-	History _history;
+	Storage storage;
+	History history;
 	Command cmd;
         
-    public UndoCommand(Storage storage, History history) {
-        _storage = storage;
-        _history = history;
+    public UndoCommand(Storage _storage, History _history) {
+        storage = _storage;
+        history = _history;
     }
     
     @Override
     public String execute() {
     	String feedback;
         try {
-			cmd = _history.getUndo();
+			cmd = history.getUndo();
 			feedback = cmd.execute();
 			updateHistory();
 			
@@ -30,8 +30,7 @@ public class UndoCommand implements Command {
 
 	@Override
 	public void updateHistory() {
-		_history.pushRedo(makeUndo());
-		
+		history.pushRedo(makeUndo());	
 	}
 
 }
