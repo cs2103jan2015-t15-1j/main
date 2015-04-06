@@ -42,8 +42,7 @@ public class StorageSearch {
     }
     
     private int[] searchOnDate(Map<Integer, Task> tasks, LocalDateTime startDate, 
-            LocalDateTime endDate, 
-            int[] foundTasks) {
+            LocalDateTime endDate, int[] foundTasks) {
         if (isDateSearch(startDate, endDate)) {
             for (Task task : tasks.values()) {
                 if (!task.getDone()) {

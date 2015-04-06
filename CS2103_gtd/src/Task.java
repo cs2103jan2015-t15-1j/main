@@ -1,9 +1,8 @@
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 
-public class Task {
-	
-	
+public class Task implements Comparable<Task> {
 	private int id;
 	private String description;
 	private LocalDateTime startDateTime;
@@ -27,23 +26,38 @@ public class Task {
 	    endDateTime = end;
 	    done = d;
 	}
+    
+    public Task(String descr, LocalDateTime start, LocalDateTime end){
+        description = descr;
+        startDateTime = start;
+        endDateTime = end;
+    }
 	
 	public String getStorageFormat() {
 		return null;
 	}
+	
 	public String getUserFormat() {
-		//Should this include the task Index as well or should we have a separate method for that?
-		//Brief information about id, desc, startdate, enddate ?? and maybe in the future, specify task type as well? 
-//		String feedback = String.format(Constants.FORMAT_DISPLAY_TASKINFO, this.getId(), this.getDescription(), this.getStartDateTimeInString(), this.getEndDateTimeInString()); 
-		String feedback = String.format("%-4d%-70s%-17s%-17s", this.getId(), this.getDescription(), this.getStartDateTimeInString(), this.getEndDateTimeInString());
+	    String doneImage = "";
+	    if (this.getDone()) {
+	        doneImage = Constants.DISPLAY_DONE;
+	    } else {
+	        doneImage = Constants.DISPLAY_UNFINISHED;
+	    }
+		String feedback = String.format("%-4d%-5s%-70s%-17s%-17s", 
+		        this.getId(), doneImage, this.getDescription(), 
+		        this.getStartDateTimeInString(), this.getEndDateTimeInString());
 	    return feedback;
 	}
+	
 	public int getId() {
 		return id;
 	}
+	
 	public String getDescription() {
 		return description;
 	}
+	
 	public LocalDateTime getStartDateTime() {
 		return startDateTime;
 	}
@@ -71,29 +85,36 @@ public class Task {
 	public String getLocation() {
 		return location;
 	}
+	
 	public boolean getDone() {
 		return done;
 	}
+	
 	public String setId(int id) {
 		this.id = id;
 		return null; // feedback.
 	}
+	
 	public String setDescription(String desc) {
 		this.description = desc;
 		return null; // feedback.
 	}
+	
 	public String setStartDateTime(LocalDateTime dateTime) {
 		this.startDateTime = dateTime;
 		return null; // feedback.
 	}
+	
 	public String setEndDateTime(LocalDateTime dateTime) {
 		this.endDateTime = dateTime;
 		return null; // feedback.
 	}
+	
 	public String setLocation(String location) {
 		this.location = location;
 		return null; // feedback
 	}
+	
 	public String setDone(boolean done) {
 		this.done = done;
 		return null; // feedback.
@@ -113,10 +134,20 @@ public class Task {
 		}
 	}
 	
-	public Task(String descr, LocalDateTime start, LocalDateTime end){
-		description = descr;
-		startDateTime = start;
-		endDateTime = end;
+	@Override
+	public int compareTo(Task compareTask) {
+	    LocalDateTime compEndDateTime = compareTask.getEndDateTime();
+	    
+	    if (endDateTime != null && compEndDateTime != null) {
+	        int diffMinutes = (int) ChronoUnit.MINUTES.between(endDateTime, compEndDateTime);
+	        return diffMinutes;
+	    } else if (endDateTime != null && compEndDateTime == null) {
+	        return -1;
+	    } else if (endDateTime == null && compEndDateTime != null) {
+	        return 1;
+	    } else {
+	        return 0;
+	    }
 	}
 	
 }

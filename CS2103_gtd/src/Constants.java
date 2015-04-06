@@ -7,7 +7,7 @@ public final class Constants {
 	public static final String MESSAGE_DELETED = "Task nr %1$d has been deleted";
 	public static final String MESSAGE_UPDATED = "Task nr %1$d has been updated";
 	public static final String MESSAGE_ALL_DELETED = "All tasks are now deleted";
-	public static final String MESSAGE_NO_TASKS = "You have currently no tasks.";
+	public static final String MESSAGE_NO_TASKS = "You have currently no tasks to show.";
 	public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks containing your keyword was found";
 	public static final String MESSAGE_WELCOME = "Welcome to TaskWaltz!";
 	public static final String MESSAGE_HELP = "Available commands:\nadd <description> <start time (if any)> <end time(if any)>\n  equivalent: a\n\ndisplay\n  equivalent: dis, show, ls\n\ndone <task identification number(s)>\n  equivalent: do\n\ndelete <task identification number(s)>\n  equivalent: remove, rm, del\n\nedit <task identification number> <new parameters>\n  equivalent: e\n\nundo\n  equivalent: u\n\nredo\n  equivalent: r\n\nsearch <Keyword>\n  equivalent: s\n\nhelp\nsetdir <file path>";
@@ -21,7 +21,9 @@ public final class Constants {
 	// Formatting
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-	public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-70s%-17s%-17s", "ID", "Description", "Start Time", "End Time");
+	public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-5s%-70s%-17s%-17s", "ID", "Done", "Description", "Start Time", "End Time");
+	public static final String DISPLAY_UNFINISHED = "[ ]";
+	public static final String DISPLAY_DONE = "[x]";
 	
 	// Storage values
     public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
