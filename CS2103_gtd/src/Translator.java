@@ -152,6 +152,9 @@ public class Translator {
 		case DONE :
 			newCommand = createDoneCommand(usercommand);
 			break;
+		case UNDONE:
+			newCommand = createUndoneCommand(usercommand);
+			break;
 		case DELETE :
 			newCommand = createDeleteCommand(usercommand);
 			break;
@@ -213,9 +216,10 @@ public class Translator {
 			return CommandType.DELETE;
 		} else if (commandTypeString.equalsIgnoreCase("CLEAR")) {
             return CommandType.CLEAR;
-		} else if (commandTypeString.equalsIgnoreCase("DONE") ||
-				commandTypeString.equalsIgnoreCase("do")) {
+		} else if (commandTypeString.equalsIgnoreCase("DONE")) {
 			return CommandType.DONE;
+		} else if (commandTypeString.equalsIgnoreCase("UNDONE")) {
+			return CommandType.UNDONE;
 		} else if (commandTypeString.equalsIgnoreCase("UNDO") ||
 				commandTypeString.equalsIgnoreCase("u")) {
 			return CommandType.UNDO;
@@ -268,6 +272,11 @@ public class Translator {
 	private Command createDoneCommand(String usercommand) {
 		int[] doneInformation = interpretDoneParameter(usercommand);
 		return new DoneCommand(this.getStorage(), this.getHistory(), doneInformation, true);
+	}
+	
+	private Command createUndoneCommand(String usercommand) {
+		int[] undoneInformation = interpretDoneParameter(usercommand);
+		return new DoneCommand(this.getStorage(), this.getHistory(), undoneInformation, false);
 	}
 	
 	private Command createUndoCommand() {
