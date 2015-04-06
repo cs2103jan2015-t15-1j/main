@@ -69,6 +69,7 @@ public class Translator {
 	private static final String[] FORMATS_DAY_MONTH_YEAR = {DD_MM_YYYY, DD_M_YYYY, D_MM_YYYY,
 		D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY, DD_MM, DD_M, D_MM, D_M};
 	private static final int MAX_YY_VALUE = 99;
+	private static final int EXTRA_DATE_YEAR = 1;
 	private static final int CURRENT_MILLENIUM = 2000;
 	
 	private static final String DELIMITTER_TIME = "(:)";
@@ -587,6 +588,11 @@ public class Translator {
 						year = Integer.parseInt(dateSegments[2]);
 						if (year <= MAX_YY_VALUE) {
 							year += CURRENT_MILLENIUM;
+						}
+					} else {
+						LocalDate extractedDate = LocalDate.of(year, month, day);
+						if (extractedDate.isBefore(LocalDate.now())) {
+							year += EXTRA_DATE_YEAR;
 						}
 					}
 					param.replace(datePatternMatcher.start(), datePatternMatcher.end() + 1, EMPTY_STRING);
