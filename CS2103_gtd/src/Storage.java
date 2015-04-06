@@ -1,4 +1,7 @@
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,11 +161,19 @@ public class Storage {
     }
     
     public String getTasksAsString() {
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
         String allTasks = "";
-        for (Task task : tasks.values()) {
-            if (!task.getDone()) { 
+        for (Task task : taskArray) {
+            if (task.getDone()) {
                 allTasks += "\n" + task.getUserFormat();
+            } else {
+                unfinishedTasks.add(task);
             }
+        }
+        Collections.sort(unfinishedTasks);
+        for (Task newTask : unfinishedTasks) {
+            allTasks += "\n" + newTask.getUserFormat();
         }
         if (allTasks.equals("")) {
             return Constants.MESSAGE_NO_TASKS;
