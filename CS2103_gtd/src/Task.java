@@ -44,9 +44,10 @@ public class Task implements Comparable<Task> {
 	    } else {
 	        doneImage = Constants.DISPLAY_UNFINISHED;
 	    }
-		String feedback = String.format("%-4d%-5s%-70s%-17s%-17s", 
-		        this.getId(), doneImage, this.getDescription(), 
-		        this.getStartDateTimeInString(), this.getEndDateTimeInString());
+//		String feedback = String.format("%-4d%-5s%-70s%-17s%-17s", 
+	    String feedback = String.format("%-4d%-6s%-19s%-19s%s", 
+		        this.getId(), doneImage, this.getStartDateTimeInString(), 
+		        this.getEndDateTimeInString(), this.getDescription());
 	    return feedback;
 	}
 	
