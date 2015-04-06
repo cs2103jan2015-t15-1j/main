@@ -38,7 +38,7 @@ public class Translator {
 	
 	
 	// Format for Date-Time input.
-	private static final String DELIMITTER_DATE = "(\\s|-|/)";
+	private static final String DELIMITTER_DATE = "(-|/)";
 	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
 			DELIMITTER_DATE + "\\d\\d\\d\\d";
 	private static final String DD_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d" +
@@ -84,6 +84,8 @@ public class Translator {
 	private static final int DATETIME_HOUR_MAXIMUM = 23;
 	private static final int DATETIME_MINUTE_MAXIMUM = 59;
 	private static final int EXTRA_TIME_DAY = 1;
+	private static final int EXTRA_TIME_HOUR = 1;
+	private static final int TIME_HALFDAY = 12;
 	
 	// Miscellaneous default values.
 	private static final String EMPTY_STRING = "";
@@ -308,14 +310,19 @@ public class Translator {
 				LocalDateTime deadline = interpretDateTimeParam(paramDeadline);
 				newTask.setEndDateTime(deadline);
 
-			} else if (paramEventStart != PARAMETER_DOES_NOT_EXIST && paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
+			} else if (paramEventStart != PARAMETER_DOES_NOT_EXIST) {
 				// The task type is "event"
 				LocalDateTime eventStart = interpretDateTimeParam(paramEventStart);
-				LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
-				if (eventEnd.isBefore(eventStart)) {
-					eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
-				}
 				newTask.setStartDateTime(eventStart);
+				LocalDateTime eventEnd = null;
+				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
+					eventEnd = interpretDateTimeParam(paramEventEnd);
+					if (eventEnd.isBefore(eventStart)) {
+						eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
+					}
+				} else {
+					eventEnd = eventStart.plusHours(EXTRA_TIME_HOUR);
+				}
 				newTask.setEndDateTime(eventEnd);
 
 			} else {
@@ -328,11 +335,13 @@ public class Translator {
 	
 	private Task interpretEditParameter(String usercommand) {
 		
-		Task newTask = new Task();
 		KeywordInfoList kList = new KeywordInfoList(usercommand, editParameterKeywords);
-
+		
 		int taskID = extractEditTaskID(usercommand);
+		Task newTask;
+		
 		if (taskID != INVALID_TASK_ID) {
+			newTask = makeShallowCopyOfOriginalTask(taskID);
 
 			newTask.setId(taskID);
 			boolean doesEditParameterExist = false;
@@ -459,6 +468,31 @@ public class Translator {
 		return interpretTaskIDs(parameter);
 	}
 	
+//	private LocalDateTime interpretDateTimeParam(String param) {
+//		// Date format: dd-MM-yyyy
+//		StringBuilder dateTimeStr = new StringBuilder(param);
+//		LocalDate date = extractLocalDate(dateTimeStr);
+//		// Time format: HH:mm
+//		LocalTime time = extractLocalTime(dateTimeStr);
+//		if (date == null && time != null) {
+//			date = provideDefaultDate(time);
+//		}
+//		return LocalDateTime.of(date, time);
+//	}
+//	
+//	private LocalDate provideDefaultDate(LocalTime time) {
+//		if (time != null) {
+//			LocalDate defaultDate = LocalDate.now();
+//			LocalTime currentTime = LocalTime.now();
+//			if (time.isBefore(currentTime)) {
+//				defaultDate = defaultDate.plusDays(EXTRA_TIME_DAY);
+//			}
+//			return defaultDate;
+//		} else {
+//			return null;
+//		}
+//	}
+	
 	private LocalDateTime interpretDateTimeParam(String param) {
 		// Date format: dd-MM-yyyy
 		StringBuilder dateTimeStr = new StringBuilder(param);
@@ -466,9 +500,28 @@ public class Translator {
 		// Time format: HH:mm
 		LocalTime time = extractLocalTime(dateTimeStr);
 		if (date == null && time != null) {
+			time = provideDefaultTime(time);
 			date = provideDefaultDate(time);
 		}
 		return LocalDateTime.of(date, time);
+	}
+	
+	private LocalTime provideDefaultTime(LocalTime time) {
+		if (time != null) {
+			LocalTime currentTime = LocalTime.now();
+			if (time.getHour() < TIME_HALFDAY && currentTime.getHour() >= TIME_HALFDAY) {
+				LocalTime afternoonTime = time.plusHours(TIME_HALFDAY);
+				if (afternoonTime.isAfter(currentTime)) {
+					return afternoonTime;
+				} else {
+					return time;
+				}
+			} else {
+				return time;
+			}
+		} else {
+			return null;
+		}
 	}
 	
 	private LocalDate provideDefaultDate(LocalTime time) {
@@ -606,4 +659,15 @@ public class Translator {
 		}
 	}
 	
+	private Task makeShallowCopyOfOriginalTask(int TaskId) {
+		Task oldTask = new Task();
+		Task old = taskStorage.getTask(TaskId);
+		oldTask.setDescription(old.getDescription());
+		oldTask.setDone(old.getDone());
+		oldTask.setId(old.getId());
+		oldTask.setStartDateTime(old.getStartDateTime());
+		oldTask.setEndDateTime(old.getEndDateTime());
+		oldTask.setLocation(old.getLocation());
+		return oldTask;
+	}
 }

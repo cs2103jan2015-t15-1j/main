@@ -9,7 +9,6 @@ public class Logic {
 	private Translator translator;
 
 	private Logic() {
-
 	}
 
 	public static Logic getLogicObject() {

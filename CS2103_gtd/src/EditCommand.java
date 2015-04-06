@@ -14,31 +14,27 @@ class EditCommand implements Command {
 		newTask = _newTask;
 		storage = _storage;
 		history = _history;
-//		logger.log(Level.CONFIG, newTask.getUserFormat());
+		// logger.log(Level.CONFIG, newTask.getUserFormat());
 
 	}
 
 	@Override
 	public String execute() {
 		int taskId = newTask.getId();
-		oldTask = makeShallowCopyOfOriginalTask(storage, taskId);
-		String feedback = "";
-		if (newTask.getDescription() != null) {
-		    feedback = storage.updateDescription(taskId, newTask.getDescription());
-        }
-        if (newTask.getStartDateTime() != null) {
-            feedback = storage.updateStartDate(taskId, newTask.getStartDateTime());
-        }
-        if (newTask.getEndDateTime() != null) {
-            feedback = storage.updateEndDate(taskId, newTask.getEndDateTime());
-        }
-        if (newTask.getLocation() != null) {
-            feedback = storage.updateLocation(taskId, newTask.getLocation());
-        }
-        Task realTask = storage.getTask(taskId);
-        feedback += "\n" + realTask.getUserFormat();
-//		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
-        updateHistory();
+		oldTask = makeShallowCopyOfOriginalTask(taskId);
+		
+		storage.updateDescription(taskId, newTask.getDescription());
+
+		storage.updateStartDate(taskId, newTask.getStartDateTime());
+
+		storage.updateEndDate(taskId, newTask.getEndDateTime());
+
+		storage.updateLocation(taskId, newTask.getLocation());
+
+		Task realTask = storage.getTask(taskId);
+		String feedback = "Original Task: " + oldTask.getUserFormat() + "\n Changed to: " + realTask.getUserFormat();
+		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+		updateHistory();
 		return feedback;
 	}
 
@@ -47,7 +43,7 @@ class EditCommand implements Command {
 		return new EditCommand(storage, history, oldTask);
 	}
 
-	private Task makeShallowCopyOfOriginalTask(Storage storage, int TaskId) {
+	private Task makeShallowCopyOfOriginalTask(int TaskId) {
 		Task oldTask = new Task();
 		Task old = storage.getTask(TaskId);
 		oldTask.setDescription(old.getDescription());
@@ -62,9 +58,7 @@ class EditCommand implements Command {
 	@Override
 	public void updateHistory() {
 		history.pushUndo(makeUndo());
-		
+
 	}
-
-
 
 }
