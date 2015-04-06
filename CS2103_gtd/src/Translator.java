@@ -32,9 +32,12 @@ public class Translator {
 	private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_EDIT_EVENTEND = "((end)|(END))";
 	private static final String KEYWORD_EDIT_DESCRIPTION = "((desc)|(DESC)|(description)|(DESCRIPTION))";
+	private static final String KEYWORD_EDIT_REMOVE = "((rm)|(RM)|(remove)|(REMOVE))";
+	private static final String PARAMETER_EDIT_REMOVE_START = "((start)|(START))";
+	private static final String PARAMETER_EDIT_REMOVE_TIME = "((time)|(TIME))";
 	private static final String[] editParameterKeywords = 
 		{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
-		KEYWORD_EDIT_DESCRIPTION};
+		KEYWORD_EDIT_DESCRIPTION, KEYWORD_EDIT_REMOVE};
 	
 	
 	// Format for Date-Time input.
@@ -318,7 +321,8 @@ public class Translator {
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
 					eventEnd = interpretDateTimeParam(paramEventEnd);
 					if (eventEnd.isBefore(eventStart)) {
-						eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
+						System.err.println("Event end time is before event start time!");
+						return null;
 					}
 				} else {
 					eventEnd = eventStart.plusHours(EXTRA_TIME_HOUR);
@@ -351,6 +355,8 @@ public class Translator {
 			String paramEventStart = kList.getParameter(KEYWORD_EDIT_EVENTSTART);
 			String paramEventEnd = kList.getParameter(KEYWORD_EDIT_EVENTEND);
 
+			String paramRemove = kList.getParameter(KEYWORD_EDIT_REMOVE);
+			
 			if (paramDescription != PARAMETER_DOES_NOT_EXIST) {
 				newTask.setDescription(paramDescription);
 				doesEditParameterExist = true;
@@ -376,6 +382,23 @@ public class Translator {
 					}
 					newTask.setEndDateTime(eventEnd);
 					doesEditParameterExist = true;
+				}
+			}
+			
+			if (paramRemove != PARAMETER_DOES_NOT_EXIST) {
+				Pattern patternRemoveTime = Pattern.compile(PARAMETER_EDIT_REMOVE_TIME);
+				Matcher matcherRemoveTime = patternRemoveTime.matcher(paramRemove);
+				if (matcherRemoveTime.find()) {
+					newTask.setStartDateTime(null);
+					newTask.setEndDateTime(null);
+					doesEditParameterExist = true;
+				} else {
+					Pattern patternRemoveStart = Pattern.compile(PARAMETER_EDIT_REMOVE_START);
+					Matcher matcherRemoveStart = patternRemoveStart.matcher(paramRemove);
+					if (matcherRemoveStart.find()) {
+						newTask.setStartDateTime(null);
+						doesEditParameterExist = true;
+					}
 				}
 			}
 			
