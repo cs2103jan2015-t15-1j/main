@@ -21,7 +21,7 @@ public final class Constants {
 	// Formatting
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-	public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-5s%-70s%-17s%-17s", "ID", "Done", "Description", "Start Time", "End Time");
+    public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-6s%-19s%-19s%s", "ID", "Done", "Start Time", "End Time", "Description");
 	public static final String DISPLAY_UNFINISHED = "[ ]";
 	public static final String DISPLAY_DONE = "[x]";
 	
