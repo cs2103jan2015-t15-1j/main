@@ -38,7 +38,7 @@ public class Translator {
 	
 	
 	// Format for Date-Time input.
-	private static final String DELIMITTER_DATE = "(\\s|-|/)";
+	private static final String DELIMITTER_DATE = "(-|/)";
 	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
 			DELIMITTER_DATE + "\\d\\d\\d\\d";
 	private static final String DD_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d" +
