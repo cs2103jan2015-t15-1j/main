@@ -318,7 +318,8 @@ public class Translator {
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
 					eventEnd = interpretDateTimeParam(paramEventEnd);
 					if (eventEnd.isBefore(eventStart)) {
-						eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
+						System.err.println("Event end time is before event start time!");
+						return null;
 					}
 				} else {
 					eventEnd = eventStart.plusHours(EXTRA_TIME_HOUR);
