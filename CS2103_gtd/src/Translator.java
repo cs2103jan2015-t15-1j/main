@@ -32,9 +32,11 @@ public class Translator {
 	private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_EDIT_EVENTEND = "((end)|(END))";
 	private static final String KEYWORD_EDIT_DESCRIPTION = "((desc)|(DESC)|(description)|(DESCRIPTION))";
+	private static final String KEYWORD_EDIT_REMOVESTART = "((rmstart)|(rm start)|(RMSTART)|(RM START)|(remove start)|(REMOVE START))";
+	private static final String KEYWORD_EDIT_REMOVETIME = "((rmtime)|(rm time)|(RMTIME)|(RM TIME)|(remove time)|(REMOVE TIME))";
 	private static final String[] editParameterKeywords = 
 		{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
-		KEYWORD_EDIT_DESCRIPTION};
+		KEYWORD_EDIT_DESCRIPTION, KEYWORD_EDIT_REMOVESTART, KEYWORD_EDIT_REMOVETIME};
 	
 	
 	// Format for Date-Time input.
@@ -352,6 +354,9 @@ public class Translator {
 			String paramEventStart = kList.getParameter(KEYWORD_EDIT_EVENTSTART);
 			String paramEventEnd = kList.getParameter(KEYWORD_EDIT_EVENTEND);
 
+			String paramRemoveStart = kList.getParameter(KEYWORD_EDIT_REMOVESTART);
+			String paramRemoveTime = kList.getParameter(KEYWORD_EDIT_REMOVETIME);
+			
 			if (paramDescription != PARAMETER_DOES_NOT_EXIST) {
 				newTask.setDescription(paramDescription);
 				doesEditParameterExist = true;
@@ -378,6 +383,13 @@ public class Translator {
 					newTask.setEndDateTime(eventEnd);
 					doesEditParameterExist = true;
 				}
+			}
+			
+			if (paramRemoveTime != PARAMETER_DOES_NOT_EXIST) {
+				newTask.setStartDateTime(null);
+				newTask.setEndDateTime(null);
+			} else if (paramRemoveStart != PARAMETER_DOES_NOT_EXIST) {
+				newTask.setStartDateTime(null);
 			}
 			
 			if (doesEditParameterExist == true) {
