@@ -328,11 +328,13 @@ public class Translator {
 	
 	private Task interpretEditParameter(String usercommand) {
 		
-		Task newTask = new Task();
 		KeywordInfoList kList = new KeywordInfoList(usercommand, editParameterKeywords);
-
+		
 		int taskID = extractEditTaskID(usercommand);
+		Task newTask;
+		
 		if (taskID != INVALID_TASK_ID) {
+			newTask = makeShallowCopyOfOriginalTask(taskID);
 
 			newTask.setId(taskID);
 			boolean doesEditParameterExist = false;
@@ -606,4 +608,15 @@ public class Translator {
 		}
 	}
 	
+	private Task makeShallowCopyOfOriginalTask(int TaskId) {
+		Task oldTask = new Task();
+		Task old = taskStorage.getTask(TaskId);
+		oldTask.setDescription(old.getDescription());
+		oldTask.setDone(old.getDone());
+		oldTask.setId(old.getId());
+		oldTask.setStartDateTime(old.getStartDateTime());
+		oldTask.setEndDateTime(old.getEndDateTime());
+		oldTask.setLocation(old.getLocation());
+		return oldTask;
+	}
 }
