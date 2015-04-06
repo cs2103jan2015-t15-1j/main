@@ -44,7 +44,6 @@ public class Task implements Comparable<Task> {
 	    } else {
 	        doneImage = Constants.DISPLAY_UNFINISHED;
 	    }
-//		String feedback = String.format("%-4d%-5s%-70s%-17s%-17s", 
 	    String feedback = String.format("%-4d%-6s%-19s%-19s%s", 
 		        this.getId(), doneImage, this.getStartDateTimeInString(), 
 		        this.getEndDateTimeInString(), this.getDescription());
@@ -143,9 +142,9 @@ public class Task implements Comparable<Task> {
 	        int diffMinutes = (int) ChronoUnit.MINUTES.between(endDateTime, compEndDateTime);
 	        return diffMinutes;
 	    } else if (endDateTime != null && compEndDateTime == null) {
-	        return -1;
-	    } else if (endDateTime == null && compEndDateTime != null) {
 	        return 1;
+	    } else if (endDateTime == null && compEndDateTime != null) {
+	        return -1;
 	    } else {
 	        return 0;
 	    }
