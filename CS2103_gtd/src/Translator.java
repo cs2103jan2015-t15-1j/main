@@ -390,17 +390,36 @@ public class Translator {
 				LocalDateTime eventStart = null;
 				if (paramEventStart != PARAMETER_DOES_NOT_EXIST) {
 					eventStart = interpretDateTimeParam(paramEventStart);
-					newTask.setStartDateTime(eventStart);
-					doesEditParameterExist = true;
+					if (paramEventEnd == PARAMETER_DOES_NOT_EXIST) {
+						if (eventStart.isBefore(newTask.getEndDateTime())) {
+							newTask.setStartDateTime(eventStart);
+							doesEditParameterExist = true;
+						} else {
+							System.err.println("Event end time is before event start time!");
+							return null;
+						}
+					}
 				}
 				
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
 					LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
-					if (eventStart != null & eventEnd.isBefore(eventStart)) {
-						eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
+					if (eventStart != null) {
+						if (eventEnd.isBefore(eventStart)) {
+							newTask.setStartDateTime(eventStart);
+							eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
+							newTask.setEndDateTime(eventEnd);
+							doesEditParameterExist = true;
+						} else {
+							System.err.println("Event end time is before event start time!");
+							return null;
+						}
+					} else if (eventEnd.isAfter(newTask.getStartDateTime())) {
+						newTask.setEndDateTime(eventEnd);
+						doesEditParameterExist = true;
+					} else {
+						System.err.println("Event end time is before event start time!");
+						return null;
 					}
-					newTask.setEndDateTime(eventEnd);
-					doesEditParameterExist = true;
 				}
 			}
 			
