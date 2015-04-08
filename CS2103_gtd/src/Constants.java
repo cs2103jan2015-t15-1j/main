@@ -18,6 +18,7 @@ public final class Constants {
 	public static final String MESSAGE_INCORRECT_ID = "Provided Task ID(s) was(were) either non-existent or in invalid format";
 	public static final String MESSAGE_INVALID_INPUT = "Invalid Input";
 	public static final String MESSAGE_NO_DONE_TAKS = "You have no done tasks to delete";
+	public static final String MESSAGE_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
 	
 	// Formatting
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";

@@ -2,7 +2,6 @@ import java.util.ArrayList;
 
 public class DeleteCommand implements Command {
     
-	private static final String MSG_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
     Storage storage;
     History history;
     int[] taskIds;
@@ -32,7 +31,7 @@ public class DeleteCommand implements Command {
         	updateHistory();
         	return userFeedback;
         } else {
-        	return MSG_NO_VALID_IDs;
+        	return Constants.MESSAGE_NO_VALID_IDs;
         }
     }
 

@@ -37,6 +37,7 @@ public class Task implements Comparable<Task> {
 		return null;
 	}
 	
+	//@author A0135280M
 	public String getUserFormat() {
 	    String doneImage = "";
 	    if (this.getDone()) {
@@ -134,6 +135,7 @@ public class Task implements Comparable<Task> {
 		}
 	}
 	
+	//@author A0135280M
 	@Override
 	public int compareTo(Task compareTask) {
 	    LocalDateTime compEndDateTime = compareTask.getEndDateTime();
