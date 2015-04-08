@@ -26,9 +26,7 @@ public class StorageTest {
     }
     
     @Test
-    // Only floating tasks working right now
-    // - later do tests for event and deadline tasks as well
-    public void addTask() {
+    public void addAndGetTask() {
         initialize();
         Task testTask = new Task();
         String theDesc = "test task";
@@ -36,8 +34,23 @@ public class StorageTest {
         storage.add(testTask);
         int taskId = testTask.getId();
         Task theStoredTask = storage.getTask(taskId);
-        assertEquals("Check that adding a task worked\n", 
+        assertEquals("Check that adding and getting a task works\n", 
                 theDesc, theStoredTask.getDescription());
+    }
+    
+    @Test
+    public void getLastTask() {
+        initialize();
+        Task testTask = new Task();
+        testTask.setDescription("hej");
+        storage.add(testTask);
+        Task testTask2 = new Task();
+        String theDesc = "test task";
+        testTask2.setDescription(theDesc);
+        storage.add(testTask2);
+        Task lastTask = storage.getLastAddedTask();
+        assertEquals("Check that getting the last added task works\n", 
+                theDesc, lastTask.getDescription());
     }
     
     @Test
@@ -45,6 +58,7 @@ public class StorageTest {
         initialize();
         Task testTask = new Task();
         testTask.setDescription("test task");
+        storage.add(testTask);
         storage.deleteAll();
         String tasksFeedback = storage.getTasksAsString();
         assertEquals("Check that deleteAll() deletes all tasks\n", 
@@ -79,22 +93,6 @@ public class StorageTest {
         String acctualNewDesc = storage.getTask(taskId).getDescription();
         assertEquals("Check that the description can be updated\n", 
                 newDesc, acctualNewDesc);
-    }
-    
-    @Test
-    // Could try out to both set to done and undone, but the implementation 
-    // is the same and therefore not efficient to try both
-    public void setToDone() {
-        initialize();
-        Task testTask = new Task();
-        String desc = "test task";
-        testTask.setDescription(desc);
-        storage.add(testTask);
-        int taskId = testTask.getId();
-        storage.done(taskId, true);
-        String displayFeedback = storage.getTasksAsString();
-        assertEquals("Check that done(id) removes the task from display\n", 
-                Constants.MESSAGE_NO_TASKS, displayFeedback);
     }
     
     private void createTask(String taskDesc, String startDateString, 

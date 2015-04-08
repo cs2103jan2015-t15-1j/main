@@ -132,6 +132,10 @@ public class Storage {
         return null;
     }
     
+    public Task getLastAddedTask() {
+        return getTask(lastIdNumber);
+    }
+    
     public Task[] getAllTasks() {
         Task[] taskArray = new Task[tasks.size()];
         int i = 0;
