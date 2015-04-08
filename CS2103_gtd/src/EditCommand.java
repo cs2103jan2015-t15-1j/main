@@ -1,3 +1,4 @@
+//@author A0111337U
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +23,7 @@ class EditCommand implements Command {
 	public String execute() {
 		int taskId = newTask.getId();
 		oldTask = makeShallowCopyOfOriginalTask(taskId);
-		
+
 		storage.updateDescription(taskId, newTask.getDescription());
 
 		storage.updateStartDate(taskId, newTask.getStartDateTime());
@@ -32,8 +33,10 @@ class EditCommand implements Command {
 		storage.updateLocation(taskId, newTask.getLocation());
 
 		Task realTask = storage.getTask(taskId);
-		String feedbackOrg = String.format("%-15s%s", "Original Task:", oldTask.getUserFormat());
-		String feedbackChange = String.format("%-15s%s", "Changed to:", realTask.getUserFormat());
+		String feedbackOrg = String.format("%-15s%s", "Original Task:",
+				oldTask.getUserFormat());
+		String feedbackChange = String.format("%-15s%s", "Changed to:",
+				realTask.getUserFormat());
 		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		updateHistory();
 		return feedbackOrg + "\n" + feedbackChange;

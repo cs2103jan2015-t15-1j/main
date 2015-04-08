@@ -1,6 +1,4 @@
-import java.io.File;
-import java.util.Scanner;
-
+//@author A0111337U
 public class Logic {
 
 	private static Logic logicObject;
@@ -22,7 +20,7 @@ public class Logic {
 		storage = new Storage();
 		String initializationFeedback = storage.prepareStorage();
 		history = new History();
-		translator = new Translator(storage,history);
+		translator = new Translator(storage, history);
 		return initializationFeedback;
 	}
 
@@ -35,7 +33,6 @@ public class Logic {
 		} catch (Exception e) {
 			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
 		}
-
 
 	}
 
