@@ -1,0 +1,820 @@
+//@author: a0111337u
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\AddCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		Command reversedCommand = new DeleteCommand(storage, history, taskIds);
+		return reversedCommand;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\AddCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\AddCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+		
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\AddCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ClearCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		Command reversedCommand = new AddCommand(storage, history, deletedTasks);
+		return reversedCommand;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ClearCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ClearCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ClearCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Command.java
+	 */
+
+interface Command {
+
+	public String execute();
+
+	public Command makeUndo();
+
+	public void updateHistory();
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Command.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteCommand.java
+	 */
+
+	public Command makeUndo() {
+		Command reversedCommand = new AddCommand(storage, history, deletedTasks);
+		return reversedCommand;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		return null;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DoneCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		return new DoneCommand(storage, history, taskIds, !setDone);
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DoneCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DoneCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DoneCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\EditCommand.java
+	 */
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+class EditCommand implements Command {
+	Task newTask;
+	Task oldTask;
+	Storage storage;
+	History history;
+
+	private static final Logger logger = Logger.getLogger(EditCommand.class
+			.getName());
+
+	public EditCommand(Storage _storage, History _history, Task _newTask) {
+		newTask = _newTask;
+		storage = _storage;
+		history = _history;
+		// logger.log(Level.CONFIG, newTask.getUserFormat());
+
+	}
+
+	@Override
+	public String execute() {
+		int taskId = newTask.getId();
+		oldTask = makeShallowCopyOfOriginalTask(taskId);
+
+		storage.updateDescription(taskId, newTask.getDescription());
+
+		storage.updateStartDate(taskId, newTask.getStartDateTime());
+
+		storage.updateEndDate(taskId, newTask.getEndDateTime());
+
+		storage.updateLocation(taskId, newTask.getLocation());
+
+		Task realTask = storage.getTask(taskId);
+		String feedbackOrg = String.format("%-15s%s", "Original Task:",
+				oldTask.getUserFormat());
+		String feedbackChange = String.format("%-15s%s", "Changed to:",
+				realTask.getUserFormat());
+		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+		updateHistory();
+		return feedbackOrg + "\n" + feedbackChange;
+	}
+
+	@Override
+	public Command makeUndo() {
+		return new EditCommand(storage, history, oldTask);
+	}
+
+	private Task makeShallowCopyOfOriginalTask(int TaskId) {
+		Task oldTask = new Task();
+		Task old = storage.getTask(TaskId);
+		oldTask.setDescription(old.getDescription());
+		oldTask.setDone(old.getDone());
+		oldTask.setId(old.getId());
+		oldTask.setStartDateTime(old.getStartDateTime());
+		oldTask.setEndDateTime(old.getEndDateTime());
+		oldTask.setLocation(old.getLocation());
+		return oldTask;
+	}
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\EditCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\History.java
+	 */
+
+	public Command getUndo() {
+		Command lastCmd;
+		try {
+			lastCmd = undoStack.pop();
+			return lastCmd;
+		} catch (Exception e) {
+			throw new NullPointerException("No commands to undo");
+		}
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\History.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\History.java
+	 */
+
+	public Command getRedo() {
+		Command lastCmd;
+		try {
+			lastCmd = redoStack.pop();
+			return lastCmd;
+		} catch (Exception e) {
+			throw new NullPointerException("No commands to redo");
+		}
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\History.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Logic.java
+	 */
+
+public class Logic {
+
+	private static Logic logicObject;
+	private Storage storage;
+	private History history;
+	private Translator translator;
+
+	private Logic() {
+	}
+
+	public static Logic getLogicObject() {
+		if (logicObject == null) {
+			logicObject = new Logic();
+		}
+		return logicObject;
+	}
+
+	public String initializeEnvironment() {
+		storage = new Storage();
+		String initializationFeedback = storage.prepareStorage();
+		history = new History();
+		translator = new Translator(storage, history);
+		return initializationFeedback;
+	}
+
+	public String execute(String userInput) {
+		Command command;
+		try {
+			command = translator.createCommand(userInput);
+			String feedback = command.execute();
+			return feedback;
+		} catch (Exception e) {
+			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
+		}
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Logic.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\LogicTest.java
+	 */
+
+public class LogicTest {
+
+	Storage storage = new Storage();
+	String fileName = "file_path_for_test.txt";
+	Logic logic = Logic.getLogicObject();
+
+	@Test
+	public void testLogicSingleton() {
+		logic.initializeEnvironment();
+		Logic duplicateLogic = Logic.getLogicObject();
+		assertEquals("Check that only one logic object is created", logic,
+				duplicateLogic);
+	}
+
+	@Test
+	public void testInvalidInput() {
+		logic.initializeEnvironment();
+		String feedback = logic.execute("SOmething");
+		assertEquals("Check that Logic cathes an Invalid Input",
+				Constants.MESSAGE_COMMAND_EXECUTION_ERROR + "SOmething",
+				feedback);
+	}
+
+	@Test
+	public void clearCommand() {// to-do
+		logic.initializeEnvironment();
+		logic.execute("clear");
+		logic.initializeEnvironment();
+		logic.execute("add task buffer");
+		logic.execute("add another task");
+		String actual = logic.execute("display");
+		String expected = "\n"
+				+ Constants.DISPLAY_TABLE_HEADERS
+				+ "\n"
+				+ String.format("%-4d%-70s%-17s%-17s", 1, "task buffer", "", "")
+				+ "\n"
+				+ String.format("%-4d%-70s%-17s%-17s", 2, "another task", "",
+						"");
+
+		assertEquals("check tasks added", expected, actual);
+		logic.execute("clear");
+		actual = logic.execute("display");
+		expected = Constants.MESSAGE_NO_TASKS;
+
+		assertEquals("Check that the clear command is working\n", expected,
+				actual);
+		logic.execute("Undo");
+		actual = logic.execute("display");
+		expected = "\n"
+				+ Constants.DISPLAY_TABLE_HEADERS
+				+ "\n"
+				+ String.format("%-4d%-70s%-17s%-17s", 1, "task buffer", "", "")
+				+ "\n"
+				+ String.format("%-4d%-70s%-17s%-17s", 2, "another task", "",
+						"");
+
+		assertEquals("Check that undo clear command works", expected, actual);
+		logic.execute("Redo");
+		actual = logic.execute("display");
+		expected = Constants.MESSAGE_NO_TASKS;
+
+		assertEquals("Check that redo undo of clear command works", expected,
+				actual);
+	}
+
+	@Test
+	public void deleteCommandEmptyFile() {// to-do
+		logic.initializeEnvironment();
+		logic.execute("clear");
+		logic.initializeEnvironment();
+
+		String feedback = logic.execute("delete 1");
+		String expected = Constants.MESSAGE_INCORRECT_ID + "\n";
+		assertEquals("Check feedback for deletion of empty file", expected,
+				feedback);
+
+		feedback = logic.execute("display");
+		expected = Constants.MESSAGE_NO_TASKS;
+		assertEquals("Check display after deletion of empty file", expected,
+				feedback);
+
+		feedback = logic.execute("Undo");
+		expected = "No commands to undo";
+		assertEquals("Check that undo delete empty file command works",
+				expected, feedback);
+
+		feedback = logic.execute("Redo");
+		expected = "No commands to redo";
+		assertEquals("Check that redo undo of delete empty file command works",
+				expected, feedback);
+	}
+
+	/*
+	 * @Test public void deleteCommandNonEmptyFile(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world"); String
+	 * feedback = logic.execute("delete 1");
+	 * assertEquals("Check deletion of empty file", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo delete command works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ;
+	 * assertEquals("Check that redo undo of delete command works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void deleteMultipleValid(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world");
+	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
+	 * String feedback = logic.execute("delete 1,2,3");
+	 * assertEquals("Check deletion of multiple tasks(all valid)", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo deletion of multiple tasks(all valid) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of deletion of multiple tasks(all valid) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void deleteSomeInvalid(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world");
+	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
+	 * logic.execute("delete 2"); String feedback =
+	 * logic.execute("delete 1,2,3");
+	 * assertEquals("Check deletion of multiple tasks(some invalid)", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo deletion of multiple tasks(some invalid) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of deletion of multiple tasks(some invalid) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void deleteInvalidTaskId(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); String feedback =
+	 * logic.execute("delete 1,2,3");
+	 * assertEquals("Check deletion of multiple tasks(task id invalid)",
+	 * feedback, Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ; assertEquals(
+	 * "Check that undo deletion of multiple tasks(task id invalid) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of deletion of multiple tasks(task id invalid) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void deleteNotInteger(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world");
+	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
+	 * String feedback = logic.execute("delete 1.5,2,3");
+	 * assertEquals("Check deletion of multiple tasks(some not integer)",
+	 * feedback, Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ; assertEquals(
+	 * "Check that undo deletion of multiple tasks(some not integer) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of deletion of multiple tasks(some not integer) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void addToDo() {//to-do logic.initializeEnvironment();
+	 * logic.execute("clear"); logic.initializeEnvironment(); String desc =
+	 * "hello"; String acctualFeedback = logic.execute("add " + desc); String
+	 * expFeedback = String.format(Constants.MESSAGE_ADDED, 1, desc);
+	 * assertEquals("Check that the add to do is working\n", acctualFeedback,
+	 * expFeedback); String undoFeedback = logic.execute("Undo"); String
+	 * expectedUndoFeedback = ;
+	 * assertEquals("Check that undo add to do works",undoFeedback
+	 * ,expectedUndoFeedback); String redoFeedback = logic.execute("redo");
+	 * String expectedRedoFeedback = ;
+	 * assertEquals("Check that redo undo of add to do works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void addEvent() {//to-do logic.initializeEnvironment();
+	 * logic.execute("clear"); logic.initializeEnvironment(); String desc =
+	 * "hello"; LocalDateTime start = ; LocalDateTime end = ; String
+	 * acctualFeedback = logic.execute("add " + desc); String expFeedback =
+	 * String.format(Constants.MESSAGE_ADDED, 1, desc);
+	 * assertEquals("Check that the add to do is working\n", acctualFeedback,
+	 * expFeedback); String undoFeedback = logic.execute("Undo"); String
+	 * expectedUndoFeedback = ;
+	 * assertEquals("Check that undo add event works",undoFeedback
+	 * ,expectedUndoFeedback); String redoFeedback = logic.execute("redo");
+	 * String expectedRedoFeedback = ;
+	 * assertEquals("Check that redo undo of add event works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void addDeadline() {//to-do logic.initializeEnvironment();
+	 * logic.execute("clear"); logic.initializeEnvironment(); String desc =
+	 * "hello"; LocalDateTime end = ; String acctualFeedback =
+	 * logic.execute("add " + desc); String expFeedback =
+	 * String.format(Constants.MESSAGE_ADDED, 1, desc);
+	 * assertEquals("Check that the add to do is working\n", acctualFeedback,
+	 * expFeedback); String undoFeedback = logic.execute("Undo"); String
+	 * expectedUndoFeedback = ;
+	 * assertEquals("Check that undo add deadline works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("redo"); String expectedRedoFeedback = ;
+	 * assertEquals("Check that redo undo of add deadline works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void doneCommandEmptyFile(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); String feedback = logic.execute("done 1");
+	 * assertEquals("Check done of empty file", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo done empty file command works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ;
+	 * assertEquals("Check that redo undo of done empty file command works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void doneCommandNonEmptyFile(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world"); String
+	 * feedback = logic.execute("done 1");
+	 * assertEquals("Check deletion of empty file", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo done command works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ;
+	 * assertEquals("Check that redo undo of done command works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void doneMultipleValid(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world");
+	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
+	 * String feedback = logic.execute("done 1,2,3");
+	 * assertEquals("Check done of multiple tasks(all valid)", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo done of multiple tasks(all valid) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of done of multiple tasks(all valid) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void doneSomeInvalid(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); logic.execute("add hello world");
+	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
+	 * logic.execute("done 2"); String feedback = logic.execute("done 1,2,3");
+	 * assertEquals("Check done of multiple tasks(some invalid)", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo done of multiple tasks(some invalid) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of done of multiple tasks(some invalid) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void doneInvalidTaskId(){//to-do
+	 * logic.initializeEnvironment(); logic.execute("clear");
+	 * logic.initializeEnvironment(); String feedback =
+	 * logic.execute("done 1,2,3");
+	 * assertEquals("Check done of multiple tasks(task id invalid)", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo done of multiple tasks(task id invalid) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of done of multiple tasks(task id invalid) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+
+	/*
+	 * @Test public void doneNotInteger(){//to-do logic.initializeEnvironment();
+	 * logic.execute("clear"); logic.initializeEnvironment();
+	 * logic.execute("add hello world"); logic.execute("add hello TaskWaltz");
+	 * logic.execute("add some line"); String feedback =
+	 * logic.execute("done 1.5,2,3");
+	 * assertEquals("Check done of multiple tasks(some not integer)", feedback,
+	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
+	 * logic.execute("Undo"); String expectedUndoFeedback = ;
+	 * assertEquals("Check that undo done of multiple tasks(some not integer) works"
+	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
+	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
+	 * "Check that redo undo of done of multiple tasks(some not integer) works"
+	 * ,redoFeedback,expectedRedoFeedback); }
+	 */
+	@Test
+	public void addEmpty() {
+		String addEmpty = "add       ";
+		logic.initializeEnvironment();
+		String feedback = logic.execute(addEmpty);
+		assertEquals(
+				"Check that adding of task with empty description is not executed",
+				Constants.MESSAGE_COMMAND_EXECUTION_ERROR + addEmpty, feedback);
+	}
+
+	public void executeEmpty() {// TO-DO
+		String empty = "";
+		logic.initializeEnvironment();
+		String feedback = logic.execute(empty);
+		assertEquals(
+				"Check that adding of task with empty description is not executed",
+				Constants.MESSAGE_COMMAND_EXECUTION_ERROR + empty, feedback);
+	}
+
+	public void executeNull() {// TO-DO
+		logic.initializeEnvironment();
+		String feedback = logic.execute(null);
+		assertEquals(
+				"Check that adding of task with empty description is not executed",
+				Constants.MESSAGE_COMMAND_EXECUTION_ERROR, feedback);
+	}
+
+}
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\LogicTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\RedoCommand.java
+	 */
+
+public class RedoCommand implements Command {
+	Storage storage;
+	History history;
+	Command cmd;
+
+	public RedoCommand(Storage _storage, History _history) {
+		storage = _storage;
+		history = _history;
+	}
+
+	@Override
+	public String execute() {
+		String feedback;
+		try {
+			cmd = history.getRedo();
+			feedback = cmd.execute();
+			updateHistory();
+
+		} catch (NullPointerException e) {
+			feedback = e.getMessage();
+		}
+		return feedback;
+	}
+
+	@Override
+	public Command makeUndo() {
+		return cmd.makeUndo();
+	}
+
+	@Override
+	public void updateHistory() {
+		history.pushUndo(makeUndo());
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\RedoCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Translator.java
+	 */
+
+	private Task makeShallowCopyOfOriginalTask(int TaskId) {
+		Task oldTask = new Task();
+		Task old = taskStorage.getTask(TaskId);
+		oldTask.setDescription(old.getDescription());
+		oldTask.setDone(old.getDone());
+		oldTask.setId(old.getId());
+		oldTask.setStartDateTime(old.getStartDateTime());
+		oldTask.setEndDateTime(old.getEndDateTime());
+		oldTask.setLocation(old.getLocation());
+		return oldTask;
+	}
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Translator.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\UndoCommand.java
+	 */
+
+public class UndoCommand implements Command {
+	Storage storage;
+	History history;
+	Command cmd;
+
+	public UndoCommand(Storage _storage, History _history) {
+		storage = _storage;
+		history = _history;
+	}
+
+	@Override
+	public String execute() {
+		String feedback;
+		try {
+			cmd = history.getUndo();
+			feedback = cmd.execute();
+			updateHistory();
+
+		} catch (NullPointerException e) {
+			feedback = e.getMessage();
+		}
+		return feedback;
+	}
+
+	@Override
+	public Command makeUndo() {
+		return cmd.makeUndo();
+	}
+
+	@Override
+	public void updateHistory() {
+		history.pushRedo(makeUndo());
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\UndoCommand.java
+
+
+
+
+

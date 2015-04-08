@@ -1,0 +1,129 @@
+//@author: generated
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		return null;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\GetDirectoryCommand.java
+	 */
+
+	public Command makeUndo() {
+		return null;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\GetDirectoryCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\GetDirectoryCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\GetDirectoryCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\HelpCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		return null;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\HelpCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\HelpCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+
+	}
+
+}
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\HelpCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SearchCommand.java
+	 */
+
+	@Override
+	public Command makeUndo() {
+		return null;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SearchCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SearchCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+
+	}
+
+}
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SearchCommand.java
+
+
+
+
+
