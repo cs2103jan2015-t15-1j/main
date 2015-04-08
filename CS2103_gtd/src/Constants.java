@@ -17,6 +17,7 @@ public final class Constants {
 	public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
 	public static final String MESSAGE_INCORRECT_ID = "Provided Task ID(s) was(were) either non-existent or in invalid format";
 	public static final String MESSAGE_INVALID_INPUT = "Invalid Input";
+	public static final String MESSAGE_NO_DONE_TAKS = "You have no done tasks to delete";
 	
 	// Formatting
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
