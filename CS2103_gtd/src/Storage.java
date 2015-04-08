@@ -69,24 +69,6 @@ public class Storage {
         return String.format(Constants.MESSAGE_ALL_DELETED);
     }
     
-    //REMOVE THIS ONE WHEN COMMAND PATTERN IMPLEMENTED. DONT USE FOR NEW IMPLEMENTATIONS!
-    public String update(int idToUpdate, Task changes) {
-        //int idToUpdate = changes.getId();
-        Task taskToUpdate = tasks.get(idToUpdate);
-        if (changes.getDescription() != null) {
-            taskToUpdate.setDescription(changes.getDescription());
-        }
-        if (changes.getStartDateTime() != null) {
-            taskToUpdate.setStartDateTime(changes.getStartDateTime());
-        }
-        if (changes.getEndDateTime() != null) {
-            taskToUpdate.setEndDateTime(changes.getEndDateTime());
-        }
-        tasks.put(idToUpdate, taskToUpdate);
-        writeToFile();
-        return String.format(Constants.MESSAGE_UPDATED, taskToUpdate.getId());
-    }
-    
     public String updateDescription(int id, String newDesc) {
         Task taskToUpdate = tasks.get(id);
         if (taskToUpdate != null) {
