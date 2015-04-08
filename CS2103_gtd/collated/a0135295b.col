@@ -1,0 +1,2066 @@
+//@author: a0135295b
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\DeleteCommand.java
+	 */
+
+	@Override
+	public String execute() {
+		String userFeedback = "";
+		ArrayList<Task> tasksThatExist = new ArrayList<Task>();
+		for (int i = 0; i < taskIds.length; i++) {
+			Task fetchedTask = storage.getTask(taskIds[i]);
+			if (fetchedTask != null) {
+				tasksThatExist.add(fetchedTask);
+				userFeedback += storage.delete(taskIds[i]) + "\n";
+			}
+
+		}
+		if (0 < tasksThatExist.size()) {
+			deletedTasks = new Task[tasksThatExist.size()];
+			deletedTasks = tasksThatExist.toArray(deletedTasks);
+			updateHistory();
+			return userFeedback;
+		} else {
+			return Constants.MESSAGE_NO_VALID_IDs;
+		}
+	}
+
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\DeleteCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfo.java
+	 */
+
+public class KeywordInfo implements Comparable<KeywordInfo> {
+	
+	// MACROS
+	private static final int KEYWORD_DOES_NOT_EXIST = -1;
+	private static final String PARAMETER_DOES_NOT_EXIST = null;
+	private static final int THIS_BEFORE_OTHER = -1;
+	private static final int THIS_EQUAL_OTHER = 0;
+	private static final int THIS_AFTER_OTHER = 1;
+	
+	// Fields
+	private String keyword;
+	private int position;
+	private String parameter;
+
+	// Constructors
+	public KeywordInfo() {
+		keyword = null;
+		position = KEYWORD_DOES_NOT_EXIST;
+		parameter = PARAMETER_DOES_NOT_EXIST;
+	}
+
+	public KeywordInfo(String _keyword) {
+		keyword = _keyword;
+		position = KEYWORD_DOES_NOT_EXIST;
+		parameter = PARAMETER_DOES_NOT_EXIST;
+	}
+
+	// Setters and getters
+	public void setKeyword(String _keyword) {
+		if (keyword == null) {
+			keyword = _keyword;
+		} else {
+			keyword = _keyword;
+			position = KEYWORD_DOES_NOT_EXIST;
+			parameter = PARAMETER_DOES_NOT_EXIST;
+		}
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public void setPosition(int index) {
+		position = index;
+		parameter = PARAMETER_DOES_NOT_EXIST;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setParameter(String _parameter) {
+		parameter = _parameter;
+	}
+
+	public String getParameter() {
+		return parameter;
+	}
+
+	@Override
+	public int compareTo(KeywordInfo otherKeywordInfo) {
+		if (this.getPosition() == KEYWORD_DOES_NOT_EXIST) {
+			return THIS_AFTER_OTHER;
+		}
+		if (this.getPosition() < otherKeywordInfo.getPosition() ||
+				otherKeywordInfo.getPosition() == KEYWORD_DOES_NOT_EXIST) {
+			return THIS_BEFORE_OTHER;
+		} else if (this.getPosition() == otherKeywordInfo.getPosition()) {
+			return THIS_EQUAL_OTHER;
+		} else {
+			return THIS_AFTER_OTHER;
+		}
+	}
+}
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfo.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfoList.java
+	 */
+
+public class KeywordInfoList {
+
+	private static final String EMPTY_STR = "";
+	private static final String PARAMETER_DOES_NOT_EXIST = null;
+	private static final int KEYWORD_DOES_NOT_EXIST = -1;
+	private static final String SINGLE_SPACE_STR = " ";
+	private static final String SINGLE_SPACE_REGEX = "\\s";
+	private static final int SINGLE_SPACE_LENGTH = 1;
+	private static final int FIRST_ARRAY_INDEX = 0;
+	
+	private ArrayList<KeywordInfo> kList;
+	private String usercommand;
+	
+	public KeywordInfoList(String _usercommand, String[] keywords) {
+		usercommand = _usercommand.trim();
+		kList = new ArrayList<KeywordInfo>();
+		updateKeywords(keywords);
+		updateKeywordPositions(usercommand);
+		updateKeywordParameters(usercommand);
+	}
+	
+	public String getDescription() {
+		int firstSpacePos = usercommand.indexOf(SINGLE_SPACE_STR);
+		int firstKeywordPos = kList.get(FIRST_ARRAY_INDEX).getPosition();
+		String descriptionChunk = EMPTY_STR;
+		if (firstKeywordPos == KEYWORD_DOES_NOT_EXIST) {
+			descriptionChunk = usercommand.substring(firstSpacePos);
+		} else {
+			descriptionChunk = usercommand.substring(firstSpacePos, firstKeywordPos);
+		}
+		return descriptionChunk.trim();
+	}
+	
+	public String getParameter(String keywordRegex) {
+		for (int i = 0; i < kList.size(); i++) {
+			if (kList.get(i).getKeyword().equals(keywordRegex)) {
+				return kList.get(i).getParameter();
+			}
+		}
+		return PARAMETER_DOES_NOT_EXIST;
+	}
+	
+	private void updateKeywords(String[] keywords) {
+		for (int i = 0; i < keywords.length; i++) {
+			KeywordInfo keywordInfo = new KeywordInfo(keywords[i]);
+			kList.add(keywordInfo);
+		}
+	}
+	
+	private void updateKeywordPositions(String usercommand) {
+		for (int i = 0; i < kList.size(); i++) {
+			String keyword = kList.get(i).getKeyword();
+			String keywordPadded = SINGLE_SPACE_REGEX + keyword + SINGLE_SPACE_REGEX;
+			
+			Pattern keywordPattern = Pattern.compile(keywordPadded);
+			Matcher keywordMatcher = keywordPattern.matcher(usercommand);
+			
+			if (keywordMatcher.find()) {
+				kList.get(i).setPosition(keywordMatcher.start() + SINGLE_SPACE_LENGTH);
+			} else {
+				kList.get(i).setPosition(KEYWORD_DOES_NOT_EXIST);
+			}
+		}
+	}
+	
+	private void updateKeywordParameters(String usercommand) {
+		assert !kList.isEmpty();
+		Collections.sort(kList);
+		
+		if (kList.get(FIRST_ARRAY_INDEX).getPosition() != KEYWORD_DOES_NOT_EXIST) {
+			
+			for (int i = 0; i < kList.size(); i++) {
+				
+				int thisKeywordPosition = kList.get(i).getPosition();
+				String parameterChunk = null;
+				boolean isLastParameter = false;
+				
+				if (i < kList.size() - 1) {
+					int nextKeywordPosition = kList.get(i + 1).getPosition();
+					
+					if (nextKeywordPosition != KEYWORD_DOES_NOT_EXIST) {
+						parameterChunk = usercommand.substring(thisKeywordPosition, nextKeywordPosition);
+						
+					} else {
+						isLastParameter = true;
+						parameterChunk = usercommand.substring(thisKeywordPosition);
+					}
+					
+				} else {
+					assert i == kList.size() - 1;
+					parameterChunk = usercommand.substring(thisKeywordPosition);
+				}
+				
+				// Remove the keyword from parameter chunk.
+				String parameter = removeFirstWord(parameterChunk);
+				kList.get(i).setParameter(parameter);
+				
+				if (isLastParameter) {
+					break;
+				}
+			}
+		}
+	}
+	
+	private String removeFirstWord(String str) {
+		str = str.trim();
+		int firstSpacePos = str.indexOf(SINGLE_SPACE_STR);
+		if (0 < firstSpacePos) {
+			str = str.substring(firstSpacePos);
+			return str.trim();
+		} else {
+			return EMPTY_STR;
+		}
+	 }
+}
+
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfoList.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\SystemTest.java
+	 */
+
+public class SystemTest {
+
+	@Test
+	public void TranslatorTest_1() throws Exception {
+		Translator t = new Translator(new StorageStub(), new History());
+		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
+		Command c = t.createCommand(testInput);
+		assertEquals(c.getClass(), AddCommand.class);
+	}
+	
+	@Test
+	public void TranslatorTest_2() throws Exception {
+		Translator t = new Translator(new StorageStub(), new History());
+		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
+		AddCommand c = (AddCommand) t.createCommand(testInput);
+		Task taskOutput = c.tasksToAdd[0];
+		assertEquals(taskOutput.getId(), -1);
+	}
+	
+	@Test
+	public void TranslatorTest_3() throws Exception {
+		Translator t = new Translator(new StorageStub(), new History());
+		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
+		AddCommand c = (AddCommand) t.createCommand(testInput);
+		Task taskOutput = c.tasksToAdd[0];
+		assertEquals(taskOutput.getDescription(), "guest speech at Shaw Alumni Center");
+	}
+	
+	@Test
+	public void TranslatorTest_4() throws Exception {
+		Translator t = new Translator(new StorageStub(), new History());
+		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
+		AddCommand c = (AddCommand) t.createCommand(testInput);
+		Task taskOutput = c.tasksToAdd[0];
+		assertEquals(taskOutput.getDone(), false);
+	}
+	
+	@Test
+	public void TranslatorTest_5() throws Exception {
+		Translator t = new Translator(new StorageStub(), new History());
+		String testInput = "add guest speech at Shaw Alumni Center start 18:00 end 20:00";
+		AddCommand c = (AddCommand) t.createCommand(testInput);
+		Task taskOutput = c.tasksToAdd[0];
+		LocalDateTime today = LocalDateTime.now();
+		assertEquals(taskOutput.getStartDateTime(), LocalDateTime.of(today.getYear(),
+				today.getMonthValue(), today.getDayOfMonth(), 18, 0));
+	}
+
+	@Test
+	public void TranslatorTest_6() throws Exception {
+		Translator t = new Translator(new StorageStub(), new History());
+		String testInput = "add guest speech at Shaw Alumni Center start 18:00 end 20:00";
+		AddCommand c = (AddCommand) t.createCommand(testInput);
+		Task taskOutput = c.tasksToAdd[0];
+		LocalDateTime today = LocalDateTime.now();
+		assertEquals(taskOutput.getEndDateTime(), LocalDateTime.of(today.getYear(),
+				today.getMonthValue(), today.getDayOfMonth(), 20, 0));
+	}
+
+}
+
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\SystemTest.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\Task.java
+	 */
+
+	@Override
+	public boolean equals(Object other) {
+		if (this.id == ((Task)other).id &&
+		this.description.equals(((Task)other).description) &&
+		this.startDateTime.equals(((Task)other).startDateTime) &&
+		this.endDateTime.equals(((Task)other).endDateTime) &&
+		this.location.equals(((Task)other).location) &&
+		this.done == ((Task)other).done) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\Task.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\Translator.java
+	 */
+
+public class Translator {
+	// ==========Constants for Translator class Section Beginning==========//
+	// Keywords for ADD command
+	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
+	// private static final String KEYWORD_ADD_EVENT_ONEHOUR =
+	// "((at)|(AT)|(@))";
+	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START)|(beg)|(BEG))";
+	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
+	private static final String[] addParameterKeywords = {
+			KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND };
+
+	// Keywords for SEARCH command
+	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
+	private static final String KEYWORD_SEARCH_AFTER = "((after)|(AFTER))";
+	private static final String KEYWORD_SEARCH_BEFORE = "((before)|(BEFORE))";
+	private static final String KEYWORD_SEARCH_ON = "((on)|(ON))";
+	private static final String[] searchParameterKeywords = {
+			KEYWORD_SEARCH_DUE, KEYWORD_SEARCH_AFTER, KEYWORD_SEARCH_BEFORE,
+			KEYWORD_SEARCH_ON };
+
+	// Keywords for EDIT command
+	private static final String KEYWORD_EDIT_DEADLINE = "((deadline)|(DEADLINE))";
+	private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START)|(beg)|(BEG))";
+	private static final String KEYWORD_EDIT_EVENTEND = "((end)|(END))";
+	private static final String KEYWORD_EDIT_DESCRIPTION = "((desc)|(DESC)|(description)|(DESCRIPTION))";
+	private static final String KEYWORD_EDIT_REMOVE = "((rm)|(RM)|(remove)|(REMOVE))";
+	private static final String PARAMETER_EDIT_REMOVE_START = "((start)|(START))";
+	private static final String PARAMETER_EDIT_REMOVE_TIME = "((time)|(TIME))";
+	private static final String[] editParameterKeywords = {
+			KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_EVENTSTART,
+			KEYWORD_EDIT_EVENTEND, KEYWORD_EDIT_DESCRIPTION,
+			KEYWORD_EDIT_REMOVE };
+
+	private static final String PARAMETER_EDIT_LAST_TASK = "((last)|(LAST))";
+	private static final int SPECIAL_ID_LAST_TASK = -100;
+
+	private static final String PARAMETER_DELETE_LAST_TASK = "((last)|(LAST))";
+	private static final String PARAMETER_DELETE_DONE_TASK = "((done)|(DONE))";
+	private static final int SPECIAL_ID_DELETE_DONE = -200;
+
+	// Format for Date-Time input.
+	private static final String DELIMITTER_DATE = "(-|/)";
+	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE
+			+ "\\d\\d" + DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String DD_M_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d"
+			+ DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String D_MM_YYYY = "\\d" + DELIMITTER_DATE + "\\d\\d"
+			+ DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String D_M_YYYY = "\\d" + DELIMITTER_DATE + "\\d"
+			+ DELIMITTER_DATE + "\\d\\d\\d\\d";
+	private static final String DD_MM_YY = "\\d\\d" + DELIMITTER_DATE
+			+ "\\d\\d" + DELIMITTER_DATE + "\\d\\d";
+	private static final String DD_M_YY = "\\d\\d" + DELIMITTER_DATE + "\\d"
+			+ DELIMITTER_DATE + "\\d\\d";
+	private static final String D_MM_YY = "\\d" + DELIMITTER_DATE + "\\d\\d"
+			+ DELIMITTER_DATE + "\\d\\d";
+	private static final String D_M_YY = "\\d" + DELIMITTER_DATE + "\\d"
+			+ DELIMITTER_DATE + "\\d\\d";
+	// private static final String[] FORMATS_DAY_MONTH_YEAR = {DD_MM_YYYY,
+	// DD_M_YYYY, D_MM_YYYY,
+	// D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY};
+
+	private static final String DD_MM = "\\d\\d" + DELIMITTER_DATE + "\\d\\d";
+	private static final String DD_M = "\\d\\d" + DELIMITTER_DATE + "\\d";
+	private static final String D_MM = "\\d" + DELIMITTER_DATE + "\\d\\d";
+	private static final String D_M = "\\d" + DELIMITTER_DATE + "\\d";
+	// private static final String[] FORMATS_DAY_MONTH = {DD_MM, DD_M, D_MM,
+	// D_M};
+	private static final String[] FORMATS_DAY_MONTH_YEAR = { DD_MM_YYYY,
+			DD_M_YYYY, D_MM_YYYY, D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY,
+			DD_MM, DD_M, D_MM, D_M };
+	private static final int MAX_YY_VALUE = 99;
+	private static final int EXTRA_DATE_YEAR = 1;
+	private static final int CURRENT_MILLENIUM = 2000;
+
+	private static final String DELIMITTER_TIME = "(:)";
+	private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME
+			+ "([0-5])\\d";
+	private static final String H_MM = "\\d" + DELIMITTER_TIME + "([0-5])\\d";
+	private static final String HH = "(0|1|2)\\d";
+	private static final String H = "\\d";
+	private static final String PM = "(p|P)(m|M)";
+	private static final String[] FORMATS_HOUR_MINUTE = { HH_MM, H_MM, HH, H };
+
+	// Default values for Date-Time variables.
+	private static final String FILLER_DEFAULT_TIME = " 12:00 ";
+	private static final int DATETIME_HOUR_MINIMUM = 0;
+	private static final int DATETIME_MINUTE_MINIMUM = 0;
+	private static final int DATETIME_HOUR_MAXIMUM = 23;
+	private static final int DATETIME_MINUTE_MAXIMUM = 59;
+	private static final int EXTRA_TIME_DAY = 1;
+	private static final int EXTRA_TIME_HOUR = 1;
+	private static final int TIME_HALFDAY = 12;
+
+	// Miscellaneous default values.
+	private static final String EMPTY_STRING = "";
+	private static final String SINGLE_SPACE = " ";
+	private static final String WHITESPACE = "\\s+";
+	private static final int ARRAY_POSITION_FIRST = 0;
+	private static final int ARRAY_POSITION_SECOND = 1;
+	private static final int NUM_TASKID_MINIMUM = 1;
+
+	// Error values.
+	private static final String INVALID_COMMAND = "%1$s is not a valid command!";
+	private static final String PARAMETER_DOES_NOT_EXIST = null;
+	private static final int INT_PARAM_INVALID = -1;
+	private static final int INVALID_TASK_ID = -1;
+	// ==========Constants for Translator class Section End================//
+
+	private Storage taskStorage;
+	private History commandHistory;
+
+	public Translator(Storage storage, History history) {
+		taskStorage = storage;
+		commandHistory = history;
+	}
+
+	public void setStorage(Storage storage) {
+		// any guard?
+		taskStorage = storage;
+	}
+
+	public void setHistory(History history) {
+		// any guard?
+		commandHistory = history;
+	}
+
+	public Storage getStorage() {
+		// Guard against null?
+		return taskStorage;
+	}
+
+	public History getHistory() {
+		// Guard against null?
+		return commandHistory;
+	}
+
+	public Command createCommand(String usercommand) throws Exception {
+		if (usercommand == null) {
+			throw new NullPointerException();
+		}
+
+		Command newCommand = null;
+		String inputCommandTypeString = extractFirstWord(usercommand);
+		CommandType inputCommandType = determineCommandType(inputCommandTypeString);
+
+		switch (inputCommandType) {
+		case ADD:
+			newCommand = createAddCommand(usercommand);
+			break;
+		case DISPLAY:
+			newCommand = createDisplayCommand();
+			break;
+		case DONE:
+			newCommand = createDoneCommand(usercommand);
+			break;
+		case UNDONE:
+			newCommand = createUndoneCommand(usercommand);
+			break;
+		case DELETE:
+			newCommand = createDeleteCommand(usercommand);
+			break;
+		case EDIT:
+			newCommand = createEditCommand(usercommand);
+			break;
+		case UNDO:
+			newCommand = createUndoCommand();
+			break;
+		case REDO:
+			newCommand = createRedoCommand();
+			break;
+		case HELP:
+			newCommand = createHelpCommand();
+			break;
+		case SETDIR:
+			newCommand = createSetDirectoryCommand(usercommand);
+			break;
+		case GETDIR:
+			newCommand = createGetDirectoryCommand(usercommand);
+			break;
+		case EXIT:
+			newCommand = createExitCommand();
+			break;
+		case SEARCH:
+			newCommand = createSearchCommand(usercommand);
+			break;
+		case CLEAR:
+			newCommand = createClearCommand();
+			break;
+		default:
+			throw new Exception(String.format(INVALID_COMMAND,
+					inputCommandTypeString));
+		}
+
+		return newCommand;
+	}
+
+	private CommandType determineCommandType(String commandTypeString) {
+		if (commandTypeString == null) {
+			return CommandType.INVALID;
+		} else if (commandTypeString.equalsIgnoreCase("ADD")
+				|| commandTypeString.equalsIgnoreCase("a")) {
+			return CommandType.ADD;
+		} else if (commandTypeString.equalsIgnoreCase("DISPLAY")
+				|| commandTypeString.equalsIgnoreCase("show")
+				|| commandTypeString.equalsIgnoreCase("dis")
+				|| commandTypeString.equalsIgnoreCase("ls")) {
+			return CommandType.DISPLAY;
+		} else if (commandTypeString.equalsIgnoreCase("SEARCH")
+				|| commandTypeString.equalsIgnoreCase("s")) {
+			return CommandType.SEARCH;
+		} else if (commandTypeString.equalsIgnoreCase("EDIT")
+				|| commandTypeString.equalsIgnoreCase("e")) {
+			return CommandType.EDIT;
+		} else if (commandTypeString.equalsIgnoreCase("DELETE")
+				|| commandTypeString.equalsIgnoreCase("remove")
+				|| commandTypeString.equalsIgnoreCase("rm")
+				|| commandTypeString.equalsIgnoreCase("del")) {
+			return CommandType.DELETE;
+		} else if (commandTypeString.equalsIgnoreCase("CLEAR")) {
+			return CommandType.CLEAR;
+		} else if (commandTypeString.equalsIgnoreCase("DONE")) {
+			return CommandType.DONE;
+		} else if (commandTypeString.equalsIgnoreCase("UNDONE")) {
+			return CommandType.UNDONE;
+		} else if (commandTypeString.equalsIgnoreCase("UNDO")
+				|| commandTypeString.equalsIgnoreCase("u")) {
+			return CommandType.UNDO;
+		} else if (commandTypeString.equalsIgnoreCase("REDO")
+				|| commandTypeString.equalsIgnoreCase("r")) {
+			return CommandType.REDO;
+		} else if (commandTypeString.equalsIgnoreCase("HELP")) {
+			return CommandType.HELP;
+		} else if (commandTypeString.equalsIgnoreCase("SETDIR")
+				|| commandTypeString.equalsIgnoreCase("SETDIRECTORY")) {
+			return CommandType.SETDIR;
+		} else if (commandTypeString.equalsIgnoreCase("GETDIR")
+				|| commandTypeString.equalsIgnoreCase("GETDIRECTORY")) {
+			return CommandType.GETDIR;
+		} else if (commandTypeString.equalsIgnoreCase("EXIT")) {
+			return CommandType.EXIT;
+		} else {
+			return CommandType.INVALID;
+		}
+	}
+
+	private Command createAddCommand(String usercommand) {
+		Task[] addInformation = { interpretAddParameter(usercommand) };
+		return new AddCommand(this.getStorage(), this.getHistory(),
+				addInformation);
+	}
+
+	private Command createDisplayCommand() {
+		return new DisplayCommand(this.getStorage());
+	}
+
+	private Command createSearchCommand(String usercommand) {
+		Task searchInformation = interpretSearchParameter(usercommand);
+		return new SearchCommand(this.getStorage(), searchInformation);
+	}
+
+	private Command createEditCommand(String usercommand) {
+		Task editInformation = interpretEditParameter(usercommand);
+		return new EditCommand(this.getStorage(), this.getHistory(),
+				editInformation);
+	}
+
+	private Command createDeleteCommand(String usercommand) {
+		int[] deleteInformation = interpretDeleteParameter(usercommand);
+		if (deleteInformation[ARRAY_POSITION_FIRST] == SPECIAL_ID_DELETE_DONE) {
+			return new DeleteDoneCommand(this.getStorage(), this.getHistory());
+		} else {
+			return new DeleteCommand(this.getStorage(), this.getHistory(),
+					deleteInformation);
+		}
+	}
+
+	private Command createClearCommand() {
+		return new ClearCommand(this.getStorage(), this.getHistory());
+	}
+
+	private Command createDoneCommand(String usercommand) {
+		int[] doneInformation = interpretDoneParameter(usercommand);
+		return new DoneCommand(this.getStorage(), this.getHistory(),
+				doneInformation, true);
+	}
+
+	private Command createUndoneCommand(String usercommand) {
+		int[] undoneInformation = interpretDoneParameter(usercommand);
+		return new DoneCommand(this.getStorage(), this.getHistory(),
+				undoneInformation, false);
+	}
+
+	private Command createUndoCommand() {
+		return new UndoCommand(this.getStorage(), this.getHistory());
+	}
+
+	private Command createRedoCommand() {
+		return new RedoCommand(this.getStorage(), this.getHistory());
+	}
+
+	private Command createHelpCommand() {
+		return new HelpCommand();
+	}
+
+	private Command createSetDirectoryCommand(String usercommand) {
+		String setDirInformation = extractSecondWord(usercommand);
+		return new SetDirectoryCommand(this.getStorage(), this.getHistory(),
+				setDirInformation);
+	}
+
+	private Command createGetDirectoryCommand(String usercommand) {
+		return new GetDirectoryCommand(this.getStorage());
+	}
+
+	private Command createExitCommand() {
+		return new ExitCommand();
+	}
+
+	private Task interpretAddParameter(String usercommand) {
+
+		Task newTask = new Task();
+		KeywordInfoList kList = new KeywordInfoList(usercommand,
+				addParameterKeywords);
+
+		String paramDescription = kList.getDescription();
+		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
+		String paramEventStart = kList.getParameter(KEYWORD_ADD_EVENTSTART);
+		String paramEventEnd = kList.getParameter(KEYWORD_ADD_EVENTEND);
+
+		if (paramDescription != EMPTY_STRING) {
+			newTask.setDescription(paramDescription);
+
+			if (paramDeadline != PARAMETER_DOES_NOT_EXIST) {
+				// The task type is "deadline"
+				LocalDateTime deadline = interpretDateTimeParam(paramDeadline);
+				newTask.setEndDateTime(deadline);
+
+			} else if (paramEventStart != PARAMETER_DOES_NOT_EXIST) {
+				// The task type is "event"
+				LocalDateTime eventStart = interpretDateTimeParam(paramEventStart);
+				newTask.setStartDateTime(eventStart);
+				LocalDateTime eventEnd = null;
+				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
+					eventEnd = provideDefaultEndDateTime(paramEventEnd,
+							eventStart);
+				} else {
+					eventEnd = eventStart.plusHours(EXTRA_TIME_HOUR);
+				}
+				newTask.setEndDateTime(eventEnd);
+
+			} else {
+				// The task type is "floating." No further action necessary.
+			}
+		}
+
+		return newTask;
+	}
+
+	private Task interpretEditParameter(String usercommand) {
+
+		KeywordInfoList kList = new KeywordInfoList(usercommand,
+				editParameterKeywords);
+
+		int taskID = extractEditTaskID(usercommand);
+		Task newTask;
+
+		if (taskID != INVALID_TASK_ID) {
+
+			if (taskID == SPECIAL_ID_LAST_TASK) {
+				Task lastAddedOriginalTask = taskStorage.getLastAddedTask();
+				newTask = makeShallowCopyOfOriginalTask(lastAddedOriginalTask
+						.getId());
+			} else {
+				newTask = makeShallowCopyOfOriginalTask(taskID);
+			}
+
+			boolean doesEditParameterExist = false;
+
+			String paramDescription = kList
+					.getParameter(KEYWORD_EDIT_DESCRIPTION);
+			String paramDeadline = kList.getParameter(KEYWORD_EDIT_DEADLINE);
+			String paramEventStart = kList
+					.getParameter(KEYWORD_EDIT_EVENTSTART);
+			String paramEventEnd = kList.getParameter(KEYWORD_EDIT_EVENTEND);
+
+			String paramRemove = kList.getParameter(KEYWORD_EDIT_REMOVE);
+
+			if (paramDescription != PARAMETER_DOES_NOT_EXIST) {
+				newTask.setDescription(paramDescription);
+				doesEditParameterExist = true;
+			}
+
+			if (paramDeadline != PARAMETER_DOES_NOT_EXIST) {
+				LocalDateTime deadline = interpretDateTimeParam(paramDeadline);
+				newTask.setEndDateTime(deadline);
+				doesEditParameterExist = true;
+
+			} else {
+				LocalDateTime eventStart = null;
+				if (paramEventStart != PARAMETER_DOES_NOT_EXIST) {
+					eventStart = interpretDateTimeParam(paramEventStart);
+					if (paramEventEnd == PARAMETER_DOES_NOT_EXIST) {
+						if (newTask.getEndDateTime() == null) {
+							System.err
+									.println("Please provide end time as well!");
+							return null;
+						} else if (eventStart
+								.isBefore(newTask.getEndDateTime())) {
+							newTask.setStartDateTime(eventStart);
+							doesEditParameterExist = true;
+						} else {
+							System.err
+									.println("Event end time is before event start time!");
+							return null;
+						}
+					}
+				}
+
+				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
+					if (eventStart != null) {
+						LocalDateTime eventEnd = provideDefaultEndDateTime(
+								paramEventEnd, eventStart);
+						if (eventEnd.isAfter(eventStart)) {
+							newTask.setStartDateTime(eventStart);
+							newTask.setEndDateTime(eventEnd);
+							doesEditParameterExist = true;
+						} else {
+							System.err
+									.println("Event end time is before event start time!");
+							return null;
+						}
+					} else {
+						LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
+						if (newTask.getStartDateTime() == null
+								|| eventEnd.isAfter(newTask.getStartDateTime())) {
+							newTask.setEndDateTime(eventEnd);
+							doesEditParameterExist = true;
+						} else {
+							System.err
+									.println("Event end time is before event start time!");
+							return null;
+						}
+					}
+				}
+			}
+
+			if (paramRemove != PARAMETER_DOES_NOT_EXIST) {
+				Pattern patternRemoveTime = Pattern
+						.compile(PARAMETER_EDIT_REMOVE_TIME);
+				Matcher matcherRemoveTime = patternRemoveTime
+						.matcher(paramRemove);
+				if (matcherRemoveTime.find()) {
+					newTask.setStartDateTime(null);
+					newTask.setEndDateTime(null);
+					doesEditParameterExist = true;
+				} else {
+					Pattern patternRemoveStart = Pattern
+							.compile(PARAMETER_EDIT_REMOVE_START);
+					Matcher matcherRemoveStart = patternRemoveStart
+							.matcher(paramRemove);
+					if (matcherRemoveStart.find()) {
+						newTask.setStartDateTime(null);
+						doesEditParameterExist = true;
+					}
+				}
+			}
+
+			if (doesEditParameterExist == true) {
+				return newTask;
+			}
+		}
+
+		return null;
+	}
+
+	private int extractEditTaskID(String usercommand) {
+		String taskIDString = extractSecondWord(usercommand);
+		int taskID;
+		Pattern patternLastTaskRequest = Pattern
+				.compile(PARAMETER_EDIT_LAST_TASK);
+		Matcher matcherLastTaskRequest = patternLastTaskRequest
+				.matcher(usercommand);
+		if (matcherLastTaskRequest.find()) {
+			taskID = SPECIAL_ID_LAST_TASK;
+		} else {
+			try {
+				taskID = Integer.parseInt(taskIDString);
+				if (taskID < NUM_TASKID_MINIMUM) {
+					taskID = INVALID_TASK_ID;
+				}
+				if (taskStorage.getTask(taskID) == null) {
+					taskID = INVALID_TASK_ID;
+				}
+			} catch (NumberFormatException e) {
+				taskID = INVALID_TASK_ID;
+			}
+		}
+		return taskID;
+	}
+
+	private Task interpretSearchParameter(String usercommand) {
+
+		Task newTask = new Task();
+		KeywordInfoList kList = new KeywordInfoList(usercommand,
+				searchParameterKeywords);
+
+		String paramDescription = kList.getDescription();
+		String paramAfter = kList.getParameter(KEYWORD_SEARCH_AFTER);
+		String paramBefore = kList.getParameter(KEYWORD_SEARCH_BEFORE);
+		String paramOn = kList.getParameter(KEYWORD_SEARCH_ON);
+
+		if (paramDescription == PARAMETER_DOES_NOT_EXIST) {
+			newTask.setDescription(EMPTY_STRING);
+
+		} else {
+			newTask.setDescription(paramDescription);
+		}
+
+		if (paramOn == PARAMETER_DOES_NOT_EXIST) {
+			if (paramAfter == PARAMETER_DOES_NOT_EXIST) {
+				newTask.setStartDateTime(LocalDateTime.MIN);
+
+			} else {
+				LocalDateTime lowerBoundaryTime = interpretDateTimeParam(paramAfter);
+				newTask.setStartDateTime(lowerBoundaryTime);
+			}
+
+			if (paramBefore == PARAMETER_DOES_NOT_EXIST) {
+				newTask.setEndDateTime(LocalDateTime.MAX);
+
+			} else {
+				LocalDateTime upperBoundaryTime = interpretDateTimeParam(paramBefore);
+				newTask.setEndDateTime(upperBoundaryTime);
+			}
+
+		} else {
+			paramOn += FILLER_DEFAULT_TIME;
+			LocalDateTime dayToSearch = interpretDateTimeParam(paramOn);
+			newTask.setStartDateTime(getBeginningOfDay(dayToSearch));
+			newTask.setEndDateTime(getEndOfDay(dayToSearch));
+		}
+
+		return newTask;
+	}
+
+	private LocalDateTime getBeginningOfDay(LocalDateTime dateTime) {
+		LocalDateTime minuteSetToMinimum = dateTime
+				.withMinute(DATETIME_MINUTE_MINIMUM);
+		LocalDateTime hourAndMinuteSetToMinimum = minuteSetToMinimum
+				.withHour(DATETIME_HOUR_MINIMUM);
+		return hourAndMinuteSetToMinimum;
+	}
+
+	private LocalDateTime getEndOfDay(LocalDateTime dateTime) {
+		LocalDateTime minuteSetToMaximum = dateTime
+				.withMinute(DATETIME_MINUTE_MAXIMUM);
+		LocalDateTime hourAndMinuteSetToMaximum = minuteSetToMaximum
+				.withHour(DATETIME_HOUR_MAXIMUM);
+		return hourAndMinuteSetToMaximum;
+	}
+
+	private int[] interpretDeleteParameter(String usercommand) {
+		String parameter = removeFirstWord(usercommand);
+		return interpretDeleteTaskIDs(parameter);
+	}
+
+	private int[] interpretDoneParameter(String usercommand) {
+		String parameter = removeFirstWord(usercommand);
+		return interpretTaskIDs(parameter);
+	}
+
+	private LocalDateTime provideDefaultEndDateTime(String endTimeParam,
+			LocalDateTime startDateTime) {
+		// Date format: dd-MM-yyyy
+		StringBuilder dateTimeStr = new StringBuilder(endTimeParam);
+		LocalDate date = extractLocalDate(dateTimeStr);
+		// Time format: HH:mm
+		LocalTime time = extractLocalTime(dateTimeStr);
+		if (date == null && time != null) {
+			time = provideDefaultEndTime(time, startDateTime);
+			date = startDateTime.toLocalDate();
+			LocalDateTime endDateTime = LocalDateTime.of(date, time);
+			if (endDateTime.isBefore(startDateTime)) {
+				endDateTime = endDateTime.plusDays(EXTRA_TIME_DAY);
+			}
+			assert startDateTime.isBefore(endDateTime);
+			return endDateTime;
+		} else if (date != null & time != null) {
+			LocalDateTime endDateTime = LocalDateTime.of(date, time);
+			if (endDateTime.isBefore(startDateTime)) {
+				System.err
+						.println("Event end time is before event start time!");
+				return null;
+			} else {
+				return endDateTime;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	private LocalDateTime interpretDateTimeParam(String param) {
+		// Date format: dd-MM-yyyy
+		StringBuilder dateTimeStr = new StringBuilder(param);
+		LocalDate date = extractLocalDate(dateTimeStr);
+		// Time format: HH:mm
+		LocalTime time = extractLocalTime(dateTimeStr);
+		if (date == null && time != null) {
+			time = provideDefaultTime(time);
+			date = provideDefaultDate(time);
+		}
+		return LocalDateTime.of(date, time);
+	}
+
+	private LocalTime provideDefaultTime(LocalTime time) {
+		if (time != null) {
+			LocalTime currentTime = LocalTime.now();
+			if (time.getHour() < TIME_HALFDAY
+					&& currentTime.getHour() >= TIME_HALFDAY) {
+				LocalTime afternoonTime = time.plusHours(TIME_HALFDAY);
+				if (afternoonTime.isAfter(currentTime)) {
+					return afternoonTime;
+				} else {
+					return time;
+				}
+			} else {
+				return time;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	private LocalTime provideDefaultEndTime(LocalTime endTime,
+			LocalDateTime referenceStartDateTime) {
+		if (endTime != null && referenceStartDateTime != null) {
+			if (endTime.getHour() < TIME_HALFDAY
+					&& referenceStartDateTime.getHour() >= TIME_HALFDAY) {
+				LocalTime afternoonTime = endTime.plusHours(TIME_HALFDAY);
+				if (afternoonTime.isAfter(referenceStartDateTime.toLocalTime())) {
+					return afternoonTime;
+				} else {
+					return endTime;
+				}
+			} else {
+				return endTime;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	private LocalDate provideDefaultDate(LocalTime time) {
+		if (time != null) {
+			LocalDate defaultDate = LocalDate.now();
+			LocalTime currentTime = LocalTime.now();
+			if (time.isBefore(currentTime)) {
+				defaultDate = defaultDate.plusDays(EXTRA_TIME_DAY);
+			}
+			return defaultDate;
+		} else {
+			return null;
+		}
+	}
+
+	private LocalDate extractLocalDate(StringBuilder param) {
+		if (param != null) {
+			for (int i = 0; i < FORMATS_DAY_MONTH_YEAR.length; i++) {
+				Pattern datePattern = Pattern
+						.compile(FORMATS_DAY_MONTH_YEAR[i]);
+				Matcher datePatternMatcher = datePattern.matcher(param);
+				if (datePatternMatcher.find()) {
+					String dateString = datePatternMatcher.group();
+					LocalDate today = LocalDate.now();
+					int year = today.getYear();
+					int month = today.getMonthValue();
+					int day = today.getDayOfMonth();
+					String[] dateSegments = dateString.split(DELIMITTER_DATE);
+					day = Integer.parseInt(dateSegments[0]);
+					month = Integer.parseInt(dateSegments[1]);
+					if (dateSegments.length == 3) {
+						year = Integer.parseInt(dateSegments[2]);
+						if (year <= MAX_YY_VALUE) {
+							year += CURRENT_MILLENIUM;
+						}
+					} else {
+						LocalDate extractedDate = LocalDate
+								.of(year, month, day);
+						if (extractedDate.isBefore(LocalDate.now())) {
+							year += EXTRA_DATE_YEAR;
+						}
+					}
+					param.replace(datePatternMatcher.start(),
+							datePatternMatcher.end() + 1, EMPTY_STRING);
+					return LocalDate.of(year, month, day);
+				}
+			}
+		}
+		return null;
+	}
+
+	private LocalTime extractLocalTime(StringBuilder param) {
+		if (param != null) {
+			for (int i = 0; i < FORMATS_HOUR_MINUTE.length; i++) {
+				Pattern timePattern = Pattern.compile(FORMATS_HOUR_MINUTE[i]);
+				Matcher timePatternMatcher = timePattern.matcher(param);
+				if (timePatternMatcher.find()) {
+					String timeString = timePatternMatcher.group();
+					int hour;
+					int minute;
+					Pattern delimitterPattern = Pattern
+							.compile(DELIMITTER_TIME);
+					Matcher delimitterMatcher = delimitterPattern
+							.matcher(timeString);
+					if (delimitterMatcher.find()) {
+						String[] timeSegments = timeString
+								.split(DELIMITTER_TIME);
+						hour = Integer.parseInt(timeSegments[0]);
+						minute = Integer.parseInt(timeSegments[1]);
+					} else {
+						hour = Integer.parseInt(timeString);
+						minute = DATETIME_MINUTE_MINIMUM;
+					}
+					return LocalTime.of(hour, minute);
+				}
+			}
+		}
+		return null;
+	}
+
+	private String extractFirstWord(String str) {
+		if (str == null) {
+			return null;
+		} else {
+			str = str.trim();
+			if (str.equals(EMPTY_STRING)) {
+				return EMPTY_STRING;
+			} else {
+				String[] words = str.split(WHITESPACE);
+				return words[ARRAY_POSITION_FIRST];
+			}
+		}
+	}
+
+	private String extractSecondWord(String str) {
+		if (str == null) {
+			return null;
+		} else {
+			str = str.trim();
+			if (str.equals(EMPTY_STRING)) {
+				return EMPTY_STRING;
+			} else {
+				String[] words = str.split(WHITESPACE);
+				if (words.length < 2) {
+					return EMPTY_STRING;
+				} else {
+					return words[ARRAY_POSITION_SECOND];
+				}
+			}
+		}
+	}
+
+	private String removeFirstWord(String str) {
+		str = str.trim();
+		int firstSpacePos = str.indexOf(SINGLE_SPACE);
+		if (0 < firstSpacePos) {
+			str = str.substring(firstSpacePos);
+			return str.trim();
+		} else {
+			return EMPTY_STRING;
+		}
+	}
+
+	private int[] interpretTaskIDs(String param) {
+		String[] paramsBeforeParse = param.split(WHITESPACE);
+		int[] paramsAfterParse = new int[paramsBeforeParse.length];
+		for (int i = 0; i < paramsBeforeParse.length; i++) {
+			try {
+				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
+			} catch (NumberFormatException paramNotInt) {
+				return new int[] { INT_PARAM_INVALID };
+			}
+		}
+		return paramsAfterParse;
+	}
+
+	private int[] interpretDeleteTaskIDs(String param) {
+		String[] paramsBeforeParse = param.split(WHITESPACE);
+		Pattern patternDeleteDoneRequested = Pattern
+				.compile(PARAMETER_DELETE_DONE_TASK);
+		Matcher matcherDeleteDoneRequested = patternDeleteDoneRequested
+				.matcher(param);
+		if (matcherDeleteDoneRequested.find()) {
+			return new int[] { SPECIAL_ID_DELETE_DONE };
+		}
+		int[] paramsAfterParse = new int[paramsBeforeParse.length];
+		for (int i = 0; i < paramsBeforeParse.length; i++) {
+			try {
+				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
+			} catch (NumberFormatException paramNotInt) {
+				return new int[] { INT_PARAM_INVALID };
+			}
+		}
+		return paramsAfterParse;
+	}
+
+	private Path interpretFilePath(String userInput) {
+		String pathString = extractSecondWord(userInput);
+		Path pathCandidate = Paths.get(pathString);
+		Path path;
+		try {
+			path = pathCandidate.toRealPath();
+			return path;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\Translator.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\TranslatorTest.java
+	 */
+
+public class TranslatorTest {
+	
+
+		//==========Constants for Translator class Section Beginning==========//
+		// Keywords for ADD command
+		private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
+		private static final String KEYWORD_ADD_LOCATION = "((at)|(AT)|(@))";
+		private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START))";
+		private static final String KEYWORD_ADD_EVENTEND = "((to)|(TO)|(end)|(END))";
+		private static final String[] addParameterKeywords = 
+			{KEYWORD_ADD_DEADLINE, KEYWORD_ADD_LOCATION, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND};
+		
+		// Keywords for SEARCH command
+		private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
+		private static final String KEYWORD_SEARCH_AFTER = "((after)|(AFTER))";
+		private static final String KEYWORD_SEARCH_BEFORE = "((before)|(BEFORE))";
+		private static final String KEYWORD_SEARCH_ON = "((on)|(ON))";
+		private static final String[] searchParameterKeywords = 
+			{KEYWORD_SEARCH_DUE, KEYWORD_SEARCH_AFTER, KEYWORD_SEARCH_BEFORE, KEYWORD_SEARCH_ON};
+		
+		// Keywords for EDIT command
+		private static final String KEYWORD_EDIT_DEADLINE = "((deadline)|(DEADLINE))";
+		private static final String KEYWORD_EDIT_LOCATION = "((location)|(LOCATION))";
+		private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START))";
+		private static final String KEYWORD_EDIT_EVENTEND = "((end)|(END))";
+		private static final String KEYWORD_EDIT_DESCRIPTION = "((desc)|(DESC)|(description)|(DESCRIPTION))";
+		private static final String[] editParameterKeywords = 
+			{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_LOCATION, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
+			KEYWORD_EDIT_DESCRIPTION};
+		
+		
+		// Format for Date-Time input.
+		private static final String DELIMITTER_DATE = "(\\s|-|/)";
+		private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE + "\\d\\d" +
+				DELIMITTER_DATE + "\\d\\d\\d\\d";
+		
+		private static final String DELIMITTER_TIME = "(:)";
+		private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME + "([0-5])\\d";
+		private static final String H_MM = "\\d" + DELIMITTER_TIME + "([0-5])\\d";
+		private static final String HH = "(0|1|2)\\d";
+		private static final String H = "\\d";
+		
+		
+		// Default values for Date-Time variables.
+		private static final String FILLER_DEFAULT_TIME = " 12:00 ";
+		private static final int DATETIME_HOUR_MINIMUM = 0;
+		private static final int DATETIME_MINUTE_MINIMUM = 0;
+		private static final int DATETIME_HOUR_MAXIMUM = 23;
+		private static final int DATETIME_MINUTE_MAXIMUM = 59;
+		
+		// Miscellaneous default values.
+		private static final String EMPTY_STRING = "";
+		private static final String SINGLE_SPACE = " ";
+		private static final String WHITESPACE = "\\s+";
+		private static final int ARRAY_POSITION_FIRST = 0;
+		private static final int ARRAY_POSITION_SECOND = 1;
+		private static final int NUM_TASKID_MINIMUM = 1;
+		
+		// Error values.
+		private static final String INVALID_COMMAND = "%1$s is not a valid command!";
+		private static final String PARAMETER_DOES_NOT_EXIST = null;
+		private static final int INT_PARAM_INVALID = -1;
+		private static final int INVALID_TASK_ID = -1;
+		//==========Constants for Translator class Section End================//
+		
+		private Translator trans = new Translator(new StorageStub(), new History());
+		private Class translatorClass = trans.getClass();
+		
+		/*
+		private Command createAddCommand(String usercommand)
+		private Command createDisplayCommand()
+		private Command createSearchCommand(String usercommand)
+		private Command createEditCommand(String usercommand) 
+		private Command createDeleteCommand(String usercommand)
+		private Command createClearCommand()
+		private Command createDoneCommand(String usercommand)
+		private Command createUndoCommand()
+		private Command createRedoCommand()
+		private Command createHelpCommand()
+		private Command createSetDirectoryCommand(String usercommand)
+		private Command createExitCommand()
+		*/
+		/*
+		private Task interpretAddParameter(String usercommand)
+		private Task interpretEditParameter(String usercommand)
+		private int extractEditTaskID(String usercommand)
+		private Task interpretSearchParameter(String usercommand)
+		private LocalDateTime getBeginningOfDay(LocalDateTime dateTime)
+		private LocalDateTime getEndOfDay(LocalDateTime dateTime)
+		private int[] interpretDeleteParameter(String usercommand) 
+		private int[] interpretDoneParameter(String usercommand)
+		private LocalDateTime interpretDateTimeParam(String param)
+		private LocalDate extractLocalDate(String param)
+		private LocalTime extractLocalTime(String param)
+		
+		private String extractFirstWord(String str)
+		
+		private String extractSecondWord(String str);
+		private String removeFirstWord(String str);
+		private int[] interpretTaskIDs(String param);
+		private Path interpretFilePath(String userInput);
+		*/
+		/*
+		@Test
+		public void interpretFilePathTest() {
+			try {
+				Method method = translatorClass.getDeclaredMethod("interpretFilePath", String.class);
+				method.setAccessible(true);
+				method.invoke(trans, ".");
+			} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				System.out.println(e.toString());
+			}
+		}
+		*/
+	
+		
+		/* Boundary case for null input */
+		@Test
+		public void determineCommandTypeTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = null;
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.INVALID;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Boundary case for empty string input */
+		@Test
+		public void determineCommandTypeTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.INVALID;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for none-existent command input */
+		@Test
+		public void determineCommandTypeTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "NONEEXISTENT ";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.INVALID;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for misplaced command input */
+		@Test
+		public void determineCommandTypeTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "CommandShouldComeFirst ADD ";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.INVALID;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for capital command */
+		@Test
+		public void determineCommandTypeTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "ADD";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.ADD;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for lower case command*/
+		@Test
+		public void determineCommandTypeTest_6() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "add";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.ADD;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "display";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.DISPLAY;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_8() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "done";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.DONE;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_9() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "delete";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.DELETE;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_10() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "edit";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.EDIT;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_11() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "undo";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.UNDO;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_12() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "redo";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.REDO;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_13() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "help";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.HELP;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_14() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "setdir";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.SETDIR;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_15() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "setdirectory";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.SETDIR;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_16() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "exit";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.EXIT;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_17() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "invalid";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.INVALID;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_18() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "search";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.SEARCH;
+			assertEquals(actualOutput, expectedOutput);
+		}
+		
+		/* Partition case for a command */
+		@Test
+		public void determineCommandTypeTest_19() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			Method methodELD = translatorClass.getDeclaredMethod("determineCommandType", String.class);
+			methodELD.setAccessible(true);
+			String testInput = "clear";
+			CommandType actualOutput = (CommandType) methodELD.invoke(trans, testInput);
+			CommandType expectedOutput = CommandType.CLEAR;
+			assertEquals(actualOutput, expectedOutput);
+		}
+
+	@Test
+	public void extractLocalDateTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = null;
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("12:00");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("22#11#3333");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("22-11-3333");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_6() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("22/11/3333");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("22 11 3333");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_8() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("22/11/3333 01/02/3000");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_9() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("12:00 once upon a time 22/11/3333 some other time 01/02/3000");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_10() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("12/1/1999");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(1999, 1, 12);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_11() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("1/12/1999");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(1999, 12, 1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_12() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("1/2/1999");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(1999, 2, 1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_13() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("11/12/16");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2016, 12, 11);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_14() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("11/2/16");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2016, 2, 11);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_15() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("1/12/16");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2016, 12, 1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_16() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("1/2/16");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2016, 2, 1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_17() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("11/12");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2015, 12, 11);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_18() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("11/2");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2015, 2, 11);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_19() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("1/12");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2015, 12, 1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalDateTest_20() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
+		methodELD.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("1/2");
+		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
+		LocalDate expectedOutput = LocalDate.of(2015, 2, 1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractFirstWordTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodEFW = translatorClass.getDeclaredMethod("extractFirstWord", String.class);
+		methodEFW.setAccessible(true);
+		String testInput = null;
+		String actualOutput = (String) methodEFW.invoke(trans, testInput);
+		String expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractFirstWordTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodEFW = translatorClass.getDeclaredMethod("extractFirstWord", String.class);
+		methodEFW.setAccessible(true);
+		String testInput = "";
+		String actualOutput = (String) methodEFW.invoke(trans, testInput);
+		String expectedOutput = "";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractFirstWordTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodEFW = translatorClass.getDeclaredMethod("extractFirstWord", String.class);
+		methodEFW.setAccessible(true);
+		String testInput = "a";
+		String actualOutput = (String) methodEFW.invoke(trans, testInput);
+		String expectedOutput = "a";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractFirstWordTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodEFW = translatorClass.getDeclaredMethod("extractFirstWord", String.class);
+		methodEFW.setAccessible(true);
+		String testInput = " a";
+		String actualOutput = (String) methodEFW.invoke(trans, testInput);
+		String expectedOutput = "a";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractFirstWordTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodEFW = translatorClass.getDeclaredMethod("extractFirstWord", String.class);
+		methodEFW.setAccessible(true);
+		String testInput = " 1 a";
+		String actualOutput = (String) methodEFW.invoke(trans, testInput);
+		String expectedOutput = "1";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractFirstWordTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodEFW = translatorClass.getDeclaredMethod("extractFirstWord", String.class);
+		methodEFW.setAccessible(true);
+		String testInput = "abcdefg    ";
+		String actualOutput = (String) methodEFW.invoke(trans, testInput);
+		String expectedOutput = "abcdefg";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	
+	@Test
+	public void extractSecondWordTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = null;
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractSecondWordTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = "";
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = "";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractSecondWordTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = " a";
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = "";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractSecondWordTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = " a 1";
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = "1";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractSecondWordTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = " a b c";
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = "b";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractSecondWordTest_6() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = "abcdefg    ";
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = "";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractSecondWordTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodESW = translatorClass.getDeclaredMethod("extractSecondWord", String.class);
+		methodESW.setAccessible(true);
+		String testInput = "11111111111 2";
+		String actualOutput = (String) methodESW.invoke(trans, testInput);
+		String expectedOutput = "2";
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("10:15");
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = LocalTime.of(10, 15);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("3:45");
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = LocalTime.of(3, 45);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("11");
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = LocalTime.of(11, 0);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_4() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("7");
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = LocalTime.of(7, 0);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("10:15");
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = LocalTime.of(10, 15);
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_6() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = null;
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void extractLocalTimeTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodELT = translatorClass.getDeclaredMethod("extractLocalTime", StringBuilder.class);
+		methodELT.setAccessible(true);
+		StringBuilder testInput = new StringBuilder("");
+		LocalTime actualOutput = (LocalTime) methodELT.invoke(trans, testInput);
+		LocalTime expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void provideDefaultDateTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodPDD = translatorClass.getDeclaredMethod("provideDefaultDate", LocalTime.class);
+		methodPDD.setAccessible(true);
+		LocalTime testInput = null;
+		LocalDate actualOutput = (LocalDate) methodPDD.invoke(trans, testInput);
+		LocalDate expectedOutput = null;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void provideDefaultDateTest_2() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodPDD = translatorClass.getDeclaredMethod("provideDefaultDate", LocalTime.class);
+		methodPDD.setAccessible(true);
+		LocalTime testInput = LocalTime.of(23, 59);
+		LocalDate actualOutput = (LocalDate) methodPDD.invoke(trans, testInput);
+		LocalDate today = LocalDate.now();
+		LocalDate expectedOutput = today;
+		assertEquals(actualOutput, expectedOutput);
+	}
+	
+	@Test
+	public void provideDefaultDateTest_3() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method methodPDD = translatorClass.getDeclaredMethod("provideDefaultDate", LocalTime.class);
+		methodPDD.setAccessible(true);
+		LocalTime testInput = LocalTime.of(0, 0);
+		LocalDate actualOutput = (LocalDate) methodPDD.invoke(trans, testInput);
+		LocalDate today = LocalDate.now();
+		LocalDate expectedOutput = today.plusDays(1);
+		assertEquals(actualOutput, expectedOutput);
+	}
+//	
+//	@Test
+//		public void interpretFilePathTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+//		Method methodIFP = translatorClass.getDeclaredMethod("interpretFilePath", String.class);
+//		methodIFP.setAccessible(true);
+//		String testInput = ".";
+//		Path actualOutput = (Path) methodIFP.invoke(trans, testInput);
+//		Path expectedOutput = Paths.get(".");
+//		assertEquals(expectedOutput, actualOutput);
+//	}
+	
+	/*
+	@Test
+	public void determineCommandTypeTest() {
+		String testInput = "aDD";
+		CommandType expected = CommandType.ADD;
+		CommandType actual = Interpreter.interpretCommandType(testInput);
+		assertEquals(expected, actual);
+	}
+	
+	KeywordInfoList kList;
+	public void initKList() {
+		String usercommand = "add format a commit by 5PM at atLanta";
+		kList = new KeywordInfoList(usercommand, addParameterKeywords);
+	}
+	
+	@Test
+	public void paramDescriptionTest() {
+		initKList();
+		String expected = "format a commit";
+		String actual = kList.getDescription();
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void paramDeadlineTest() {
+		initKList();
+		String expected = "5PM";
+		String actual = kList.getParameter(KEYWORD_DEADLINE);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void paramLocationTest() {
+		initKList();
+		String expected = "atLanta";
+		String actual = kList.getParameter(KEYWORD_LOCATION);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void paramEventStart() {
+		initKList();
+		String expected = null;
+		String actual = kList.getParameter(KEYWORD_EVENTSTART);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void paramEventEnd() {
+		initKList();
+		String expected = null;
+		String actual = kList.getParameter(KEYWORD_EVENTEND);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void removeFirstWordTest() {
+		String testInput = "  firstWord  firstWordRemoved  yes";
+		String expected = "firstWordRemoved  yes";
+		String actual = Interpreter.removeFirstWord(testInput);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void interpretDeleteParametersTest() {
+		String testInput = " delete 120 33   135  34";
+		int[] expected = {120, 33, 135, 34};
+		int[] actual = Interpreter.interpretDeleteParameter(testInput);
+		assertTrue(Arrays.equals(expected, actual));
+	}
+	
+	@Test
+	public void interpretDoneParametersTest() {
+		String testInput = " done 120 33   135  34";
+		int[] expected = {120, 33, 135, 34};
+		int[] actual = Interpreter.interpretDeleteParameter(testInput);
+		assertTrue(Arrays.equals(expected, actual));
+	}
+	
+	@Test
+	public void extractLocalDateTest() {
+		String testInput = " add task waltz meting start 10:30 on 04/03/2015 at Computing";
+		LocalDate expected = LocalDate.of(2015, 3, 4);
+		LocalDate actual = Interpreter.extractLocalDate(testInput);
+		assertTrue(expected.equals(actual));
+	}
+	
+	@Test
+	public void extractLocalTimeTest() {
+		String testInput = " add task waltz meting start 10:30 on 04/03/2015 at Computing";
+		LocalTime expected = LocalTime.of(10, 30);
+		LocalTime actual = Interpreter.extractLocalTime(testInput);
+		assertTrue(expected.equals(actual));
+	}
+	
+	@Test
+	public void interpretDateTimeParamTest() {
+		String testInput = " on the 20:30 of 03-12-5888 Supernova exploded.";
+		LocalDateTime expected = LocalDateTime.of(5888, 12, 3, 20, 30);
+		LocalDateTime actual = Interpreter.interpretDateTimeParam(testInput, CommandType.ADD);
+		assertTrue(expected.equals(actual));
+	}
+	
+	public void interpretAddOREditParameterTest() {
+		String testInput = " add finish lunch and call a loved one at Hawker Center from 12:30 04/03/2015 to 15:30 04/03/2015";
+		Task expected = new Task();
+		expected.setDescription("finish lunch and call a loved one");
+		expected.setDone(false);
+		expected.setLocation("Hawker Center");
+		expected.setStartDateTime(LocalDateTime.of(2015, 3, 4, 12, 30));
+		expected.setEndDateTime(LocalDateTime.of(2015, 3, 4, 15, 30));
+		Task actual = Interpreter.interpretAddOREditParameter(testInput, Interpreter.interpretCommandType(testInput));
+		assertEquals(expected, actual);
+	}
+	*/
+	
+}
+
+	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\TranslatorTest.java
+
+
+
+
+
