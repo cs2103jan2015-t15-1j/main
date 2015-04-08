@@ -1,5 +1,8 @@
+import java.util.ArrayList;
+
 public class DeleteCommand implements Command {
     
+	private static final String MSG_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
     Storage storage;
     History history;
     int[] taskIds;
@@ -9,18 +12,28 @@ public class DeleteCommand implements Command {
         storage = _storage;
         history = _history;
         taskIds = _taskIds;
-        deletedTasks = new Task[taskIds.length];
     }
     
     @Override
     public String execute() {
         String userFeedback = "";
+        ArrayList<Task> tasksThatExist = new ArrayList<Task>();
         for (int i=0; i<taskIds.length; i++) {
-            deletedTasks[i] = storage.getTask(taskIds[i]);
-            userFeedback += storage.delete(taskIds[i]) + "\n";
+        	Task fetchedTask = storage.getTask(taskIds[i]);
+        	if (fetchedTask != null) {
+        		tasksThatExist.add(fetchedTask);
+        		userFeedback += storage.delete(taskIds[i]) + "\n";
+        	}
+            
         }
-        updateHistory();
-        return userFeedback;
+        if (0 < tasksThatExist.size()) {
+        	deletedTasks = new Task[tasksThatExist.size()];
+        	deletedTasks = tasksThatExist.toArray(deletedTasks);
+        	updateHistory();
+        	return userFeedback;
+        } else {
+        	return MSG_NO_VALID_IDs;
+        }
     }
 
     public Command makeUndo() {
@@ -31,7 +44,6 @@ public class DeleteCommand implements Command {
 	@Override
 	public void updateHistory() {
 		history.pushUndo(makeUndo());
-		
 	}
 
 }
