@@ -7,8 +7,6 @@ import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.media.jfxmedia.logging.Logger;
-
 public class Translator {
 	//==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
@@ -38,7 +36,8 @@ public class Translator {
 	private static final String[] editParameterKeywords = 
 		{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
 		KEYWORD_EDIT_DESCRIPTION, KEYWORD_EDIT_REMOVE};
-	
+	private static final String PARAMETER_EDIT_LAST_TASK = "((last)|(LAST))";
+	private static final int SPECIAL_ID_LAST_TASK = -100;
 	
 	// Format for Date-Time input.
 	private static final String DELIMITTER_DATE = "(-|/)";
@@ -355,9 +354,14 @@ public class Translator {
 		Task newTask;
 		
 		if (taskID != INVALID_TASK_ID) {
-			newTask = makeShallowCopyOfOriginalTask(taskID);
-
-			newTask.setId(taskID);
+			
+			if (taskID == SPECIAL_ID_LAST_TASK) {
+				Task lastAddedOriginalTask = taskStorage.getLastAddedTask();
+				newTask = makeShallowCopyOfOriginalTask(lastAddedOriginalTask.getId());
+			} else {
+				newTask = makeShallowCopyOfOriginalTask(taskID);
+			}
+			
 			boolean doesEditParameterExist = false;
 
 			String paramDescription = kList.getParameter(KEYWORD_EDIT_DESCRIPTION);
@@ -423,13 +427,22 @@ public class Translator {
 	private int extractEditTaskID(String usercommand) {
 		String taskIDString = extractSecondWord(usercommand);
 		int taskID;
-		try {
-			taskID = Integer.parseInt(taskIDString);
-			if (taskID < NUM_TASKID_MINIMUM) {
+		Pattern patternLastTaskRequest = Pattern.compile(PARAMETER_EDIT_LAST_TASK);
+		Matcher matcherLastTaskRequest = patternLastTaskRequest.matcher(usercommand);
+		if (matcherLastTaskRequest.find()) {
+			taskID = SPECIAL_ID_LAST_TASK;
+		} else {
+			try {
+				taskID = Integer.parseInt(taskIDString);
+				if (taskID < NUM_TASKID_MINIMUM) {
+					taskID = INVALID_TASK_ID;
+				}
+				if (taskStorage.getTask(taskID) == null) {
+					taskID = INVALID_TASK_ID;
+				}
+			} catch (NumberFormatException e) {
 				taskID = INVALID_TASK_ID;
 			}
-		} catch (NumberFormatException e) {
-			taskID = INVALID_TASK_ID;
 		}
 		return taskID;
 	}
