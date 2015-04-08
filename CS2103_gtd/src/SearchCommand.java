@@ -2,16 +2,16 @@
 public class SearchCommand implements Command {
     
     Task searchObj;
-    Storage _storage;
+    Storage storage;
     
-    public SearchCommand(Storage storage, Task _searchObj) {
+    public SearchCommand(Storage _storage, Task _searchObj) {
         searchObj = _searchObj;
-        _storage = storage;
+        storage = _storage;
     }
     
     @Override
     public String execute() {
-        String searchFeedback = _storage.search(searchObj);
+        String searchFeedback = storage.search(searchObj);
         return searchFeedback;
     }
 
