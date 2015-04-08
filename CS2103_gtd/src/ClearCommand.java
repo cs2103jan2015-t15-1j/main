@@ -18,14 +18,14 @@ public class ClearCommand implements Command {
 		return feedback;
 	}
 
-	// @author A0111337U
+	//@author A0111337U
 	@Override
 	public Command makeUndo() {
 		Command reversedCommand = new AddCommand(storage, history, deletedTasks);
 		return reversedCommand;
 	}
 
-	// @author A0111337U
+	//@author A0111337U
 	@Override
 	public void updateHistory() {
 		history.pushUndo(makeUndo());

@@ -5,6 +5,7 @@
  * Last Updated: 03/03/2015
  */
 
+//@author A0135295B
 public class KeywordInfo implements Comparable<KeywordInfo> {
 	
 	// MACROS

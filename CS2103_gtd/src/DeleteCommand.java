@@ -13,6 +13,7 @@ public class DeleteCommand implements Command {
 		taskIds = _taskIds;
 	}
 
+	//@author A0135295B
 	@Override
 	public String execute() {
 		String userFeedback = "";
@@ -35,13 +36,13 @@ public class DeleteCommand implements Command {
 		}
 	}
 
-	// @author A0111337U
+	//@author A0111337U
 	public Command makeUndo() {
 		Command reversedCommand = new AddCommand(storage, history, deletedTasks);
 		return reversedCommand;
 	}
 
-	// @author A0111337U
+	//@author A0111337U
 	@Override
 	public void updateHistory() {
 		history.pushUndo(makeUndo());

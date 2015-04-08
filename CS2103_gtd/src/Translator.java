@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//@author A0135295B
 public class Translator {
 	// ==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command

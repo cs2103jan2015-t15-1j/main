@@ -13,13 +13,13 @@ public class DisplayCommand implements Command {
 		return displayFeedback;
 	}
 
-	// @author A0111337U
+	//@author A0111337U
 	@Override
 	public Command makeUndo() {
 		return null;
 	}
 
-	// @author A0111337U
+	//@author A0111337U
 	@Override
 	public void updateHistory() {
 

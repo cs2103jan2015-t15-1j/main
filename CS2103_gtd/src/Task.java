@@ -121,6 +121,7 @@ public class Task implements Comparable<Task> {
 		return null; // feedback.
 	}
 	
+	//@author A0135295B
 	@Override
 	public boolean equals(Object other) {
 		if (this.id == ((Task)other).id &&
