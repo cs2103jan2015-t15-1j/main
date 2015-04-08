@@ -1,36 +1,36 @@
-
+//@author A0111337U
 public class UndoCommand implements Command {
 	Storage storage;
 	History history;
 	Command cmd;
-        
-    public UndoCommand(Storage _storage, History _history) {
-        storage = _storage;
-        history = _history;
-    }
-    
-    @Override
-    public String execute() {
-    	String feedback;
-        try {
+
+	public UndoCommand(Storage _storage, History _history) {
+		storage = _storage;
+		history = _history;
+	}
+
+	@Override
+	public String execute() {
+		String feedback;
+		try {
 			cmd = history.getUndo();
 			feedback = cmd.execute();
 			updateHistory();
-			
+
 		} catch (NullPointerException e) {
 			feedback = e.getMessage();
 		}
-        return feedback;
-    }
+		return feedback;
+	}
 
-    @Override
-    public Command makeUndo() {
-        return cmd.makeUndo();
-    }
+	@Override
+	public Command makeUndo() {
+		return cmd.makeUndo();
+	}
 
 	@Override
 	public void updateHistory() {
-		history.pushRedo(makeUndo());	
+		history.pushRedo(makeUndo());
 	}
 
 }
