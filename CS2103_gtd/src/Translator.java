@@ -337,11 +337,7 @@ public class Translator {
 				newTask.setStartDateTime(eventStart);
 				LocalDateTime eventEnd = null;
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
-					eventEnd = interpretDateTimeParam(paramEventEnd);
-					if (eventEnd.isBefore(eventStart)) {
-						System.err.println("Event end time is before event start time!");
-						return null;
-					}
+					eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
 				} else {
 					eventEnd = eventStart.plusHours(EXTRA_TIME_HOUR);
 				}
@@ -401,7 +397,7 @@ public class Translator {
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
 					LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
 					if (eventStart != null & eventEnd.isBefore(eventStart)) {
-						eventEnd = eventEnd.plusDays(EXTRA_TIME_DAY);
+						eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
 					}
 					newTask.setEndDateTime(eventEnd);
 					doesEditParameterExist = true;
@@ -523,6 +519,33 @@ public class Translator {
 		return interpretTaskIDs(parameter);
 	}
 	
+	private LocalDateTime provideDefaultEndDateTime(String endTimeParam, LocalDateTime startDateTime) {
+		// Date format: dd-MM-yyyy
+		StringBuilder dateTimeStr = new StringBuilder(endTimeParam);
+		LocalDate date = extractLocalDate(dateTimeStr);
+		// Time format: HH:mm
+		LocalTime time = extractLocalTime(dateTimeStr);
+		if (date == null && time != null) {
+			time = provideDefaultEndTime(time, startDateTime);
+			date = startDateTime.toLocalDate();
+			LocalDateTime endDateTime = LocalDateTime.of(date, time);
+			if (endDateTime.isBefore(startDateTime)) {
+				endDateTime = endDateTime.plusDays(EXTRA_TIME_DAY);
+			}
+			assert startDateTime.isBefore(endDateTime);
+			return endDateTime;
+		} else if (date != null & time != null) {
+			LocalDateTime endDateTime = LocalDateTime.of(date, time);
+			if (endDateTime.isBefore(startDateTime)) {
+				System.err.println("Event end time is before event start time!");
+				return null;
+			} else {
+				return endDateTime;
+			}
+		} else {
+			return null;
+		}
+	}
 	
 	private LocalDateTime interpretDateTimeParam(String param) {
 		// Date format: dd-MM-yyyy
@@ -549,6 +572,23 @@ public class Translator {
 				}
 			} else {
 				return time;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	private LocalTime provideDefaultEndTime(LocalTime endTime, LocalDateTime referenceStartDateTime) {
+		if (endTime != null && referenceStartDateTime != null) {
+			if (endTime.getHour() < TIME_HALFDAY && referenceStartDateTime.getHour() >= TIME_HALFDAY) {
+				LocalTime afternoonTime = endTime.plusHours(TIME_HALFDAY);
+				if (afternoonTime.isAfter(referenceStartDateTime.toLocalTime())) {
+					return afternoonTime;
+				} else {
+					return endTime;
+				}
+			} else {
+				return endTime;
 			}
 		} else {
 			return null;
