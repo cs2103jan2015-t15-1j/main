@@ -36,8 +36,13 @@ public class Translator {
 	private static final String[] editParameterKeywords = 
 		{KEYWORD_EDIT_DEADLINE, KEYWORD_EDIT_EVENTSTART, KEYWORD_EDIT_EVENTEND,
 		KEYWORD_EDIT_DESCRIPTION, KEYWORD_EDIT_REMOVE};
+	
 	private static final String PARAMETER_EDIT_LAST_TASK = "((last)|(LAST))";
 	private static final int SPECIAL_ID_LAST_TASK = -100;
+	
+	private static final String PARAMETER_DELETE_LAST_TASK = "((last)|(LAST))";
+	private static final String PARAMETER_DELETE_DONE_TASK = "((done)|(DONE))";
+	private static final int SPECIAL_ID_DELETE_DONE = -200;
 	
 	// Format for Date-Time input.
 	private static final String DELIMITTER_DATE = "(-|/)";
@@ -262,7 +267,11 @@ public class Translator {
 	
 	private Command createDeleteCommand(String usercommand) {
 		int[] deleteInformation = interpretDeleteParameter(usercommand);
-		return new DeleteCommand(this.getStorage(), this.getHistory(), deleteInformation);
+		if (deleteInformation[ARRAY_POSITION_FIRST] == SPECIAL_ID_DELETE_DONE) {
+			return new DeleteDoneCommand(this.getStorage(), this.getHistory());
+		} else {
+			return new DeleteCommand(this.getStorage(), this.getHistory(), deleteInformation);
+		}
 	}
 	
 	private Command createClearCommand() {
@@ -506,7 +515,7 @@ public class Translator {
 	
 	private int[] interpretDeleteParameter(String usercommand) {
 		String parameter = removeFirstWord(usercommand);
-		return interpretTaskIDs(parameter);
+		return interpretDeleteTaskIDs(parameter);
 	}
 	
 	private int[] interpretDoneParameter(String usercommand) {
@@ -514,30 +523,6 @@ public class Translator {
 		return interpretTaskIDs(parameter);
 	}
 	
-//	private LocalDateTime interpretDateTimeParam(String param) {
-//		// Date format: dd-MM-yyyy
-//		StringBuilder dateTimeStr = new StringBuilder(param);
-//		LocalDate date = extractLocalDate(dateTimeStr);
-//		// Time format: HH:mm
-//		LocalTime time = extractLocalTime(dateTimeStr);
-//		if (date == null && time != null) {
-//			date = provideDefaultDate(time);
-//		}
-//		return LocalDateTime.of(date, time);
-//	}
-//	
-//	private LocalDate provideDefaultDate(LocalTime time) {
-//		if (time != null) {
-//			LocalDate defaultDate = LocalDate.now();
-//			LocalTime currentTime = LocalTime.now();
-//			if (time.isBefore(currentTime)) {
-//				defaultDate = defaultDate.plusDays(EXTRA_TIME_DAY);
-//			}
-//			return defaultDate;
-//		} else {
-//			return null;
-//		}
-//	}
 	
 	private LocalDateTime interpretDateTimeParam(String param) {
 		// Date format: dd-MM-yyyy
@@ -687,6 +672,24 @@ public class Translator {
 	
 	private int[] interpretTaskIDs(String param) {
 		String[] paramsBeforeParse = param.split(WHITESPACE);
+		int[] paramsAfterParse = new int[paramsBeforeParse.length];
+		for (int i = 0; i < paramsBeforeParse.length; i++) {
+			try {
+				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
+			} catch (NumberFormatException paramNotInt) {
+				return new int[]{INT_PARAM_INVALID};
+			}
+		}
+		return paramsAfterParse;
+	}
+	
+	private int[] interpretDeleteTaskIDs(String param) {
+		String[] paramsBeforeParse = param.split(WHITESPACE);
+		Pattern patternDeleteDoneRequested = Pattern.compile(PARAMETER_DELETE_DONE_TASK);
+		Matcher matcherDeleteDoneRequested = patternDeleteDoneRequested.matcher(param);
+		if (matcherDeleteDoneRequested.find()) {
+			return new int[]{SPECIAL_ID_DELETE_DONE};
+		}
 		int[] paramsAfterParse = new int[paramsBeforeParse.length];
 		for (int i = 0; i < paramsBeforeParse.length; i++) {
 			try {

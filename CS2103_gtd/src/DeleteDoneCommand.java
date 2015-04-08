@@ -13,20 +13,18 @@ public class DeleteDoneCommand implements Command {
     
     @Override
     public String execute() {
-        ArrayList<Integer> deletedTasksList = new ArrayList<Integer>();
+        ArrayList<Task> doneTasksList = new ArrayList<Task>();
         String userFeedback = "";
         Task[] allTasks = storage.getAllTasks();
         for (Task task : allTasks) {
             if (task.getDone()) {
-                int taskId = task.getId();
-                deletedTasksList.add(taskId);
+                doneTasksList.add(task);
                 userFeedback += storage.delete(task.getId()) + "\n";
             }
-            
         }
-        if (deletedTasksList.size() > 0) {
-            deletedTasks = new Task[deletedTasksList.size()];
-            deletedTasks = deletedTasksList.toArray(deletedTasks);
+        if (doneTasksList.size() > 0) {
+            deletedTasks = new Task[doneTasksList.size()];
+            deletedTasks = doneTasksList.toArray(deletedTasks);
             updateHistory();
             return userFeedback;
         } else {
