@@ -391,7 +391,10 @@ public class Translator {
 				if (paramEventStart != PARAMETER_DOES_NOT_EXIST) {
 					eventStart = interpretDateTimeParam(paramEventStart);
 					if (paramEventEnd == PARAMETER_DOES_NOT_EXIST) {
-						if (eventStart.isBefore(newTask.getEndDateTime())) {
+						if (newTask.getEndDateTime() == null) {
+							System.err.println("Please provide end time as well!");
+							return null;
+						} else if (eventStart.isBefore(newTask.getEndDateTime())) {
 							newTask.setStartDateTime(eventStart);
 							doesEditParameterExist = true;
 						} else {
@@ -402,23 +405,26 @@ public class Translator {
 				}
 				
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
-					LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
 					if (eventStart != null) {
-						if (eventEnd.isBefore(eventStart)) {
+						LocalDateTime eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
+						if (eventEnd.isAfter(eventStart)) {
 							newTask.setStartDateTime(eventStart);
-							eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
 							newTask.setEndDateTime(eventEnd);
 							doesEditParameterExist = true;
 						} else {
 							System.err.println("Event end time is before event start time!");
 							return null;
 						}
-					} else if (eventEnd.isAfter(newTask.getStartDateTime())) {
-						newTask.setEndDateTime(eventEnd);
-						doesEditParameterExist = true;
 					} else {
-						System.err.println("Event end time is before event start time!");
-						return null;
+						LocalDateTime eventEnd = interpretDateTimeParam(paramEventEnd);
+						if (newTask.getStartDateTime() == null ||
+								eventEnd.isAfter(newTask.getStartDateTime())) {
+							newTask.setEndDateTime(eventEnd);
+							doesEditParameterExist = true;
+						} else {
+							System.err.println("Event end time is before event start time!");
+							return null;
+						}
 					}
 				}
 			}
