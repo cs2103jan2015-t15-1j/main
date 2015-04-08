@@ -32,10 +32,11 @@ class EditCommand implements Command {
 		storage.updateLocation(taskId, newTask.getLocation());
 
 		Task realTask = storage.getTask(taskId);
-		String feedback = "Original Task: " + oldTask.getUserFormat() + "\n Changed to: " + realTask.getUserFormat();
+		String feedbackOrg = String.format("%-15s%s", "Original Task:", oldTask.getUserFormat());
+		String feedbackChange = String.format("%-15s%s", "Changed to:", realTask.getUserFormat());
 		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		updateHistory();
-		return feedback;
+		return feedbackOrg + "\n" + feedbackChange;
 	}
 
 	@Override
