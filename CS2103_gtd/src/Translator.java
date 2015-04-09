@@ -836,7 +836,6 @@ public class Translator {
 		oldTask.setId(old.getId());
 		oldTask.setStartDateTime(old.getStartDateTime());
 		oldTask.setEndDateTime(old.getEndDateTime());
-		oldTask.setLocation(old.getLocation());
 		return oldTask;
 	}
 }

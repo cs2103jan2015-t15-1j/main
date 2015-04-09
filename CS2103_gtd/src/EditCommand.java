@@ -23,14 +23,9 @@ class EditCommand implements Command {
 	public String execute() {
 		int taskId = newTask.getId();
 		oldTask = makeShallowCopyOfOriginalTask(taskId);
-
 		storage.updateDescription(taskId, newTask.getDescription());
-
 		storage.updateStartDate(taskId, newTask.getStartDateTime());
-
 		storage.updateEndDate(taskId, newTask.getEndDateTime());
-
-		storage.updateLocation(taskId, newTask.getLocation());
 
 		Task realTask = storage.getTask(taskId);
 		String feedbackOrg = String.format("%-15s%s", "Original Task:",
@@ -55,7 +50,6 @@ class EditCommand implements Command {
 		oldTask.setId(old.getId());
 		oldTask.setStartDateTime(old.getStartDateTime());
 		oldTask.setEndDateTime(old.getEndDateTime());
-		oldTask.setLocation(old.getLocation());
 		return oldTask;
 	}
 

@@ -1,15 +1,12 @@
 import java.util.Stack;
 
+//@author A0111337U
 public class History {
 
 	Stack<Command> undoStack = new Stack<Command>();
 	Stack<Command> redoStack = new Stack<Command>();
 	boolean isUndo = false;
 	boolean isRedo = false;
-
-	public History() {
-
-	}
 
 	public void pushUndo(Command cmd) {
 		// cmd should already be in its undo state
@@ -30,7 +27,6 @@ public class History {
 		redoStack.push(cmd);
 	}
 
-	// @author A0111337U
 	public Command getUndo() {
 		Command lastCmd;
 		try {

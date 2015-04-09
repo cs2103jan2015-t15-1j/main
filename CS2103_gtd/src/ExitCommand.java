@@ -1,3 +1,4 @@
+//@author A0111337U
 public class ExitCommand implements Command {
 
 	public ExitCommand() {
@@ -10,13 +11,11 @@ public class ExitCommand implements Command {
 		return null;
 	}
 
-	// @author generated
 	@Override
 	public Command makeUndo() {
 		return null;
 	}
 
-	// @author generated
 	@Override
 	public void updateHistory() {
 

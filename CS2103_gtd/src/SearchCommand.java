@@ -1,3 +1,4 @@
+//@author A0135280M
 public class SearchCommand implements Command {
 
 	Task searchObj;
@@ -14,13 +15,11 @@ public class SearchCommand implements Command {
 		return searchFeedback;
 	}
 
-	// @author generated
 	@Override
 	public Command makeUndo() {
 		return null;
 	}
 
-	// @author generated
 	@Override
 	public void updateHistory() {
 
