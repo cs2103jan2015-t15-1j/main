@@ -20,6 +20,8 @@ public class History {
 		undoStack.push(cmd);
 		if (!isRedo) {
 			redoStack.clear();
+		} else {
+			isRedo = false;
 		}
 	}
 
