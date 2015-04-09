@@ -17,12 +17,18 @@ public class StorageTest {
         storage.deleteAll();
     }
     
+    private void endTest() {
+        storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
+        storage.deleteAll();
+    }
+    
     @Test
     // Need to try out to be able to use it in other tests
     public void setAndGetFilePath() {
         initialize();
         String newFilePath = storage.getFilePath();
         assertEquals("Check that setFilePath() updates the filePath\n", fileName, newFilePath);
+        endTest();
     }
     
     @Test
@@ -36,6 +42,7 @@ public class StorageTest {
         Task theStoredTask = storage.getTask(taskId);
         assertEquals("Check that adding and getting a task works\n", 
                 theDesc, theStoredTask.getDescription());
+        endTest();
     }
     
     @Test
@@ -51,6 +58,7 @@ public class StorageTest {
         Task lastTask = storage.getLastAddedTask();
         assertEquals("Check that getting the last added task works\n", 
                 theDesc, lastTask.getDescription());
+        endTest();
     }
     
     @Test
@@ -63,6 +71,7 @@ public class StorageTest {
         String tasksFeedback = storage.getTasksAsString();
         assertEquals("Check that deleteAll() deletes all tasks\n", 
                 Constants.MESSAGE_NO_TASKS, tasksFeedback);
+        endTest();
     }
     
     @Test
@@ -77,6 +86,7 @@ public class StorageTest {
         String tasksFeedback = storage.getTasksAsString();
         assertEquals("Check that delete(id) deletes the task\n", 
                 Constants.MESSAGE_NO_TASKS, tasksFeedback);
+        endTest();
     }
     
     @Test
@@ -93,6 +103,7 @@ public class StorageTest {
         String acctualNewDesc = storage.getTask(taskId).getDescription();
         assertEquals("Check that the description can be updated\n", 
                 newDesc, acctualNewDesc);
+        endTest();
     }
     
     private void createTask(String taskDesc, String startDateString, 
@@ -140,6 +151,7 @@ public class StorageTest {
         
         assertThat("Check that search shows an event starting on that time\n", 
                 feedback, containsString(taskDesc));
+        endTest();
     }
     
     @Test
@@ -160,6 +172,7 @@ public class StorageTest {
         
         assertThat("Check that search shows an event starting after that time\n", 
                 feedback, containsString(taskDesc));
+        endTest();
     }
     
     @Test
@@ -180,6 +193,7 @@ public class StorageTest {
         
         assertThat("Check that search shows an event happening before that time\n", 
                 feedback, containsString(taskDesc));
+        endTest();
     }
     
     @Test
@@ -199,7 +213,9 @@ public class StorageTest {
         
         assertEquals("Check that search desn't show events happening after given time\n", 
                 feedback, Constants.MESSAGE_SEARCH_UNSUCCESSFUL);
+        endTest();
     }
+    
     @Test
     // Search for string
     public void searchForString() {
@@ -213,6 +229,7 @@ public class StorageTest {
         
         assertThat("Check that search can find tasks on substrings of the description\n", 
                 feedback, containsString("search"));
+        endTest();
     }
     
 }

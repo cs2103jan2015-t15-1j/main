@@ -1,15 +1,17 @@
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-
+//@author A0135280M
 public class Task implements Comparable<Task> {
-	private int id;
+	
+    private int id;
 	private String description;
 	private LocalDateTime startDateTime;
 	private LocalDateTime endDateTime;
 	private String location;
 	private boolean done;
-
+	
+	//@author A0135295B
 	public Task() {
 		id = -1;
 		description = null;
@@ -19,6 +21,7 @@ public class Task implements Comparable<Task> {
 		done = false;
 	}
 	
+	//@author A0135280M
 	public Task(int i, String desc, LocalDateTime start, LocalDateTime end, boolean d) {
 	    id = i;
 	    description = desc;
@@ -26,18 +29,7 @@ public class Task implements Comparable<Task> {
 	    endDateTime = end;
 	    done = d;
 	}
-    
-    public Task(String descr, LocalDateTime start, LocalDateTime end){
-        description = descr;
-        startDateTime = start;
-        endDateTime = end;
-    }
 	
-	public String getStorageFormat() {
-		return null;
-	}
-	
-	//@author A0135280M
 	public String getUserFormat() {
 	    String doneImage = "";
 	    if (this.getDone()) {
@@ -68,11 +60,11 @@ public class Task implements Comparable<Task> {
 	}
 	
 	public String getStartDateTimeInString() {
-		return getDateTimeInString(this.getStartDateTime());
+		return getDateTimeInString(getStartDateTime());
 	}
 	
 	public String getEndDateTimeInString() {
-		return getDateTimeInString(this.getEndDateTime());
+		return getDateTimeInString(getEndDateTime());
 	}
 	
 	public static String getDateTimeInString(LocalDateTime dateTime) {
@@ -91,34 +83,28 @@ public class Task implements Comparable<Task> {
 		return done;
 	}
 	
-	public String setId(int id) {
-		this.id = id;
-		return null; // feedback.
+	public void setId(int _id) {
+		id = _id;
 	}
 	
-	public String setDescription(String desc) {
-		this.description = desc;
-		return null; // feedback.
+	public void setDescription(String _desc) {
+		description = _desc;
 	}
 
-	public String setStartDateTime(LocalDateTime dateTime) {
-		this.startDateTime = dateTime;
-		return null; // feedback.
+	public void setStartDateTime(LocalDateTime _startDateTime) {
+		startDateTime = _startDateTime;
 	}
 
-	public String setEndDateTime(LocalDateTime dateTime) {
-		this.endDateTime = dateTime;
-		return null; // feedback.
+	public void setEndDateTime(LocalDateTime _endDateTime) {
+		endDateTime = _endDateTime;
 	}
 
-	public String setLocation(String location) {
-		this.location = location;
-		return null; // feedback
+	public void setLocation(String _location) {
+		location = _location;
 	}
 	
-	public String setDone(boolean done) {
-		this.done = done;
-		return null; // feedback.
+	public void setDone(boolean _done) {
+		done = _done;
 	}
 	
 	//@author A0135295B

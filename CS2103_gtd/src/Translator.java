@@ -413,7 +413,7 @@ public class Translator {
 					if (paramEventEnd == PARAMETER_DOES_NOT_EXIST) {
 						if (newTask.getEndDateTime() == null) {
 							System.err
-									.println("Please provide end time as well!");
+									.println("\nPlease provide end time as well\n");
 							return null;
 						} else if (eventStart
 								.isBefore(newTask.getEndDateTime())) {
@@ -421,7 +421,7 @@ public class Translator {
 							doesEditParameterExist = true;
 						} else {
 							System.err
-									.println("Event end time is before event start time!");
+									.println("\nEvent end time is before event start time\n");
 							return null;
 						}
 					}
