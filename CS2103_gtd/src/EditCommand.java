@@ -1,6 +1,6 @@
 //@author A0111337U
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 
 class EditCommand implements Command {
 	Task newTask;
@@ -8,8 +8,8 @@ class EditCommand implements Command {
 	Storage storage;
 	History history;
 
-	private static final Logger logger = Logger.getLogger(EditCommand.class
-			.getName());
+//	private static final Logger logger = Logger.getLogger(EditCommand.class
+//			.getName());
 
 	public EditCommand(Storage _storage, History _history, Task _newTask) {
 		newTask = _newTask;
