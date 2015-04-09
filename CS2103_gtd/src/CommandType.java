@@ -1,4 +1,4 @@
-
+//@author A0135280M
 public enum CommandType {
     ADD, DISPLAY, DONE, UNDONE, DELETE, EDIT, UNDO, REDO, HELP, SETDIR, GETDIR, EXIT, 
     INVALID, SEARCH, CLEAR
