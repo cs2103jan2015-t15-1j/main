@@ -4,6 +4,8 @@ public class History {
 
 	Stack<Command> undoStack = new Stack<Command>();
 	Stack<Command> redoStack = new Stack<Command>();
+	boolean isUndo = false;
+	boolean isRedo = false;
 
 	public History() {
 
@@ -11,8 +13,14 @@ public class History {
 
 	public void pushUndo(Command cmd) {
 		// cmd should already be in its undo state
+		if (isUndo) {
+			isUndo = false;
+			return;
+		}
 		undoStack.push(cmd);
-		redoStack.clear();
+		if (!isRedo) {
+			redoStack.clear();
+		}
 	}
 
 	public void pushRedo(Command cmd) {
@@ -25,6 +33,7 @@ public class History {
 		Command lastCmd;
 		try {
 			lastCmd = undoStack.pop();
+			isUndo = true;
 			return lastCmd;
 		} catch (Exception e) {
 			throw new NullPointerException("No commands to undo");
@@ -36,6 +45,8 @@ public class History {
 		Command lastCmd;
 		try {
 			lastCmd = redoStack.pop();
+			isUndo = true;
+			isRedo = true;
 			return lastCmd;
 		} catch (Exception e) {
 			throw new NullPointerException("No commands to redo");
