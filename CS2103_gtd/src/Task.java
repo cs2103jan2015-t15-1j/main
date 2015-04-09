@@ -8,7 +8,6 @@ public class Task implements Comparable<Task> {
 	private String description;
 	private LocalDateTime startDateTime;
 	private LocalDateTime endDateTime;
-	private String location;
 	private boolean done;
 	
 	//@author A0135295B
@@ -17,7 +16,6 @@ public class Task implements Comparable<Task> {
 		description = null;
 		startDateTime = null;
 		endDateTime = null;
-		location = null;
 		done = false;
 	}
 	
@@ -75,10 +73,6 @@ public class Task implements Comparable<Task> {
         return dateTimeString;
 	}
 	
-	public String getLocation() {
-		return location;
-	}
-	
 	public boolean getDone() {
 		return done;
 	}
@@ -98,10 +92,6 @@ public class Task implements Comparable<Task> {
 	public void setEndDateTime(LocalDateTime _endDateTime) {
 		endDateTime = _endDateTime;
 	}
-
-	public void setLocation(String _location) {
-		location = _location;
-	}
 	
 	public void setDone(boolean _done) {
 		done = _done;
@@ -114,7 +104,6 @@ public class Task implements Comparable<Task> {
 		this.description.equals(((Task)other).description) &&
 		this.startDateTime.equals(((Task)other).startDateTime) &&
 		this.endDateTime.equals(((Task)other).endDateTime) &&
-		this.location.equals(((Task)other).location) &&
 		this.done == ((Task)other).done) {
 			return true;
 		} else {

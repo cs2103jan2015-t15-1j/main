@@ -97,15 +97,6 @@ public class Storage {
         return Constants.MESSAGE_INCORRECT_ID;
     }
     
-    public String updateLocation(int id, String location) {
-        Task taskToUpdate = tasks.get(id);
-        if (taskToUpdate != null) {
-            taskToUpdate.setLocation(location);
-            return updateTask(id, taskToUpdate);
-        }
-        return Constants.MESSAGE_INCORRECT_ID;
-    }
-    
     private String updateTask(int id, Task updatedTask) {
         if (tasks.get(id) != null) {
             tasks.put(id, updatedTask);
