@@ -9,6 +9,7 @@ public class Task implements Comparable<Task> {
 	private LocalDateTime endDateTime;
 	private String location;
 	private boolean done;
+	private boolean overDue;
 
 	public Task() {
 		id = -1;
@@ -47,6 +48,14 @@ public class Task implements Comparable<Task> {
 	    String feedback = String.format("%-4d%-6s%-19s%-19s%s", 
 		        this.getId(), doneImage, this.getStartDateTimeInString(), 
 		        this.getEndDateTimeInString(), this.getDescription());
+	    if(this.getoverDue()) {
+//	    	JTextArea textArea = new JTextArea(task);
+//      	 
+//      	 Highlighter highligter = textArea.getHighlighter();
+//      	 HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
+//      	 highlighter.addHighlight(painter);
+	    	feedback += "[overdue]";
+	    }
 	    return feedback;
 	}
 	
@@ -89,6 +98,11 @@ public class Task implements Comparable<Task> {
 	public boolean getDone() {
 		return done;
 	}
+	
+	public boolean getoverDue() {
+		return true;
+	}
+	
 	
 	public String setId(int id) {
 		this.id = id;
@@ -133,6 +147,10 @@ public class Task implements Comparable<Task> {
 			return false;
 		}
 	}
+	
+	
+	
+	
 	
 	@Override
 	public int compareTo(Task compareTask) {
