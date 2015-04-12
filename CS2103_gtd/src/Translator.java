@@ -645,8 +645,8 @@ public class Translator {
 		assert tomorrowBeginning.isBefore(tomorrowEnd);
 		
 		Task displayTomorrowInfoPackage = new Task();
-		//displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
-		displayTomorrowInfoPackage.setStartDateTime(LocalDateTime.MIN);
+		displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
+		//displayTomorrowInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayTomorrowInfoPackage.setEndDateTime(tomorrowEnd);
 		displayTomorrowInfoPackage.setDescription(EMPTY_STRING);
 		return displayTomorrowInfoPackage;
