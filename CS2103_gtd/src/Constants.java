@@ -6,12 +6,25 @@ public final class Constants {
     // Feedback messages
 	public static final String MESSAGE_ADDED = "Added new Task:";
 	public static final String MESSAGE_DELETED = "Task nr %1$d has been deleted";
-	public static final String MESSAGE_UPDATED = "Task nr %1$d has been updated";
+	public static final String MESSAGE_UPDATED = "Tasks have been updated:";
 	public static final String MESSAGE_ALL_DELETED = "All tasks are now deleted";
 	public static final String MESSAGE_NO_TASKS = "You have currently no tasks to show.";
 	public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks containing your keyword was found";
 	public static final String MESSAGE_WELCOME = "Welcome to TaskWaltz!";
-	public static final String MESSAGE_HELP = "Available commands:\nadd <description> <start time (if any)> <end time(if any)>\n  equivalent: a\n\ndisplay\n  equivalent: dis, show, ls\n\ndone <task identification number(s)>\n  equivalent: do\n\ndelete <task identification number(s)>\n  equivalent: remove, rm, del\n\nedit <task identification number> <new parameters>\n  equivalent: e\n\nundo\n  equivalent: u\n\nredo\n  equivalent: r\n\nsearch <Keyword>\n  equivalent: s\n\nhelp\nsetdir <file path>";
+	public static final String MESSAGE_HELP = "Available commands:\n"
+			+ "add <description> <start time (if any)> <end time(if any)>\n  equivalent: a\n\n"
+			+ "delete <task identification number(s)>\n  equivalent: remove, rm, del\n\n"
+			+ "display\n  equivalent: dis, show, ls\n\n"
+			+ "done <task identification number(s)>\n  equivalent: do\n\n"
+			+ "edit <task identification number> <new parameters>\n  equivalent: e\n\n"
+			+ "exit\n\n"
+			+ "getdir\n\n"
+			+ "help\n\n"
+			+ "redo\n  equivalent: r\n\n"
+			+ "search <Keyword>\n  equivalent: s\n\n"
+			+ "setdir <file path>\n\n"
+			+ "undo\n  equivalent: u"
+			+ "undone\n\n";
 	public static final String MESSAGE_INITIALIZATION_ERROR = "There was a problem opening TaskWaltz";
 	public static final String MESSAGE_COMMAND_EXECUTION_ERROR = "TaskWaltz was not able to execute the following command: ";
 	public static final String MESSAGE_FILE_CHANGE = "The file %1$s is now used for storing tasks";

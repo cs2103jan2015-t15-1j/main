@@ -11,6 +11,7 @@ public class ExitCommand implements Command {
 		return null;
 	}
 
+	//@author generated
 	@Override
 	public Command makeUndo() {
 		return null;

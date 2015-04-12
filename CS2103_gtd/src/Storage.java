@@ -111,7 +111,7 @@ public class Storage {
             doneTask.setDone(setDone);
             tasks.put(id, doneTask);
             writeToFile();
-            return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
+            return doneTask.getUserFormat();
         }
         return Constants.MESSAGE_INCORRECT_ID;
     }
