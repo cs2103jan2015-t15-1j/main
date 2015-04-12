@@ -101,7 +101,8 @@ public class Task implements Comparable<Task> {
     }
     
     public boolean isFloatingTask() {
-        if (startDateTime == null && endDateTime == null) {
+        if ((startDateTime == null || startDateTime.equals(LocalDateTime.MIN)) && 
+                (endDateTime == null || startDateTime.equals(LocalDateTime.MAX))) {
             return true;
         }
         return false;

@@ -153,7 +153,9 @@ public class Storage {
         
         displayTasks += Constants.DISPLAY_TABLE_HEADERS;
         displayTasks += storageSearch.search(tasks, displayObj, lastIdNumber);
-        displayTasks += getFloatingTasksAsString();
+        if (displayObj.isFloatingTask()) {
+            displayTasks += getFloatingTasksAsString();
+        }
         return displayTasks;
     }
     
@@ -168,49 +170,12 @@ public class Storage {
         return feedback;
     }
     
-    public String getTasksAsString() {
-        ArrayList<Task> taskList = new ArrayList<Task>();
-        taskList.addAll(getDoneTasks());
-        taskList.addAll(getUnfinishedTasks());
-        
-        String allTasks = "";
-        for (Task newTask : taskList) {
-            allTasks += "\n" + newTask.getUserFormat();
-        }
-        if (allTasks.equals("")) {
-            return Constants.MESSAGE_NO_TASKS;
-        }
-        return "\n" + Constants.DISPLAY_TABLE_HEADERS + allTasks;
-    }
-    
-    private ArrayList<Task> getUnfinishedTasks() {
-        Task[] taskArray = getAllTasks();
-        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
-        for (Task task : taskArray) {
-            if (!task.isDone()) {
-                unfinishedTasks.add(task);
-            }
-        }
-        Collections.sort(unfinishedTasks);
-        return unfinishedTasks;
-    }
-    
-    private ArrayList<Task> getDoneTasks() {
-        Task[] taskArray = getAllTasks();
-        ArrayList<Task> doneTasks = new ArrayList<Task>();
-        for (Task task : taskArray) {
-            if (task.isDone()) {
-                doneTasks.add(task);
-            }
-        }
-        return doneTasks;
-    }
-
     public String getDoneTasksAsString() {
-        String doneTasksString = "";
-        ArrayList<Task> doneTasks = getDoneTasks();
-        for (Task task : doneTasks) {
-            doneTasksString += "\n" + task.getUserFormat();
+        String doneTasksString = Constants.DISPLAY_TABLE_HEADERS;
+        for (Task task : tasks.values()) {
+            if (task.isDone()) {
+                doneTasksString += "\n" + task.getUserFormat();
+            }
         }
         return doneTasksString;
     }
