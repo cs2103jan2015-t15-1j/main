@@ -114,9 +114,9 @@ public class Task implements Comparable<Task> {
         if (isDone()) {
             doneImage = Constants.DISPLAY_DONE;
         }
-        if (isEventTask() && isOverdue(startDateTime)) {
+        if (isEventTask() && isOverdue(startDateTime) && !isDone()) {
             statusImage = Constants.DISPLAY_OVERDUE;
-        } else if (isDeadlineTask() && isOverdue(endDateTime)) {
+        } else if (isDeadlineTask() && isOverdue(endDateTime) && !isDone()) {
             statusImage = Constants.DISPLAY_OVERDUE;
         }
         String feedback = String.format(Constants.DISPLAY_TASK_FORMAT, 

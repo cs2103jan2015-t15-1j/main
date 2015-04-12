@@ -21,6 +21,7 @@ public class UI {
     private static String initializeEnvironment() {
         String initializationMessage = Constants.MESSAGE_WELCOME;
         initializationMessage += "\n" + mainLogic.initializeEnvironment();
+        initializationMessage += "\n" + "Your tasks for this week:";
         initializationMessage += "\n" + mainLogic.execute("display");
         return initializationMessage;
     }

@@ -78,14 +78,6 @@ public class StorageSearch {
         return !(startDate.equals(LocalDateTime.MIN) && endDate.equals(LocalDateTime.MAX));
     }
     
-    private boolean isFloatingTask(LocalDateTime taskEndDate) {
-        return taskEndDate == null;
-    }
-    
-    private boolean isDeadlineTask(LocalDateTime taskStartDate) {
-        return taskStartDate == null;
-    }
-    
     private boolean isNotInInterval(boolean startIsAfter, boolean startIsOn, 
             boolean endIsBefore, boolean endIsOn) {
         return !((startIsAfter || startIsOn) && (endIsBefore || endIsOn));
