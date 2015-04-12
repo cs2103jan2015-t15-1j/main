@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.DayOfWeek;
 
 //@author A0135280M
 public class Task implements Comparable<Task> {
@@ -55,7 +56,8 @@ public class Task implements Comparable<Task> {
 	public static String getDateTimeInString(LocalDateTime dateTime) {
 		String dateTimeString = "";
         if (dateTime != null) {
-        	dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+        	dateTimeString = dateTime.getDayOfWeek().toString().substring(0, 3) + " ";
+        	dateTimeString += dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
         }
         return dateTimeString;
 	}
