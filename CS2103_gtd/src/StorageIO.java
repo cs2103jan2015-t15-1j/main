@@ -80,7 +80,7 @@ public class StorageIO {
             taskObj.put("startDate", startDateTime);
             String endDateTime = task.getEndDateTimeInString();
             taskObj.put("endDate", endDateTime);
-            String done = task.getDone() + "";
+            String done = task.isDone() + "";
             taskObj.put("done", done);
             jsonArray.put(taskObj);
         }

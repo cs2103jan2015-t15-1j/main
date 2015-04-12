@@ -30,7 +30,7 @@ public class StorageSearch {
     private int[] searchOnKeyword(Map<Integer, Task> tasks, String keyword, 
             int[] foundTasks) {
         for (Task task : tasks.values()) {
-            if (!task.getDone()) { 
+            if (!task.isDone()) { 
                 String taskDesc = task.getDescription();
                 if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
                     int index = task.getId()-1;
@@ -45,7 +45,7 @@ public class StorageSearch {
             LocalDateTime endDate, int[] foundTasks) {
         if (isDateSearch(startDate, endDate)) {
             for (Task task : tasks.values()) {
-                if (!task.getDone()) {
+                if (!task.isDone()) {
                     int index = task.getId()-1;
                     foundTasks[index] = isTaskInInterval(task, startDate, 
                             endDate, foundTasks[index]);
@@ -64,14 +64,16 @@ public class StorageSearch {
         boolean endIsBefore = false;
         boolean endIsOn = false;
         
-        if (isFloatingTask(taskEndDate)) {
+        if (task.isFloatingTask()) {
             return Constants.NOT_INCLUDED_IN_SEARCH;
-        } else if (isDeadlineTask(taskStartDate)) {
+        } else if (task.isDeadlineTask()) {
             startIsAfter = taskEndDate.isAfter(searchStartDate);
             startIsOn = taskEndDate.equals(searchStartDate);
-        } else {
+        } else if (task.isEventTask()) {
             startIsAfter = taskStartDate.isAfter(searchStartDate);
             startIsOn = taskStartDate.equals(searchStartDate);
+        } else {
+            System.err.println(Constants.MESSAGE_GENERAL_ERROR);
         }
         endIsBefore = taskEndDate.isBefore(searchEndDate);
         endIsOn = taskEndDate.equals(searchEndDate);

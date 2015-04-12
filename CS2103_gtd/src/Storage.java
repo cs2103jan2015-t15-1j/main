@@ -138,24 +138,41 @@ public class Storage {
     }
     
     public String getTasksAsString() {
-        Task[] taskArray = getAllTasks();
-        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
+        ArrayList<Task> taskList = new ArrayList<Task>();
+        taskList.addAll(getDoneTasks());
+        taskList.addAll(getUnfinishedTasks());
+        
         String allTasks = "";
-        for (Task task : taskArray) {
-            if (task.getDone()) {
-                allTasks += "\n" + task.getUserFormat();
-            } else {
-                unfinishedTasks.add(task);
-            }
-        }
-        Collections.sort(unfinishedTasks);
-        for (Task newTask : unfinishedTasks) {
+        for (Task newTask : taskList) {
             allTasks += "\n" + newTask.getUserFormat();
         }
         if (allTasks.equals("")) {
             return Constants.MESSAGE_NO_TASKS;
         }
         return "\n" + Constants.DISPLAY_TABLE_HEADERS + allTasks;
+    }
+    
+    private ArrayList<Task> getUnfinishedTasks() {
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
+        for (Task task : taskArray) {
+            if (!task.isDone()) {
+                unfinishedTasks.add(task);
+            }
+        }
+        Collections.sort(unfinishedTasks);
+        return unfinishedTasks;
+    }
+    
+    private ArrayList<Task> getDoneTasks() {
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> doneTasks = new ArrayList<Task>();
+        for (Task task : taskArray) {
+            if (task.isDone()) {
+                doneTasks.add(task);
+            }
+        }
+        return doneTasks;
     }
     
     public String search(Task searchObj) {
