@@ -20,6 +20,12 @@ public final class Constants {
 	public static final String MESSAGE_INVALID_INPUT = "Invalid Input";
 	public static final String MESSAGE_NO_DONE_TAKS = "You have no done tasks to delete";
 	public static final String MESSAGE_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
+	public static final String MESSAGE_EDIT_ORIGINAL = "Original Task:";
+	public static final String MESSAGE_EDIT_CHANGE = "Changed to:";
+	
+	//Error Messages
+	public static final String MESSAGE_NO_UNDO = "No commands to undo";
+	public static final String MESSAGE_NO_REDO = "No commands to redo";
 	
 	// Formatting
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
@@ -27,6 +33,8 @@ public final class Constants {
     public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-6s%-19s%-19s%s", "ID", "Done", "Start Time", "End Time", "Description");
 	public static final String DISPLAY_UNFINISHED = "[ ]";
 	public static final String DISPLAY_DONE = "[x]";
+	public static final String EDIT_FORMAT = "%-15s%s";
+	
 	
 	// Storage values
     public static final String STORAGE_ENTRY_DOES_NOT_EXIST = "EMTPY";
