@@ -1,15 +1,22 @@
 //@author A0135280M
 public class DisplayCommand implements Command {
 
-	Storage _storage;
+	Storage storage;
+	Task displayObj;
 
-	public DisplayCommand(Storage storage) {
-		_storage = storage;
+	public DisplayCommand(Storage _storage, Task _displayObj) {
+		storage = _storage;
+		displayObj = _displayObj;
 	}
 
 	@Override
 	public String execute() {
-		String displayFeedback = _storage.getTasksAsString();
+		if (displayObj.getDone() == true) {
+			String displayFeedback = storage.searchDone();
+		} else {
+			String displayFeedback = storage.search(displayObj);
+		}
+		String displayFeedback = storage.getTasksAsString();
 		return displayFeedback;
 	}
 

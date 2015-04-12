@@ -13,20 +13,14 @@ public class Translator {
 	// ==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
-	// private static final String KEYWORD_ADD_EVENT_ONEHOUR =
-	// "((at)|(AT)|(@))";
 	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = {
 			KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND };
 	
-	// Keywords for DONE command
+	// Parameters for DONE command
 	private static final String PARAMETER_DISPLAY_ALL = "all";
 	private static final String PARAMETER_DISPLAY_DONE = "done";
-	/*
-	private static final String KEYWORD_DISPLAY_UNDONE = "((undone)|(UNDONE)|(upcoming)|(UPCOMING))";
-	private static final String KEYWORD_DISPLAY_OVERDUE = "((overdue)|(OVERDUE))";
-	*/
 	private static final String PARAMETER_DISPLAY_THISWEEK = "this week";
 	private static final String PARAMETER_DISPLAY_TODAY = "today";
 	private static final String PARAMETER_DISPLAY_TOMORROW = "tomorrow";
@@ -55,8 +49,6 @@ public class Translator {
 
 	private static final String PARAMETER_EDIT_LAST_TASK = "((last)|(LAST))";
 	private static final int SPECIAL_ID_LAST_TASK = -100;
-
-	private static final String PARAMETER_DELETE_LAST_TASK = "((last)|(LAST))";
 	private static final String PARAMETER_DELETE_DONE_TASK = "((done)|(DONE))";
 	private static final int SPECIAL_ID_DELETE_DONE = -200;
 
@@ -101,7 +93,6 @@ public class Translator {
 	private static final String H_MM = "\\d" + DELIMITTER_TIME + "([0-5])\\d";
 	private static final String HH = "(0|1|2)\\d";
 	private static final String H = "\\d";
-	private static final String PM = "(p|P)(m|M)";
 	private static final String[] FORMATS_HOUR_MINUTE = { HH_MM, H_MM, HH, H };
 
 	// Default values for Date-Time variables.
@@ -588,12 +579,13 @@ public class Translator {
 	
 	private Task createDisplayOneWeekInfoPackage() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime oneWeekLater = now.plusDays(DAYS_IN_ONE_WEEK);
+		LocalDateTime oneWeekLater = getEndOfDay(now.plusDays(DAYS_IN_ONE_WEEK));
 		assert now.isBefore(oneWeekLater);
 		
 		Task displayOneWeekInfoPackage = new Task();
 		displayOneWeekInfoPackage.setStartDateTime(now);
 		displayOneWeekInfoPackage.setEndDateTime(oneWeekLater);
+		displayOneWeekInfoPackage.setDescription(EMPTY_STRING);
 		return displayOneWeekInfoPackage;
 	}
 	
@@ -605,71 +597,64 @@ public class Translator {
 		Task displayAllInfoPackage = new Task();
 		displayAllInfoPackage.setStartDateTime(beginningOfTime);
 		displayAllInfoPackage.setEndDateTime(endOfTime);
+		displayAllInfoPackage.setDescription(EMPTY_STRING);
 		return displayAllInfoPackage;
 	}
 	
 	private Task createDisplayDoneInfoPackage() {
 		Task displayDoneInfoPackage = new Task();
 		displayDoneInfoPackage.setDone(true);
+		displayDoneInfoPackage.setDescription(EMPTY_STRING);
 		return displayDoneInfoPackage;
 	}
 	
 	private Task createDisplayTodayInfoPackage() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime todayBeginning = now.withMinute(DATETIME_MINUTE_MINIMUM)
-				.withHour(DATETIME_HOUR_MINIMUM);
-		LocalDateTime todayEnd = now.withMinute(DATETIME_MINUTE_MAXIMUM)
-				.withHour(DATETIME_HOUR_MAXIMUM);
+		LocalDateTime todayBeginning = getBeginningOfDay(now);
+		LocalDateTime todayEnd = getEndOfDay(now);
 		assert todayBeginning.isBefore(todayEnd);
 		
 		Task displayTodayInfoPackage = new Task();
 		displayTodayInfoPackage.setStartDateTime(todayBeginning);
 		displayTodayInfoPackage.setEndDateTime(todayEnd);
+		displayTodayInfoPackage.setDescription(EMPTY_STRING);
 		return displayTodayInfoPackage;
 	}
 	
 	private Task createDisplayThisWeekInfoPackage() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime thisWeekBeginning = now.withMinute(DATETIME_MINUTE_MINIMUM)
-				.withHour(DATETIME_HOUR_MINIMUM).with(DayOfWeek.MONDAY);
-		LocalDateTime thisWeekEnd = now.withMinute(DATETIME_MINUTE_MAXIMUM)
-				.withHour(DATETIME_HOUR_MAXIMUM).with(DayOfWeek.SUNDAY);
+		LocalDateTime thisWeekBeginning = getBeginningOfDay(now).with(DayOfWeek.MONDAY);
+		LocalDateTime thisWeekEnd = getEndOfDay(now).with(DayOfWeek.SUNDAY);
 		assert thisWeekBeginning.isBefore(thisWeekEnd);
 		
 		Task displayThisWeekInfoPackage = new Task();
 		displayThisWeekInfoPackage.setStartDateTime(thisWeekBeginning);
 		displayThisWeekInfoPackage.setEndDateTime(thisWeekEnd);
+		displayThisWeekInfoPackage.setDescription(EMPTY_STRING);
 		return displayThisWeekInfoPackage;
 	}
 	
 	private Task createDisplayTomorrowInfoPackage() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime tomorrowBeginning = now.withMinute(DATETIME_MINUTE_MINIMUM)
-				.withHour(DATETIME_HOUR_MINIMUM).plusDays(EXTRA_TIME_DAY);
-		LocalDateTime tomorrowEnd = now.withMinute(DATETIME_MINUTE_MAXIMUM)
-				.withHour(DATETIME_HOUR_MAXIMUM).plusDays(EXTRA_TIME_DAY);
+		LocalDateTime tomorrowBeginning = getBeginningOfDay(now).plusDays(EXTRA_TIME_DAY);
+		LocalDateTime tomorrowEnd = getEndOfDay(now).plusDays(EXTRA_TIME_DAY);
 		assert tomorrowBeginning.isBefore(tomorrowEnd);
 		
 		Task displayTomorrowInfoPackage = new Task();
 		displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
 		displayTomorrowInfoPackage.setEndDateTime(tomorrowEnd);
+		displayTomorrowInfoPackage.setDescription(EMPTY_STRING);
 		return displayTomorrowInfoPackage;
 	}
 
 	private LocalDateTime getBeginningOfDay(LocalDateTime dateTime) {
-		LocalDateTime minuteSetToMinimum = dateTime
-				.withMinute(DATETIME_MINUTE_MINIMUM);
-		LocalDateTime hourAndMinuteSetToMinimum = minuteSetToMinimum
+		return dateTime.withMinute(DATETIME_MINUTE_MINIMUM)
 				.withHour(DATETIME_HOUR_MINIMUM);
-		return hourAndMinuteSetToMinimum;
 	}
 
 	private LocalDateTime getEndOfDay(LocalDateTime dateTime) {
-		LocalDateTime minuteSetToMaximum = dateTime
-				.withMinute(DATETIME_MINUTE_MAXIMUM);
-		LocalDateTime hourAndMinuteSetToMaximum = minuteSetToMaximum
+		return dateTime.withMinute(DATETIME_MINUTE_MAXIMUM)
 				.withHour(DATETIME_HOUR_MAXIMUM);
-		return hourAndMinuteSetToMaximum;
 	}
 
 	private int[] interpretDeleteParameter(String usercommand) {
