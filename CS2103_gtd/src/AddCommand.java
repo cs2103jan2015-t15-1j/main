@@ -17,11 +17,11 @@ public class AddCommand implements Command {
 	public String execute() {
 		String userFeedback = "";
 		for (int i=0; i<tasksToAdd.length; i++) {
-		    userFeedback += storage.add(tasksToAdd[i]);
+		    userFeedback += "\n" + storage.add(tasksToAdd[i]);
 		    taskIds[i] = tasksToAdd[i].getId();
 		}
 		updateHistory();
-		return userFeedback;
+		return Constants.MESSAGE_ADDED +"\n"+ Constants.DISPLAY_TABLE_HEADERS + userFeedback;
 	}
 	
 	//@author A0111337U
