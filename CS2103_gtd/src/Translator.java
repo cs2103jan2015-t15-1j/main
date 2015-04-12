@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.time.DayOfWeek;
 
 //@author A0135295B
 public class Translator {
@@ -18,6 +19,17 @@ public class Translator {
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = {
 			KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND };
+	
+	// Keywords for DONE command
+	private static final String PARAMETER_DISPLAY_ALL = "all";
+	private static final String PARAMETER_DISPLAY_DONE = "done";
+	/*
+	private static final String KEYWORD_DISPLAY_UNDONE = "((undone)|(UNDONE)|(upcoming)|(UPCOMING))";
+	private static final String KEYWORD_DISPLAY_OVERDUE = "((overdue)|(OVERDUE))";
+	*/
+	private static final String PARAMETER_DISPLAY_THISWEEK = "this week";
+	private static final String PARAMETER_DISPLAY_TODAY = "today";
+	private static final String PARAMETER_DISPLAY_TOMORROW = "tomorrow";
 
 	// Keywords for SEARCH command
 	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
@@ -101,6 +113,7 @@ public class Translator {
 	private static final int EXTRA_TIME_DAY = 1;
 	private static final int EXTRA_TIME_HOUR = 1;
 	private static final int TIME_HALFDAY = 12;
+	private static final int DAYS_IN_ONE_WEEK = 7;
 
 	// Miscellaneous default values.
 	private static final String EMPTY_STRING = "";
@@ -159,7 +172,7 @@ public class Translator {
 			newCommand = createAddCommand(usercommand);
 			break;
 		case DISPLAY:
-			newCommand = createDisplayCommand();
+			newCommand = createDisplayCommand(usercommand);
 			break;
 		case DONE:
 			newCommand = createDoneCommand(usercommand);
@@ -260,8 +273,9 @@ public class Translator {
 				addInformation);
 	}
 
-	private Command createDisplayCommand() {
-		return new DisplayCommand(this.getStorage());
+	private Command createDisplayCommand(String usercommand) {
+		Task displayInformation = interpretDisplayParameter(usercommand);
+		return new DisplayCommand(this.getStorage(), displayInformation);
 	}
 
 	private Command createSearchCommand(String usercommand) {
@@ -480,7 +494,6 @@ public class Translator {
 				return newTask;
 			}
 		}
-
 		return null;
 	}
 
@@ -552,6 +565,95 @@ public class Translator {
 		}
 
 		return newTask;
+	}
+	
+	private Task interpretDisplayParameter(String usercommand) {
+		String displayParam = extractSecondWord(usercommand);
+		if (displayParam.equals(EMPTY_STRING)) {
+			return createDisplayOneWeekInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_ALL)) {
+			return createDisplayAllInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_DONE)) {
+			return createDisplayDoneInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_TODAY)) {
+			return createDisplayTodayInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_THISWEEK)) {
+			return createDisplayThisWeekInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_TOMORROW)) {
+			return createDisplayTomorrowInfoPackage();
+		} else {
+			return null;
+		}
+	}
+	
+	private Task createDisplayOneWeekInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime oneWeekLater = now.plusDays(DAYS_IN_ONE_WEEK);
+		assert now.isBefore(oneWeekLater);
+		
+		Task displayOneWeekInfoPackage = new Task();
+		displayOneWeekInfoPackage.setStartDateTime(now);
+		displayOneWeekInfoPackage.setEndDateTime(oneWeekLater);
+		return displayOneWeekInfoPackage;
+	}
+	
+	private Task createDisplayAllInfoPackage() {
+		LocalDateTime beginningOfTime = LocalDateTime.MIN;
+		LocalDateTime endOfTime = LocalDateTime.MAX;
+		assert beginningOfTime.isBefore(endOfTime);
+		
+		Task displayAllInfoPackage = new Task();
+		displayAllInfoPackage.setStartDateTime(beginningOfTime);
+		displayAllInfoPackage.setEndDateTime(endOfTime);
+		return displayAllInfoPackage;
+	}
+	
+	private Task createDisplayDoneInfoPackage() {
+		Task displayDoneInfoPackage = new Task();
+		displayDoneInfoPackage.setDone(true);
+		return displayDoneInfoPackage;
+	}
+	
+	private Task createDisplayTodayInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime todayBeginning = now.withMinute(DATETIME_MINUTE_MINIMUM)
+				.withHour(DATETIME_HOUR_MINIMUM);
+		LocalDateTime todayEnd = now.withMinute(DATETIME_MINUTE_MAXIMUM)
+				.withHour(DATETIME_HOUR_MAXIMUM);
+		assert todayBeginning.isBefore(todayEnd);
+		
+		Task displayTodayInfoPackage = new Task();
+		displayTodayInfoPackage.setStartDateTime(todayBeginning);
+		displayTodayInfoPackage.setEndDateTime(todayEnd);
+		return displayTodayInfoPackage;
+	}
+	
+	private Task createDisplayThisWeekInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime thisWeekBeginning = now.withMinute(DATETIME_MINUTE_MINIMUM)
+				.withHour(DATETIME_HOUR_MINIMUM).with(DayOfWeek.MONDAY);
+		LocalDateTime thisWeekEnd = now.withMinute(DATETIME_MINUTE_MAXIMUM)
+				.withHour(DATETIME_HOUR_MAXIMUM).with(DayOfWeek.SUNDAY);
+		assert thisWeekBeginning.isBefore(thisWeekEnd);
+		
+		Task displayThisWeekInfoPackage = new Task();
+		displayThisWeekInfoPackage.setStartDateTime(thisWeekBeginning);
+		displayThisWeekInfoPackage.setEndDateTime(thisWeekEnd);
+		return displayThisWeekInfoPackage;
+	}
+	
+	private Task createDisplayTomorrowInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tomorrowBeginning = now.withMinute(DATETIME_MINUTE_MINIMUM)
+				.withHour(DATETIME_HOUR_MINIMUM).plusDays(EXTRA_TIME_DAY);
+		LocalDateTime tomorrowEnd = now.withMinute(DATETIME_MINUTE_MAXIMUM)
+				.withHour(DATETIME_HOUR_MAXIMUM).plusDays(EXTRA_TIME_DAY);
+		assert tomorrowBeginning.isBefore(tomorrowEnd);
+		
+		Task displayTomorrowInfoPackage = new Task();
+		displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
+		displayTomorrowInfoPackage.setEndDateTime(tomorrowEnd);
+		return displayTomorrowInfoPackage;
 	}
 
 	private LocalDateTime getBeginningOfDay(LocalDateTime dateTime) {
