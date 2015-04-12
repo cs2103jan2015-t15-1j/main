@@ -579,12 +579,13 @@ public class Translator {
 	
 	private Task createDisplayOneWeekInfoPackage() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime oneWeekLater = getEndOfDay(now.plusDays(DAYS_IN_ONE_WEEK));
-		assert now.isBefore(oneWeekLater);
+		LocalDateTime todayBeginning = getBeginningOfDay(now);
+		LocalDateTime oneWeekLaterEnd = getEndOfDay(now.plusDays(DAYS_IN_ONE_WEEK));
+		assert now.isBefore(oneWeekLaterEnd);
 		
 		Task displayOneWeekInfoPackage = new Task();
-		displayOneWeekInfoPackage.setStartDateTime(now);
-		displayOneWeekInfoPackage.setEndDateTime(oneWeekLater);
+		displayOneWeekInfoPackage.setStartDateTime(todayBeginning);
+		displayOneWeekInfoPackage.setEndDateTime(oneWeekLaterEnd);
 		displayOneWeekInfoPackage.setDescription(EMPTY_STRING);
 		return displayOneWeekInfoPackage;
 	}

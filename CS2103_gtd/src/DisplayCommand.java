@@ -11,12 +11,12 @@ public class DisplayCommand implements Command {
 
 	@Override
 	public String execute() {
-		if (displayObj.getDone() == true) {
-			String displayFeedback = storage.searchDone();
+		String displayFeedback = "";
+		if (displayObj.isDone() == true) {
+			displayFeedback = storage.getDoneTasksAsString();
 		} else {
-			String displayFeedback = storage.search(displayObj);
+			displayFeedback = storage.search(displayObj);
 		}
-		String displayFeedback = storage.getTasksAsString();
 		return displayFeedback;
 	}
 
