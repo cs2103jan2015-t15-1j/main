@@ -1,25 +1,22 @@
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 
 //@author A0135280M
 public class StorageSearch {
     
-    public String search(Map<Integer, Task> tasks, Task searchObj, int lastIdNo) {
-        ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
-        int[] foundTasks = new int[lastIdNo];
+    public String search(ArrayList<Task> taskList, Task searchObj) {
+        Collections.sort(taskList);
+        int[] foundTasks = new int[taskList.size()];
         
         foundTasks = searchOnKeyword(taskList, searchObj, foundTasks);
         foundTasks = searchOnDate(taskList, searchObj, foundTasks);
 
-//        ArrayList<Task> searchResult = new ArrayList<Task>();
         String searchResult = "";
         for (int i=0; i<foundTasks.length; i++) {
             if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
-//                Task task = tasks.get(i+1);
-//                searchResult += "\n" + task.getUserFormat();
-                searchResult += taskList.get(i);
+                Task newTask = taskList.get(i);
+                searchResult += "\n" + newTask.getUserFormat();
             }
         }
         return searchResult;
@@ -28,11 +25,11 @@ public class StorageSearch {
     private int[] searchOnKeyword(ArrayList<Task> tasks, Task searchObj, 
             int[] foundTasks) {
         String keyword = searchObj.getDescription();
-        for (Task task : tasks) {
+        for (int i=0; i<tasks.size(); i++) {
+            Task task = tasks.get(i);
             String taskDesc = task.getDescription();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                int index = task.getId()-1;
-                foundTasks[index] = Constants.INCLUDED_IN_SEARCH;
+                foundTasks[i] = Constants.INCLUDED_IN_SEARCH;
             }
         }
         return foundTasks;
@@ -42,10 +39,10 @@ public class StorageSearch {
         LocalDateTime startDate = searchObj.getStartDateTime();
         LocalDateTime endDate = searchObj.getEndDateTime();
         if (isDateSearch(startDate, endDate)) {
-            for (Task task : tasks) {
-                int index = task.getId()-1;
-                foundTasks[index] = isTaskInInterval(task, startDate, 
-                        endDate, foundTasks[index]);
+            for (int i=0; i<tasks.size(); i++) {
+                Task task = tasks.get(i);
+                foundTasks[i] = isTaskInInterval(task, startDate, 
+                        endDate, foundTasks[i]);
             }
         }
         return foundTasks;

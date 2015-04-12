@@ -185,15 +185,13 @@ public class Storage {
             }
         }
         
-//        Collections.sort(unfinishedTasks);
-        String searchResult = storageSearch.search(tasks, displayObj, lastIdNumber);
+        String searchResult = storageSearch.search(unfinishedTasks, displayObj);
         String floatingTasks = getFloatingTasksAsString();
         
         if (searchResult == "" && floatingTasks == "") {
             displayTasks += Constants.MESSAGE_NO_TASKS;
         } else {
             displayTasks += Constants.DISPLAY_TABLE_HEADERS;
-            displayTasks += doneTasks;
             displayTasks += floatingTasks;
             displayTasks += searchResult;
         }
@@ -203,7 +201,8 @@ public class Storage {
     
     public String search(Task searchObj) {
         String feedback;
-        String result = storageSearch.search(tasks, searchObj, lastIdNumber);
+        ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
+        String result = storageSearch.search(taskList, searchObj);
         if (result.equals("")) {
             feedback = Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
         } else {

@@ -36,7 +36,7 @@ public final class Constants {
     public static final String DISPLAY_TABLE_HEADERS = "\n" + String.format("%-4s%-8s%-5s%-23s%-23s%s", "ID", "Status","Done", "Start (DD-MM-YYYY)", "End (DD-MM-YYYY)", "Description");
 	public static final String DISPLAY_DONE = "[x]";
 	public static final String DISPLAY_UNDONE = "[ ]";
-	public static final String DISPLAY_OVERDUE = "OverDue";
+	public static final String DISPLAY_OVERDUE = "overdue";
 	public static final String EDIT_FORMAT = "%-15s%s";
 	
 	

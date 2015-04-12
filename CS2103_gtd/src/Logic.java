@@ -31,8 +31,8 @@ public class Logic {
 		} catch (Exception e) {
             return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
         }
-			String feedback = command.execute();
-			return feedback;
+		String feedback = command.execute();
+		return feedback;
 		
 
 	}
