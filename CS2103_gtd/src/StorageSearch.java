@@ -1,45 +1,48 @@
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
 
 //@author A0135280M
 public class StorageSearch {
     
-    public String search(Map<Integer, Task> tasks, Task searchObj, int lastIdNo) {
-        int[] foundTasks = new int[lastIdNo];
-        foundTasks = searchOnKeyword(tasks, searchObj, foundTasks);
-        foundTasks = searchOnDate(tasks, searchObj, foundTasks);
+    public String search(ArrayList<Task> taskList, Task searchObj) {
+        Collections.sort(taskList);
+        int[] foundTasks = new int[taskList.size()];
+        
+        foundTasks = searchOnKeyword(taskList, searchObj, foundTasks);
+        foundTasks = searchOnDate(taskList, searchObj, foundTasks);
 
         String searchResult = "";
         for (int i=0; i<foundTasks.length; i++) {
             if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
-                Task task = tasks.get(i+1);
-                searchResult += "\n" + task.getUserFormat();
+                Task newTask = taskList.get(i);
+                searchResult += "\n" + newTask.getUserFormat();
             }
         }
         return searchResult;
     }
     
-    private int[] searchOnKeyword(Map<Integer, Task> tasks, Task searchObj, 
+    private int[] searchOnKeyword(ArrayList<Task> tasks, Task searchObj, 
             int[] foundTasks) {
         String keyword = searchObj.getDescription();
-        for (Task task : tasks.values()) {
+        for (int i=0; i<tasks.size(); i++) {
+            Task task = tasks.get(i);
             String taskDesc = task.getDescription();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
-                int index = task.getId()-1;
-                foundTasks[index] = Constants.INCLUDED_IN_SEARCH;
+                foundTasks[i] = Constants.INCLUDED_IN_SEARCH;
             }
         }
         return foundTasks;
     }
     
-    private int[] searchOnDate(Map<Integer, Task> tasks, Task searchObj, int[] foundTasks) {
+    private int[] searchOnDate(ArrayList<Task> tasks, Task searchObj, int[] foundTasks) {
         LocalDateTime startDate = searchObj.getStartDateTime();
         LocalDateTime endDate = searchObj.getEndDateTime();
         if (isDateSearch(startDate, endDate)) {
-            for (Task task : tasks.values()) {
-                int index = task.getId()-1;
-                foundTasks[index] = isTaskInInterval(task, startDate, 
-                        endDate, foundTasks[index]);
+            for (int i=0; i<tasks.size(); i++) {
+                Task task = tasks.get(i);
+                foundTasks[i] = isTaskInInterval(task, startDate, 
+                        endDate, foundTasks[i]);
             }
         }
         return foundTasks;
@@ -63,7 +66,7 @@ public class StorageSearch {
             startIsAfter = taskStartDate.isAfter(searchStartDate);
             startIsOn = taskStartDate.equals(searchStartDate);
         } else {
-            System.err.println(Constants.MESSAGE_GENERAL_ERROR);
+            return originalValue;
         }
         endIsBefore = taskEndDate.isBefore(searchEndDate);
         endIsOn = taskEndDate.equals(searchEndDate);

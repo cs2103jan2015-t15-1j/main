@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+
 //@author A0135280M
 public class DisplayCommand implements Command {
 
@@ -14,10 +16,18 @@ public class DisplayCommand implements Command {
 		String displayFeedback = "";
 		if (displayObj.isDone() == true) {
 			displayFeedback = storage.getDoneTasksAsString();
+		} else if (isDisplayAllCommand()) {
+		    displayFeedback = storage.getTasksAsString();
 		} else {
-			displayFeedback = storage.display(displayObj);
+			displayFeedback = storage.displayByDate(displayObj);
 		}
 		return displayFeedback;
+	}
+	
+	private boolean isDisplayAllCommand() {
+	    LocalDateTime start = displayObj.getStartDateTime();
+	    LocalDateTime end = displayObj.getEndDateTime();
+	    return start.equals(LocalDateTime.MIN) && end.equals(LocalDateTime.MAX);
 	}
 
 	//@author generated
