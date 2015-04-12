@@ -16,11 +16,7 @@ public class StorageSearch {
                 searchResult += "\n" + task.getUserFormat();
             }
         }
-        
-        if (searchResult.equals("")) {
-            return Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
-        }
-        return Constants.DISPLAY_TABLE_HEADERS+"\n"+searchResult;
+        return searchResult;
     }
     
     private int[] searchOnKeyword(Map<Integer, Task> tasks, Task searchObj, 

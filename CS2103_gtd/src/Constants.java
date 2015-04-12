@@ -25,13 +25,15 @@ public final class Constants {
     public static final String MESSAGE_NO_DONE_TAKS = "You have no done tasks to delete";
     public static final String MESSAGE_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
     public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
-    public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks containing your keyword was found";
+    public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks matched your search criterias";
+    public static final String MESSAGE_TIME_PERIOD = "DISPLAY TASKS FROM %1$s TO %1$s\n";
+    public static final String MESSAGE_DISPLAY_ALL = "DISPLAY ALL TASKS\n";
     
 	// Formatting
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-    public static final String DISPLAY_TABLE_HEADERS = String.format("%-4s%-8s%-19s%-19s%s", "ID", "Status", "Start Time", "End Time", "Description");
-	public static final String DISPLAY_DONE = "\u2714";
+    public static final String DISPLAY_TABLE_HEADERS = "\n" + String.format("%-4s%-8s%-19s%-19s%s", "ID", "Status", "Start Time", "End Time", "Description");
+    public static final String DISPLAY_DONE = "\u2714";
 	public static final String DISPLAY_OVERDUE = "!";
 	public static final String EDIT_FORMAT = "%-15s%s";
 	

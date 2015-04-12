@@ -85,14 +85,16 @@ public class Task implements Comparable<Task> {
 	}
     
     public boolean isEventTask() {
-        if (startDateTime != null && endDateTime != null) {
+        if ((startDateTime != null && !startDateTime.equals(LocalDateTime.MIN)) && 
+                (endDateTime != null && !endDateTime.equals(LocalDateTime.MAX))) {
             return true;
         }
         return false;
     }
     
     public boolean isDeadlineTask() {
-        if (startDateTime == null && endDateTime != null) {
+        if ((startDateTime == null || startDateTime.equals(LocalDateTime.MIN)) && 
+                (endDateTime != null && !endDateTime.equals(LocalDateTime.MAX))) {
             return true;
         }
         return false;

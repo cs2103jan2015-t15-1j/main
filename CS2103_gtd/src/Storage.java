@@ -137,6 +137,37 @@ public class Storage {
         return taskArray;
     }
     
+    public String display(Task displayObj) {
+        String displayTasks = "\n";
+        
+        if (displayObj.isEventTask()) {
+            String startTime = displayObj.getStartDateTimeInString();
+            String endTime = displayObj.getEndDateTimeInString();
+            displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, startTime, endTime);
+        } else if (displayObj.isDeadlineTask()) {
+            String endTime = displayObj.getEndDateTimeInString();
+            displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, "now", endTime);
+        } else {
+            displayTasks += Constants.MESSAGE_DISPLAY_ALL;
+        }
+        
+        displayTasks += Constants.DISPLAY_TABLE_HEADERS;
+        displayTasks += storageSearch.search(tasks, displayObj, lastIdNumber);
+        displayTasks += getFloatingTasksAsString();
+        return displayTasks;
+    }
+    
+    public String search(Task searchObj) {
+        String feedback;
+        String result = storageSearch.search(tasks, searchObj, lastIdNumber);
+        if (result.equals("")) {
+            feedback = Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
+        } else {
+            feedback = Constants.DISPLAY_TABLE_HEADERS+"\n"+result;
+        }
+        return feedback;
+    }
+    
     public String getTasksAsString() {
         ArrayList<Task> taskList = new ArrayList<Task>();
         taskList.addAll(getDoneTasks());
@@ -184,9 +215,14 @@ public class Storage {
         return doneTasksString;
     }
     
-    public String search(Task searchObj) {
-        String feedback = storageSearch.search(tasks, searchObj, lastIdNumber);
-        return feedback;
+    private String getFloatingTasksAsString() {
+        String floatingTasksString = "";
+        for (Task task : tasks.values()) {
+            if (task.isFloatingTask()) {
+                floatingTasksString += "\n" + task.getUserFormat();
+            }
+        }
+        return floatingTasksString;
     }
     
     public void writeToFile() {

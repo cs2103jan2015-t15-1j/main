@@ -15,7 +15,7 @@ public class DisplayCommand implements Command {
 		if (displayObj.isDone() == true) {
 			displayFeedback = storage.getDoneTasksAsString();
 		} else {
-			displayFeedback = storage.search(displayObj);
+			displayFeedback = storage.display(displayObj);
 		}
 		return displayFeedback;
 	}
