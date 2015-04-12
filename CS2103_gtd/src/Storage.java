@@ -50,7 +50,7 @@ public class Storage {
         }
         tasks.put(taskId, newTask);
         writeToFile();
-        return String.format(Constants.MESSAGE_ADDED, newTask.getId(), newTask.getDescription());
+        return newTask.getUserFormat();
     }
     
     public String delete(int id) {
@@ -111,7 +111,7 @@ public class Storage {
             doneTask.setDone(setDone);
             tasks.put(id, doneTask);
             writeToFile();
-            return String.format(Constants.MESSAGE_UPDATED, doneTask.getId());
+            return doneTask.getUserFormat();
         }
         return Constants.MESSAGE_INCORRECT_ID;
     }

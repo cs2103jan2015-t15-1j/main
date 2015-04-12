@@ -22,19 +22,23 @@ class EditCommand implements Command {
 	@Override
 	public String execute() {
 		int taskId = newTask.getId();
+		updateStorage(taskId);
+
+		Task realTask = storage.getTask(taskId);
+		String feedbackOriginal = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_ORIGINAL,
+				oldTask.getUserFormat());
+		String feedbackChange = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_CHANGE,
+				realTask.getUserFormat());
+		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+		updateHistory();
+		return feedbackOriginal + "\n" + feedbackChange;
+	}
+
+	private void updateStorage(int taskId) {
 		oldTask = makeShallowCopyOfOriginalTask(taskId);
 		storage.updateDescription(taskId, newTask.getDescription());
 		storage.updateStartDate(taskId, newTask.getStartDateTime());
 		storage.updateEndDate(taskId, newTask.getEndDateTime());
-
-		Task realTask = storage.getTask(taskId);
-		String feedbackOrg = String.format("%-15s%s", "Original Task:",
-				oldTask.getUserFormat());
-		String feedbackChange = String.format("%-15s%s", "Changed to:",
-				realTask.getUserFormat());
-		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
-		updateHistory();
-		return feedbackOrg + "\n" + feedbackChange;
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class DoneCommand implements Command {
 
 		}
 		updateHistory();
-		return userFeedback;
+		return Constants.MESSAGE_UPDATED +"\n"+ Constants.DISPLAY_TABLE_HEADERS +"\n"+userFeedback;
 	}
 
 	//@author A0111337U
