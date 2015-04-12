@@ -13,7 +13,7 @@ public class Translator {
 	// ==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
-	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START)|(beg)|(BEG))";
+	private static final String KEYWORD_ADD_EVENTSTART = "((begin)|(BEGIN)|(start)|(START))";
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = {
 			KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND };
@@ -584,7 +584,8 @@ public class Translator {
 		assert now.isBefore(oneWeekLaterEnd);
 		
 		Task displayOneWeekInfoPackage = new Task();
-		displayOneWeekInfoPackage.setStartDateTime(todayBeginning);
+		//displayOneWeekInfoPackage.setStartDateTime(todayBeginning);
+		displayOneWeekInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayOneWeekInfoPackage.setEndDateTime(oneWeekLaterEnd);
 		displayOneWeekInfoPackage.setDescription(EMPTY_STRING);
 		return displayOneWeekInfoPackage;
@@ -616,7 +617,8 @@ public class Translator {
 		assert todayBeginning.isBefore(todayEnd);
 		
 		Task displayTodayInfoPackage = new Task();
-		displayTodayInfoPackage.setStartDateTime(todayBeginning);
+		//displayTodayInfoPackage.setStartDateTime(todayBeginning);
+		displayTodayInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayTodayInfoPackage.setEndDateTime(todayEnd);
 		displayTodayInfoPackage.setDescription(EMPTY_STRING);
 		return displayTodayInfoPackage;
@@ -629,7 +631,8 @@ public class Translator {
 		assert thisWeekBeginning.isBefore(thisWeekEnd);
 		
 		Task displayThisWeekInfoPackage = new Task();
-		displayThisWeekInfoPackage.setStartDateTime(thisWeekBeginning);
+		//displayThisWeekInfoPackage.setStartDateTime(thisWeekBeginning);
+		displayThisWeekInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayThisWeekInfoPackage.setEndDateTime(thisWeekEnd);
 		displayThisWeekInfoPackage.setDescription(EMPTY_STRING);
 		return displayThisWeekInfoPackage;
@@ -642,7 +645,8 @@ public class Translator {
 		assert tomorrowBeginning.isBefore(tomorrowEnd);
 		
 		Task displayTomorrowInfoPackage = new Task();
-		displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
+		//displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
+		displayTomorrowInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayTomorrowInfoPackage.setEndDateTime(tomorrowEnd);
 		displayTomorrowInfoPackage.setDescription(EMPTY_STRING);
 		return displayTomorrowInfoPackage;
