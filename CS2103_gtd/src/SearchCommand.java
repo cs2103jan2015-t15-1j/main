@@ -14,7 +14,8 @@ public class SearchCommand implements Command {
 		String searchFeedback = storage.search(searchObj);
 		return searchFeedback;
 	}
-
+	
+	//@author generated
 	@Override
 	public Command makeUndo() {
 		return null;

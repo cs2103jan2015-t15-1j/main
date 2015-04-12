@@ -30,12 +30,15 @@ public final class Constants {
     public static final String MESSAGE_DISPLAY_ALL = "DISPLAY ALL TASKS\n";
     
 	// Formatting
+    public static final String DISPLAY_TASK_FORMAT = "%-4d%-7s%-5s%-19s%-19s%s";
 	public static final String FORMAT_DISPLAY_TASKINFO = "\nTaskID: %1$d\n%2$s\nStart: %3$s\nEnd: %4$s\n";
 	public static final DateTimeFormatter FORMAT_STORAGE_DATETIME = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-    public static final String DISPLAY_TABLE_HEADERS = "\n" + String.format("%-4s%-8s%-19s%-19s%s", "ID", "Status", "Start Time", "End Time", "Description");
-    public static final String DISPLAY_DONE = "\u2714";
+    public static final String DISPLAY_TABLE_HEADERS = "\n" + String.format("%-4s%-7s%-5s%-19s%-19s%s", "ID", "Status","Done", "    Start Time", "    End Time", "Description");
+	public static final String DISPLAY_DONE = "[x]";
+	public static final String DISPLAY_UNDONE = "[ ]";
 	public static final String DISPLAY_OVERDUE = "!";
 	public static final String EDIT_FORMAT = "%-15s%s";
+	
 	
 	// Numbers
 	public static final int NO_ID_GIVEN = -1;

@@ -108,17 +108,18 @@ public class Task implements Comparable<Task> {
     }
     
     public String getUserFormat() {
+    	String doneImage = Constants.DISPLAY_UNDONE;
         String statusImage = "";
         if (isDone()) {
-            statusImage = Constants.DISPLAY_DONE;
+            doneImage = Constants.DISPLAY_DONE;
         }
         if (isEventTask() && isOverdue(startDateTime)) {
             statusImage = Constants.DISPLAY_OVERDUE;
         } else if (isDeadlineTask() && isOverdue(endDateTime)) {
             statusImage = Constants.DISPLAY_OVERDUE;
         }
-        String feedback = String.format("%-4d%-8s%-19s%-19s%s", 
-                getId(), statusImage, getStartDateTimeInString(), 
+        String feedback = String.format(Constants.DISPLAY_TASK_FORMAT, 
+                getId(), statusImage, doneImage, getStartDateTimeInString(), 
                 getEndDateTimeInString(), getDescription());
         return feedback;
     }
