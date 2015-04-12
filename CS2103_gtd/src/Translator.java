@@ -417,9 +417,9 @@ public class Translator {
 					eventStart = interpretDateTimeParam(paramEventStart);
 					if (paramEventEnd == PARAMETER_DOES_NOT_EXIST) {
 						if (newTask.getEndDateTime() == null) {
-							System.err
-									.println("\nPlease provide end time as well\n");
-							return null;
+							newTask.setStartDateTime(eventStart);
+							newTask.setEndDateTime(eventStart.plusHours(EXTRA_TIME_HOUR));
+							doesEditParameterExist = true;
 						} else if (eventStart
 								.isBefore(newTask.getEndDateTime())) {
 							newTask.setStartDateTime(eventStart);
