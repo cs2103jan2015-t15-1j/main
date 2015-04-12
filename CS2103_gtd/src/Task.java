@@ -1,6 +1,5 @@
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.DayOfWeek;
 
 //@author A0135280M
 public class Task implements Comparable<Task> {
@@ -45,6 +44,15 @@ public class Task implements Comparable<Task> {
 		return endDateTime;
 	}
 	
+	//@author A0135295B
+    private static String getDateTimeInString(LocalDateTime dateTime) {
+        String dateTimeString = "";
+        if (dateTime != null) {
+            dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+        }
+        return dateTimeString;
+    }
+    
 	public String getStartDateTimeInString() {
 		return getDateTimeInString(getStartDateTime());
 	}
@@ -52,24 +60,25 @@ public class Task implements Comparable<Task> {
 	public String getEndDateTimeInString() {
 		return getDateTimeInString(getEndDateTime());
 	}
-	
-	public static String getDateTimeInStringForDisplay(LocalDateTime dateTime) {
-		String dateTimeString = "";
+    
+    private String getDateTimeForDisplay(LocalDateTime dateTime) {
+        String dateTimeString = "";
         if (dateTime != null) {
-        	dateTimeString = dateTime.getDayOfWeek().toString().substring(0, 3) + " ";
-        	dateTimeString += dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+            dateTimeString = dateTime.getDayOfWeek().toString().substring(0, 3) + " ";
+            dateTimeString += dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
         }
         return dateTimeString;
+    }
+	
+	public String getStartDateForDisplay() {
+	    return getDateTimeForDisplay(getStartDateTime());
 	}
 	
-	public static String getDateTimeInString(LocalDateTime dateTime) {
-		String dateTimeString = "";
-        if (dateTime != null) {
-        	dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
-        }
-        return dateTimeString;
-	}
+	public String getEndDateForDisplay() {
+        return getDateTimeForDisplay(getEndDateTime());
+    }
 	
+	//@author A0135280M
 	public boolean isDone() {
 		return done;
 	}
@@ -130,8 +139,8 @@ public class Task implements Comparable<Task> {
             statusImage = Constants.DISPLAY_OVERDUE;
         }
         String feedback = String.format(Constants.DISPLAY_TASK_FORMAT, 
-                getId(), statusImage, doneImage, getDateTimeInStringForDisplay(this.getStartDateTime()), 
-                getDateTimeInStringForDisplay(this.getEndDateTime()), getDescription());
+                getId(), statusImage, doneImage, getDateTimeForDisplay(this.getStartDateTime()), 
+                getDateTimeForDisplay(this.getEndDateTime()), getDescription());
         return feedback;
     }
     

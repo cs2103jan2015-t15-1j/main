@@ -163,24 +163,20 @@ public class Storage {
     }
     
     public String displayByDate(Task displayObj) {
-        Task[] taskArray = getAllTasks();
-        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
-        
         String displayTasks = "\n";
         if (displayObj.isEventTask()) {
-            String startTime = displayObj.getStartDateTimeInString();
-            String endTime = displayObj.getEndDateTimeInString();
+            String startTime = displayObj.getStartDateForDisplay();
+            String endTime = displayObj.getEndDateForDisplay();
             displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, startTime, endTime);
         } else if (displayObj.isDeadlineTask()) {
-            String endTime = displayObj.getEndDateTimeInString();
+            String endTime = displayObj.getEndDateForDisplay();
             displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, "NOW", endTime);
         }
         
-        String doneTasks = "";
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
         for (Task task : taskArray) {
-            if (task.isDone()) {
-                doneTasks += "\n" + task.getUserFormat();
-            } else {
+            if (!task.isDone()) {
                 unfinishedTasks.add(task);
             }
         }
