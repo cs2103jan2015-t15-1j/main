@@ -13,6 +13,8 @@ public final class Constants {
     public static final String MESSAGE_FILE_CHANGE = "The file %1$s is now used for storing tasks";
     public static final String MESSAGE_EDIT_ORIGINAL = "Original Task:";
     public static final String MESSAGE_EDIT_CHANGE = "Changed to:";
+    public static final String MESSAGE_TIME_PERIOD = "DISPLAY TASKS FROM %1$s TO %2$s\n";
+    public static final String MESSAGE_DISPLAY_ALL = "DISPLAY ALL TASKS\n";
 	
 	// Error Messages
     public static final String MESSAGE_GENERAL_ERROR = "Something went wrong";
@@ -26,8 +28,6 @@ public final class Constants {
     public static final String MESSAGE_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
     public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
     public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks matched your search criterias";
-    public static final String MESSAGE_TIME_PERIOD = "DISPLAY TASKS FROM %1$s TO %1$s\n";
-    public static final String MESSAGE_DISPLAY_ALL = "DISPLAY ALL TASKS\n";
     
 	// Formatting
     public static final String DISPLAY_TASK_FORMAT = "%-4d%-8s%-5s%-19s%-19s%s";

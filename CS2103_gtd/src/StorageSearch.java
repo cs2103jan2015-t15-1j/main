@@ -1,13 +1,18 @@
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 //@author A0135280M
 public class StorageSearch {
     
     public String search(Map<Integer, Task> tasks, Task searchObj, int lastIdNo) {
+        ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
+        Collections.sort(taskList);
         int[] foundTasks = new int[lastIdNo];
-        foundTasks = searchOnKeyword(tasks, searchObj, foundTasks);
-        foundTasks = searchOnDate(tasks, searchObj, foundTasks);
+        
+        foundTasks = searchOnKeyword(taskList, searchObj, foundTasks);
+        foundTasks = searchOnDate(taskList, searchObj, foundTasks);
 
         String searchResult = "";
         for (int i=0; i<foundTasks.length; i++) {
@@ -19,10 +24,10 @@ public class StorageSearch {
         return searchResult;
     }
     
-    private int[] searchOnKeyword(Map<Integer, Task> tasks, Task searchObj, 
+    private int[] searchOnKeyword(ArrayList<Task> tasks, Task searchObj, 
             int[] foundTasks) {
         String keyword = searchObj.getDescription();
-        for (Task task : tasks.values()) {
+        for (Task task : tasks) {
             String taskDesc = task.getDescription();
             if (taskDesc.toLowerCase().contains(keyword.toLowerCase())) {
                 int index = task.getId()-1;
@@ -32,16 +37,16 @@ public class StorageSearch {
         return foundTasks;
     }
     
-    private int[] searchOnDate(Map<Integer, Task> tasks, Task searchObj, int[] foundTasks) {
+    private int[] searchOnDate(ArrayList<Task> tasks, Task searchObj, int[] foundTasks) {
         LocalDateTime startDate = searchObj.getStartDateTime();
         LocalDateTime endDate = searchObj.getEndDateTime();
-        if (isDateSearch(startDate, endDate)) {
-            for (Task task : tasks.values()) {
+//        if (isDateSearch(startDate, endDate)) {
+            for (Task task : tasks) {
                 int index = task.getId()-1;
                 foundTasks[index] = isTaskInInterval(task, startDate, 
                         endDate, foundTasks[index]);
             }
-        }
+//        }
         return foundTasks;
     }
     

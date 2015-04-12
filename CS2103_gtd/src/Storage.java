@@ -146,7 +146,7 @@ public class Storage {
             displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, startTime, endTime);
         } else if (displayObj.isDeadlineTask()) {
             String endTime = displayObj.getEndDateTimeInString();
-            displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, "now", endTime);
+            displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, "NOW", endTime);
         } else {
             displayTasks += Constants.MESSAGE_DISPLAY_ALL;
         }
@@ -159,9 +159,9 @@ public class Storage {
             displayTasks += Constants.DISPLAY_TABLE_HEADERS;
             displayTasks += searchResult;
         }
-        if (!displayObj.isFloatingTask()) {
+//        if (!displayObj.isFloatingTask()) {
             displayTasks += floatingTasks;
-        }
+//        }
         return displayTasks;
     }
     
