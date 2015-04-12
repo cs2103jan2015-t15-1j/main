@@ -174,6 +174,15 @@ public class Storage {
         }
         return doneTasks;
     }
+
+    public String getDoneTasksAsString() {
+        String doneTasksString = "";
+        ArrayList<Task> doneTasks = getDoneTasks();
+        for (Task task : doneTasks) {
+            doneTasksString += "\n" + task.getUserFormat();
+        }
+        return doneTasksString;
+    }
     
     public String search(Task searchObj) {
         String feedback = storageSearch.search(tasks, searchObj, lastIdNumber);
