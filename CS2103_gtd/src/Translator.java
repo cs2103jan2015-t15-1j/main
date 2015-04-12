@@ -684,7 +684,7 @@ public class Translator {
 			}
 			assert startDateTime.isBefore(endDateTime);
 			return endDateTime;
-		} else if (date != null & time != null) {
+		} else if (date != null && time != null) {
 			LocalDateTime endDateTime = LocalDateTime.of(date, time);
 			if (endDateTime.isBefore(startDateTime)) {
 				System.err
@@ -693,9 +693,16 @@ public class Translator {
 			} else {
 				return endDateTime;
 			}
+		} else if (date != null && time == null) {
+			time = getStartOfNextHour(LocalTime.now());
+			return LocalDateTime.of(date, time);
 		} else {
 			return null;
 		}
+	}
+	
+	private LocalTime getStartOfNextHour(LocalTime ref) {
+		return ref.withMinute(DATETIME_MINUTE_MINIMUM).plusHours(EXTRA_TIME_HOUR);
 	}
 
 	private LocalDateTime interpretDateTimeParam(String param) {
@@ -707,6 +714,8 @@ public class Translator {
 		if (date == null && time != null) {
 			time = provideDefaultTime(time);
 			date = provideDefaultDate(time);
+		} else if (date != null && time == null) {
+			time = getStartOfNextHour(LocalTime.now());
 		}
 		return LocalDateTime.of(date, time);
 	}
