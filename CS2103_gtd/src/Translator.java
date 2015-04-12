@@ -559,7 +559,7 @@ public class Translator {
 	}
 	
 	private Task interpretDisplayParameter(String usercommand) {
-		String displayParam = extractSecondWord(usercommand);
+		String displayParam = removeFirstWord(usercommand);
 		if (displayParam.equals(EMPTY_STRING)) {
 			return createDisplayOneWeekInfoPackage();
 		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_ALL)) {
