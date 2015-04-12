@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 public final class Constants {
     
     // Feedback messages
-	public static final String MESSAGE_ADDED = "The task %1$d. %2$s, has been added";
+	public static final String MESSAGE_ADDED = "Added new Task:";
 	public static final String MESSAGE_DELETED = "Task nr %1$d has been deleted";
 	public static final String MESSAGE_UPDATED = "Task nr %1$d has been updated";
 	public static final String MESSAGE_ALL_DELETED = "All tasks are now deleted";
