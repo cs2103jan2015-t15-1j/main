@@ -61,6 +61,13 @@ public class StorageTest {
         endTest();
     }
     
+    private Task getDisplayAllSearchObj() {
+        Task t = new Task();
+        t.setStartDateTime(LocalDateTime.MIN);
+        t.setEndDateTime(LocalDateTime.MAX);
+        return t;
+    }
+    
     @Test
     public void deleteAllTasks() {
         initialize();
@@ -68,9 +75,9 @@ public class StorageTest {
         testTask.setDescription("test task");
         storage.add(testTask);
         storage.deleteAll();
-        String tasksFeedback = storage.getTasksAsString();
+        String tasksFeedback = storage.display(getDisplayAllSearchObj());
         assertEquals("Check that deleteAll() deletes all tasks\n", 
-                Constants.MESSAGE_NO_TASKS, tasksFeedback);
+                "\n"+Constants.MESSAGE_DISPLAY_ALL+Constants.MESSAGE_NO_TASKS, tasksFeedback);
         endTest();
     }
     
@@ -83,9 +90,9 @@ public class StorageTest {
         storage.add(testTask);
         int taskId = testTask.getId();
         storage.delete(taskId);
-        String tasksFeedback = storage.getTasksAsString();
+        String tasksFeedback = storage.display(getDisplayAllSearchObj());
         assertEquals("Check that delete(id) deletes the task\n", 
-                Constants.MESSAGE_NO_TASKS, tasksFeedback);
+                "\n"+Constants.MESSAGE_DISPLAY_ALL+Constants.MESSAGE_NO_TASKS, tasksFeedback);
         endTest();
     }
     

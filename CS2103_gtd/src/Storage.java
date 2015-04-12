@@ -151,8 +151,15 @@ public class Storage {
             displayTasks += Constants.MESSAGE_DISPLAY_ALL;
         }
         
-        displayTasks += Constants.DISPLAY_TABLE_HEADERS;
-        displayTasks += storageSearch.search(tasks, displayObj, lastIdNumber);
+        String searchResult = storageSearch.search(tasks, displayObj, lastIdNumber);
+        String floatingTasks = getFloatingTasksAsString();
+        if (searchResult == "" && floatingTasks == "") {
+            displayTasks += Constants.MESSAGE_NO_TASKS;
+        } else {
+            displayTasks += Constants.DISPLAY_TABLE_HEADERS;
+            displayTasks += searchResult;
+            displayTasks += floatingTasks;
+        }
         if (displayObj.isFloatingTask()) {
             displayTasks += getFloatingTasksAsString();
         }
