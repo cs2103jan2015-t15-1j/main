@@ -28,19 +28,6 @@ public class Task implements Comparable<Task> {
 	    done = d;
 	}
 	
-	public String getUserFormat() {
-	    String doneImage = "";
-	    if (this.getDone()) {
-	        doneImage = Constants.DISPLAY_DONE;
-	    } else {
-	        doneImage = Constants.DISPLAY_UNFINISHED;
-	    }
-	    String feedback = String.format("%-4d%-6s%-19s%-19s%s", 
-		        this.getId(), doneImage, this.getStartDateTimeInString(), 
-		        this.getEndDateTimeInString(), this.getDescription());
-	    return feedback;
-	}
-	
 	public int getId() {
 		return id;
 	}
@@ -73,7 +60,7 @@ public class Task implements Comparable<Task> {
         return dateTimeString;
 	}
 	
-	public boolean getDone() {
+	public boolean isDone() {
 		return done;
 	}
 	
@@ -96,6 +83,48 @@ public class Task implements Comparable<Task> {
 	public void setDone(boolean _done) {
 		done = _done;
 	}
+    
+    public boolean isEventTask() {
+        if (startDateTime != null && endDateTime != null) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isDeadlineTask() {
+        if (startDateTime == null && endDateTime != null) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isFloatingTask() {
+        if (startDateTime == null && endDateTime == null) {
+            return true;
+        }
+        return false;
+    }
+    
+    public String getUserFormat() {
+        String statusImage = "";
+        if (isDone()) {
+            statusImage = Constants.DISPLAY_DONE;
+        }
+        if (isEventTask() && isOverdue(startDateTime)) {
+            statusImage = Constants.DISPLAY_OVERDUE;
+        } else if (isDeadlineTask() && isOverdue(endDateTime)) {
+            statusImage = Constants.DISPLAY_OVERDUE;
+        }
+        String feedback = String.format("%-4d%-8s%-19s%-19s%s", 
+                getId(), statusImage, getStartDateTimeInString(), 
+                getEndDateTimeInString(), getDescription());
+        return feedback;
+    }
+    
+    private boolean isOverdue(LocalDateTime timeToCheck) {
+        LocalDateTime timeNow = LocalDateTime.now();
+        return timeToCheck.isBefore(timeNow);
+    }
 	
 	//@author A0135295B
 	@Override

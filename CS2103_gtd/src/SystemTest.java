@@ -39,7 +39,7 @@ public class SystemTest {
 		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];
-		assertEquals(taskOutput.getDone(), false);
+		assertEquals(taskOutput.isDone(), false);
 	}
 	
 	@Test

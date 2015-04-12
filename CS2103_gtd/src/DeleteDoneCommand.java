@@ -18,7 +18,7 @@ public class DeleteDoneCommand implements Command {
         String userFeedback = "";
         Task[] allTasks = storage.getAllTasks();
         for (Task task : allTasks) {
-            if (task.getDone()) {
+            if (task.isDone()) {
                 doneTasksList.add(task);
                 userFeedback += storage.delete(task.getId()) + "\n";
             }
