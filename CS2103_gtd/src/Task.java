@@ -53,11 +53,19 @@ public class Task implements Comparable<Task> {
 		return getDateTimeInString(getEndDateTime());
 	}
 	
-	public static String getDateTimeInString(LocalDateTime dateTime) {
+	public static String getDateTimeInStringForDisplay(LocalDateTime dateTime) {
 		String dateTimeString = "";
         if (dateTime != null) {
         	dateTimeString = dateTime.getDayOfWeek().toString().substring(0, 3) + " ";
         	dateTimeString += dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+        }
+        return dateTimeString;
+	}
+	
+	public static String getDateTimeInString(LocalDateTime dateTime) {
+		String dateTimeString = "";
+        if (dateTime != null) {
+        	dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
         }
         return dateTimeString;
 	}
@@ -122,8 +130,8 @@ public class Task implements Comparable<Task> {
             statusImage = Constants.DISPLAY_OVERDUE;
         }
         String feedback = String.format(Constants.DISPLAY_TASK_FORMAT, 
-                getId(), statusImage, doneImage, getStartDateTimeInString(), 
-                getEndDateTimeInString(), getDescription());
+                getId(), statusImage, doneImage, getDateTimeInStringForDisplay(this.getStartDateTime()), 
+                getDateTimeInStringForDisplay(this.getEndDateTime()), getDescription());
         return feedback;
     }
     
