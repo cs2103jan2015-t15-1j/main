@@ -8,17 +8,18 @@ public class StorageSearch {
     
     public String search(Map<Integer, Task> tasks, Task searchObj, int lastIdNo) {
         ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
-        Collections.sort(taskList);
         int[] foundTasks = new int[lastIdNo];
         
         foundTasks = searchOnKeyword(taskList, searchObj, foundTasks);
         foundTasks = searchOnDate(taskList, searchObj, foundTasks);
 
+//        ArrayList<Task> searchResult = new ArrayList<Task>();
         String searchResult = "";
         for (int i=0; i<foundTasks.length; i++) {
             if (foundTasks[i] == Constants.INCLUDED_IN_SEARCH) {
-                Task task = tasks.get(i+1);
-                searchResult += "\n" + task.getUserFormat();
+//                Task task = tasks.get(i+1);
+//                searchResult += "\n" + task.getUserFormat();
+                searchResult += taskList.get(i);
             }
         }
         return searchResult;
@@ -40,13 +41,13 @@ public class StorageSearch {
     private int[] searchOnDate(ArrayList<Task> tasks, Task searchObj, int[] foundTasks) {
         LocalDateTime startDate = searchObj.getStartDateTime();
         LocalDateTime endDate = searchObj.getEndDateTime();
-//        if (isDateSearch(startDate, endDate)) {
+        if (isDateSearch(startDate, endDate)) {
             for (Task task : tasks) {
                 int index = task.getId()-1;
                 foundTasks[index] = isTaskInInterval(task, startDate, 
                         endDate, foundTasks[index]);
             }
-//        }
+        }
         return foundTasks;
     }
     
@@ -68,7 +69,7 @@ public class StorageSearch {
             startIsAfter = taskStartDate.isAfter(searchStartDate);
             startIsOn = taskStartDate.equals(searchStartDate);
         } else {
-            System.err.println(Constants.MESSAGE_GENERAL_ERROR);
+            return originalValue;
         }
         endIsBefore = taskEndDate.isBefore(searchEndDate);
         endIsOn = taskEndDate.equals(searchEndDate);

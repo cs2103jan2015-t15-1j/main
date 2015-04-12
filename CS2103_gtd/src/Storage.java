@@ -137,9 +137,36 @@ public class Storage {
         return taskArray;
     }
     
-    public String display(Task displayObj) {
-        String displayTasks = "\n";
+    public String getTasksAsString() {
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
         
+        String allTasks = "\n" + Constants.MESSAGE_DISPLAY_ALL + 
+                Constants.DISPLAY_TABLE_HEADERS;
+        
+        for (Task task : taskArray) {
+            if (task.isDone()) {
+                allTasks += "\n" + task.getUserFormat();
+            } else {
+                unfinishedTasks.add(task);
+            }
+        }
+        
+        Collections.sort(unfinishedTasks);
+        for (Task newTask : unfinishedTasks) {
+            allTasks += "\n" + newTask.getUserFormat();
+        }
+        if (allTasks.equals("")) {
+            return Constants.MESSAGE_NO_TASKS;
+        }
+        return allTasks;
+    }
+    
+    public String displayByDate(Task displayObj) {
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
+        
+        String displayTasks = "\n";
         if (displayObj.isEventTask()) {
             String startTime = displayObj.getStartDateTimeInString();
             String endTime = displayObj.getEndDateTimeInString();
@@ -147,21 +174,30 @@ public class Storage {
         } else if (displayObj.isDeadlineTask()) {
             String endTime = displayObj.getEndDateTimeInString();
             displayTasks += String.format(Constants.MESSAGE_TIME_PERIOD, "NOW", endTime);
-        } else {
-            displayTasks += Constants.MESSAGE_DISPLAY_ALL;
         }
         
+        String doneTasks = "";
+        for (Task task : taskArray) {
+            if (task.isDone()) {
+                doneTasks += "\n" + task.getUserFormat();
+            } else {
+                unfinishedTasks.add(task);
+            }
+        }
+        
+//        Collections.sort(unfinishedTasks);
         String searchResult = storageSearch.search(tasks, displayObj, lastIdNumber);
         String floatingTasks = getFloatingTasksAsString();
+        
         if (searchResult == "" && floatingTasks == "") {
             displayTasks += Constants.MESSAGE_NO_TASKS;
         } else {
             displayTasks += Constants.DISPLAY_TABLE_HEADERS;
+            displayTasks += doneTasks;
+            displayTasks += floatingTasks;
             displayTasks += searchResult;
         }
-//        if (!displayObj.isFloatingTask()) {
-            displayTasks += floatingTasks;
-//        }
+        
         return displayTasks;
     }
     
@@ -189,7 +225,7 @@ public class Storage {
     private String getFloatingTasksAsString() {
         String floatingTasksString = "";
         for (Task task : tasks.values()) {
-            if (task.isFloatingTask()) {
+            if (task.isFloatingTask() && !task.isDone()) {
                 floatingTasksString += "\n" + task.getUserFormat();
             }
         }

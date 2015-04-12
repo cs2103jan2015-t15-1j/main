@@ -28,11 +28,12 @@ public class Logic {
 		Command command;
 		try {
 			command = translator.createCommand(userInput);
+		} catch (Exception e) {
+            return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
+        }
 			String feedback = command.execute();
 			return feedback;
-		} catch (Exception e) {
-			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
-		}
+		
 
 	}
 
