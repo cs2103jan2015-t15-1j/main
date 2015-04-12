@@ -18,8 +18,8 @@ public class StorageTest {
     }
     
     private void endTest() {
-        storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
         storage.deleteAll();
+        storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
     }
     
     @Test

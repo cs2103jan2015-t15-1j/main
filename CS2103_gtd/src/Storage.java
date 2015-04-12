@@ -158,10 +158,9 @@ public class Storage {
         } else {
             displayTasks += Constants.DISPLAY_TABLE_HEADERS;
             displayTasks += searchResult;
-            displayTasks += floatingTasks;
         }
-        if (displayObj.isFloatingTask()) {
-            displayTasks += getFloatingTasksAsString();
+        if (!displayObj.isFloatingTask()) {
+            displayTasks += floatingTasks;
         }
         return displayTasks;
     }
