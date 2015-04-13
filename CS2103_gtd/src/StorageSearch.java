@@ -5,6 +5,13 @@ import java.util.Collections;
 //@author A0135280M
 public class StorageSearch {
     
+    /**
+     * Goes through the given task list and checks which tasks that both includes
+     * the search word and is inside the search span. 
+     * @param taskList: ArrayList of tasks to be checked
+     * @param searchObj: Task object containing all search criterias
+     * @return String with the found tasks in a user readable format
+     */
     public String search(ArrayList<Task> taskList, Task searchObj) {
         Collections.sort(taskList);
         int[] foundTasks = new int[taskList.size()];
@@ -22,6 +29,14 @@ public class StorageSearch {
         return searchResult;
     }
     
+    /**
+     * Checks which tasks that includes the search word in their description
+     * @param tasks: ArrayList of tasks to search from
+     * @param searchObj: Task object containing the search criterias
+     * @param foundTasks: Binary array with 1s for the tasks which still meets 
+     * the search criteria and 0s for those who don't
+     * @return the updated foundTasks array
+     */
     private int[] searchOnKeyword(ArrayList<Task> tasks, Task searchObj, 
             int[] foundTasks) {
         String keyword = searchObj.getDescription();
@@ -35,6 +50,14 @@ public class StorageSearch {
         return foundTasks;
     }
     
+    /**
+     * Checks which tasks that is included in the time span
+     * @param tasks: ArrayList of tasks to search from
+     * @param searchObj: Task object containing the search criterias
+     * @param foundTasks: Binary array with 1s for the tasks which still meets 
+     * the search criteria and 0s for those who don't
+     * @return the updated foundTasks array
+     */
     private int[] searchOnDate(ArrayList<Task> tasks, Task searchObj, int[] foundTasks) {
         LocalDateTime startDate = searchObj.getStartDateTime();
         LocalDateTime endDate = searchObj.getEndDateTime();
@@ -48,6 +71,9 @@ public class StorageSearch {
         return foundTasks;
     }
     
+    /**
+     * Checks in a task is included in a given time interval 
+     */
     private int isTaskInInterval(Task task, LocalDateTime searchStartDate, 
             LocalDateTime searchEndDate, int originalValue) {
         LocalDateTime taskStartDate = task.getStartDateTime();
@@ -66,7 +92,7 @@ public class StorageSearch {
             startIsAfter = taskStartDate.isAfter(searchStartDate);
             startIsOn = taskStartDate.equals(searchStartDate);
         } else {
-            return originalValue;
+            assert false; //should never get here
         }
         endIsBefore = taskEndDate.isBefore(searchEndDate);
         endIsOn = taskEndDate.equals(searchEndDate);

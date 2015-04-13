@@ -127,6 +127,10 @@ public class Task implements Comparable<Task> {
         return false;
     }
     
+    /**
+     * Returns a string in tabular format with all task information formatted 
+     * to be displayed to the user
+     */
     public String getUserFormat() {
     	String doneImage = Constants.DISPLAY_UNDONE;
         String statusImage = "";

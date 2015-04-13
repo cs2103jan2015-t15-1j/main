@@ -28,6 +28,7 @@ public final class Constants {
     public static final String MESSAGE_NO_VALID_IDs = "No task(s) corresponding to the requested ID(s) could be found.";
     public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
     public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks matched your search criterias";
+    public static final String MESSAGE_UNSUCCESSFUL_FILE_CHANGE = "The storage path could not be changed to %1$s";
     
 	// Formatting
     public static final String DISPLAY_TASK_FORMAT = "%-4d%-8s%-5s%-23s%-23s%s";
@@ -37,6 +38,7 @@ public final class Constants {
 	public static final String DISPLAY_DONE = "[x]";
 	public static final String DISPLAY_UNDONE = "[ ]";
 	public static final String DISPLAY_OVERDUE = "overdue";
+	public static final String DISPLAY_TIME_NOW = "NOW";
 	public static final String EDIT_FORMAT = "%-15s%s";
 	
 	

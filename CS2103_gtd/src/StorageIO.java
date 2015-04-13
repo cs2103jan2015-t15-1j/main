@@ -58,10 +58,11 @@ public class StorageIO {
             BufferedWriter output = new BufferedWriter(new FileWriter(configFile));
             output.write(path);
             output.close();
+            return String.format(Constants.MESSAGE_FILE_CHANGE, storageFilePath);
         } catch (IOException e) {
             e.printStackTrace();
+            return String.format(Constants.MESSAGE_UNSUCCESSFUL_FILE_CHANGE, storageFilePath);
         }
-        return String.format(Constants.MESSAGE_FILE_CHANGE, storageFilePath);
     }
     
     public int getLastIdNumber() {
