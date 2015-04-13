@@ -21,6 +21,11 @@ public class StorageIO {
 		return storageFilePath;
 	}
 
+	/**
+	 * Get the storage file path if any saved in the config file, otherwise 
+	 * create a new one.
+	 * @return the storage file path
+	 */
 	public String initializeConfigFile() throws IOException {
 		configFilePath = System.getProperty("user.dir") + "/config.txt";
 		File file = new File(configFilePath);
@@ -39,8 +44,7 @@ public class StorageIO {
 				}
 			}
 		} catch (IOException e) {
-			throw new IOException(
-					"TaskWaltz was not able to retrieve your data. Check your directory path in config.txtF");
+			throw new IOException(Constants.MESSAGE_ERROR_CONFIG_FILE);
 		}
 		return storageFilePath;
 	}
@@ -50,10 +54,13 @@ public class StorageIO {
 				+ Constants.DEFAULT_STORAGE_PATH;
 	}
 
+	/**
+	 * Set a new storage file path and save it to the config file
+	 * @param path     the new storage file path
+	 */
 	public String setFilePath(String path) throws IOException {
-
 		if (!path.contains(".json")) {
-			return "Please specify the directory, file name and extension(.json)";
+			return Constants.MESSAGE_ERROR_NOT_JSON;
 		}
 		storageFilePath = path;
 		File file = new File(storageFilePath);
@@ -62,10 +69,10 @@ public class StorageIO {
 				file.createNewFile();
 			}
 			File configFile = new File(configFilePath);
-			configFile.createNewFile();// to remove the old config file if any
+			configFile.createNewFile(); // to remove the old config file if any
 			BufferedWriter output = new BufferedWriter(new FileWriter(
 					configFile));
-			output.write(path);// write the storage file path
+			output.write(path); // write the storage file path
 			output.flush();
 			output.close();
 			return String
@@ -81,6 +88,9 @@ public class StorageIO {
 		return lastIdNumber;
 	}
 
+	/**
+	 * Turn the task objects into JSON and save to file
+	 */
 	public void writeToFile(Map<Integer, Task> tasks) {
 		JSONObject jsonObj = new JSONObject();
 
@@ -110,6 +120,9 @@ public class StorageIO {
 		}
 	}
 
+	/**
+	 * Read data from the storage file and create Task objects
+	 */
 	public void getDataFromFile(Map<Integer, Task> tasks) {
 		String jsonStr = "";
 		try {
@@ -130,10 +143,6 @@ public class StorageIO {
 
 	}
 
-	/*
-	 * JSON example: { tasks: [ { desc: do something, startDate: 190215 endDate:
-	 * 200215 done: false }, { ... }, { ... }, ...] }
-	 */
 	private void createTasksFromJson(String jsonStr, Map<Integer, Task> tasks) {
 		JSONObject jsonObj = new JSONObject(jsonStr);
 		JSONArray jsonArr = jsonObj.getJSONArray("tasks");

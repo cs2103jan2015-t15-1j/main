@@ -65,7 +65,7 @@ public class StorageTest {
         testTask.setDescription("test task");
         storage.add(testTask);
         storage.deleteAll();
-        String tasksFeedback = storage.getTasksAsString();
+        String tasksFeedback = storage.getAllTasksAsString();
         assertEquals("Check that deleteAll() deletes all tasks\n", 
                 Constants.MESSAGE_NO_TASKS, tasksFeedback);
     }
@@ -78,7 +78,7 @@ public class StorageTest {
         storage.add(testTask);
         int taskId = testTask.getId();
         storage.delete(taskId);
-        String tasksFeedback = storage.getTasksAsString();
+        String tasksFeedback = storage.getAllTasksAsString();
         assertEquals("Check that delete(id) deletes the task\n", 
                 Constants.MESSAGE_NO_TASKS, tasksFeedback);
     }
