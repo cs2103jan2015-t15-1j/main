@@ -190,8 +190,8 @@ interface Command {
 	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\EditCommand.java
 	 */
 
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class EditCommand implements Command {
 	Task newTask;
@@ -199,14 +199,14 @@ class EditCommand implements Command {
 	Storage storage;
 	History history;
 
-//	private static final Logger logger = Logger.getLogger(EditCommand.class
-//			.getName());
+	private static final Logger logger = Logger.getLogger(EditCommand.class
+			.getName());
 
 	public EditCommand(Storage _storage, History _history, Task _newTask) {
 		newTask = _newTask;
 		storage = _storage;
 		history = _history;
-		// logger.log(Level.CONFIG, newTask.getUserFormat());
+		logger.log(Level.CONFIG, newTask.getUserFormat());
 
 	}
 
@@ -216,11 +216,11 @@ class EditCommand implements Command {
 		updateStorage(taskId);
 
 		Task realTask = storage.getTask(taskId);
-		String feedbackOriginal = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_ORIGINAL,
-				oldTask.getUserFormat());
-		String feedbackChange = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_CHANGE,
-				realTask.getUserFormat());
-		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+		String feedbackOriginal = String.format(Constants.EDIT_FORMAT,
+				Constants.MESSAGE_EDIT_ORIGINAL, oldTask.getUserFormat());
+		String feedbackChange = String.format(Constants.EDIT_FORMAT,
+				Constants.MESSAGE_EDIT_CHANGE, realTask.getUserFormat());
+		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		updateHistory();
 		return feedbackOriginal + "\n" + feedbackChange;
 	}
@@ -377,12 +377,13 @@ public class Logic {
 	}
 
 	public String initializeEnvironment() {
-		storage = new Storage();
+        StorageIO storageIO = new StorageIO();
+		storage = new Storage(storageIO);
 		String initializationFeedback;
 		try {
 			initializationFeedback = storage.prepareStorage();
 		} catch (IOException e) {
-			return "TaskWaltz was not able to retrieve your data. Check your directory path in config.txt";
+			return e.getMessage();
 		}
 		history = new History();
 		translator = new Translator(storage, history);
@@ -416,7 +417,8 @@ public class Logic {
 
 public class LogicTest {
 
-	Storage storage = new Storage();
+    StorageIO storageIO = new StorageIoMock();
+	Storage storage = new Storage(storageIO);
 	String fileName = "file_path_for_test.txt";
 	Logic logic = Logic.getLogicObject();
 
@@ -506,223 +508,7 @@ public class LogicTest {
 				expected, feedback);
 	}
 
-	/*
-	 * @Test public void deleteCommandNonEmptyFile(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world"); String
-	 * feedback = logic.execute("delete 1");
-	 * assertEquals("Check deletion of empty file", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo delete command works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ;
-	 * assertEquals("Check that redo undo of delete command works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void deleteMultipleValid(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world");
-	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
-	 * String feedback = logic.execute("delete 1,2,3");
-	 * assertEquals("Check deletion of multiple tasks(all valid)", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo deletion of multiple tasks(all valid) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of deletion of multiple tasks(all valid) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void deleteSomeInvalid(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world");
-	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
-	 * logic.execute("delete 2"); String feedback =
-	 * logic.execute("delete 1,2,3");
-	 * assertEquals("Check deletion of multiple tasks(some invalid)", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo deletion of multiple tasks(some invalid) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of deletion of multiple tasks(some invalid) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void deleteInvalidTaskId(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); String feedback =
-	 * logic.execute("delete 1,2,3");
-	 * assertEquals("Check deletion of multiple tasks(task id invalid)",
-	 * feedback, Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ; assertEquals(
-	 * "Check that undo deletion of multiple tasks(task id invalid) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of deletion of multiple tasks(task id invalid) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void deleteNotInteger(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world");
-	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
-	 * String feedback = logic.execute("delete 1.5,2,3");
-	 * assertEquals("Check deletion of multiple tasks(some not integer)",
-	 * feedback, Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ; assertEquals(
-	 * "Check that undo deletion of multiple tasks(some not integer) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of deletion of multiple tasks(some not integer) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void addToDo() {//to-do logic.initializeEnvironment();
-	 * logic.execute("clear"); logic.initializeEnvironment(); String desc =
-	 * "hello"; String acctualFeedback = logic.execute("add " + desc); String
-	 * expFeedback = String.format(Constants.MESSAGE_ADDED, 1, desc);
-	 * assertEquals("Check that the add to do is working\n", acctualFeedback,
-	 * expFeedback); String undoFeedback = logic.execute("Undo"); String
-	 * expectedUndoFeedback = ;
-	 * assertEquals("Check that undo add to do works",undoFeedback
-	 * ,expectedUndoFeedback); String redoFeedback = logic.execute("redo");
-	 * String expectedRedoFeedback = ;
-	 * assertEquals("Check that redo undo of add to do works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void addEvent() {//to-do logic.initializeEnvironment();
-	 * logic.execute("clear"); logic.initializeEnvironment(); String desc =
-	 * "hello"; LocalDateTime start = ; LocalDateTime end = ; String
-	 * acctualFeedback = logic.execute("add " + desc); String expFeedback =
-	 * String.format(Constants.MESSAGE_ADDED, 1, desc);
-	 * assertEquals("Check that the add to do is working\n", acctualFeedback,
-	 * expFeedback); String undoFeedback = logic.execute("Undo"); String
-	 * expectedUndoFeedback = ;
-	 * assertEquals("Check that undo add event works",undoFeedback
-	 * ,expectedUndoFeedback); String redoFeedback = logic.execute("redo");
-	 * String expectedRedoFeedback = ;
-	 * assertEquals("Check that redo undo of add event works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void addDeadline() {//to-do logic.initializeEnvironment();
-	 * logic.execute("clear"); logic.initializeEnvironment(); String desc =
-	 * "hello"; LocalDateTime end = ; String acctualFeedback =
-	 * logic.execute("add " + desc); String expFeedback =
-	 * String.format(Constants.MESSAGE_ADDED, 1, desc);
-	 * assertEquals("Check that the add to do is working\n", acctualFeedback,
-	 * expFeedback); String undoFeedback = logic.execute("Undo"); String
-	 * expectedUndoFeedback = ;
-	 * assertEquals("Check that undo add deadline works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("redo"); String expectedRedoFeedback = ;
-	 * assertEquals("Check that redo undo of add deadline works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void doneCommandEmptyFile(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); String feedback = logic.execute("done 1");
-	 * assertEquals("Check done of empty file", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo done empty file command works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ;
-	 * assertEquals("Check that redo undo of done empty file command works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void doneCommandNonEmptyFile(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world"); String
-	 * feedback = logic.execute("done 1");
-	 * assertEquals("Check deletion of empty file", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo done command works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ;
-	 * assertEquals("Check that redo undo of done command works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void doneMultipleValid(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world");
-	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
-	 * String feedback = logic.execute("done 1,2,3");
-	 * assertEquals("Check done of multiple tasks(all valid)", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo done of multiple tasks(all valid) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of done of multiple tasks(all valid) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void doneSomeInvalid(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); logic.execute("add hello world");
-	 * logic.execute("add hello TaskWaltz"); logic.execute("add some line");
-	 * logic.execute("done 2"); String feedback = logic.execute("done 1,2,3");
-	 * assertEquals("Check done of multiple tasks(some invalid)", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo done of multiple tasks(some invalid) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of done of multiple tasks(some invalid) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void doneInvalidTaskId(){//to-do
-	 * logic.initializeEnvironment(); logic.execute("clear");
-	 * logic.initializeEnvironment(); String feedback =
-	 * logic.execute("done 1,2,3");
-	 * assertEquals("Check done of multiple tasks(task id invalid)", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo done of multiple tasks(task id invalid) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of done of multiple tasks(task id invalid) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
-
-	/*
-	 * @Test public void doneNotInteger(){//to-do logic.initializeEnvironment();
-	 * logic.execute("clear"); logic.initializeEnvironment();
-	 * logic.execute("add hello world"); logic.execute("add hello TaskWaltz");
-	 * logic.execute("add some line"); String feedback =
-	 * logic.execute("done 1.5,2,3");
-	 * assertEquals("Check done of multiple tasks(some not integer)", feedback,
-	 * Constants.MESSAGE_ALL_DELETED); String undoFeedback =
-	 * logic.execute("Undo"); String expectedUndoFeedback = ;
-	 * assertEquals("Check that undo done of multiple tasks(some not integer) works"
-	 * ,undoFeedback,expectedUndoFeedback); String redoFeedback =
-	 * logic.execute("Redo"); String expectedRedoFeedback = ; assertEquals(
-	 * "Check that redo undo of done of multiple tasks(some not integer) works"
-	 * ,redoFeedback,expectedRedoFeedback); }
-	 */
+	
 	@Test
 	public void addEmpty() {
 		String addEmpty = "add       ";

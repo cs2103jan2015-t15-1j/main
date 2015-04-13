@@ -113,6 +113,8 @@ public final class Constants {
     public static final String MESSAGE_ERROR_SET_DICT = "The file name was not input correctly";
     public static final String MESSAGE_SEARCH_UNSUCCESSFUL = "No tasks matched your search criterias";
     public static final String MESSAGE_UNSUCCESSFUL_FILE_CHANGE = "The storage path could not be changed to %1$s";
+    public static final String MESSAGE_ERROR_CONFIG_FILE = "TaskWaltz was not able to retrieve your data. Check your directory path in config.txt";
+    public static final String MESSAGE_ERROR_NOT_JSON = "Please specify the directory, file name and extension(.json)";
     
 	// Formatting
     public static final String DISPLAY_TASK_FORMAT = "%-4d%-8s%-5s%-23s%-23s%s";
@@ -142,13 +144,13 @@ public final class Constants {
             + "done <task identification number(s)>\n  equivalent: do\n\n"
             + "edit <task identification number> <new parameters>\n  equivalent: e\n\n"
             + "exit\n\n"
-            + "getdir\n\n"
+            + "getdirectory <file path>\n  equivalent: getdir\n\n"
             + "help\n\n"
             + "redo\n  equivalent: r\n\n"
             + "search <Keyword>\n  equivalent: s\n\n"
-            + "setdir <file path>\n\n"
-            + "undo\n  equivalent: u"
-            + "undone\n\n";
+            + "setdirectory <file path>\n  equivalent: setdir\n\n"
+            + "undo\n  equivalent: u\n\n"
+            + "undone <task identification number(s)>";
 }
 
 	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Constants.java
@@ -243,9 +245,9 @@ public class DisplayCommand implements Command {
 			if (displayObj.isDone() == true) {
 				displayFeedback = storage.getDoneTasksAsString();
 			} else if (isDisplayAllCommand()) {
-				displayFeedback = storage.getTasksAsString();
+				displayFeedback = storage.getAllTasksAsString();
 			} else {
-				displayFeedback = storage.displayByDate(displayObj);
+				displayFeedback = storage.getTasksInTimeSpan(displayObj);
 			}
 		} else {
 			displayFeedback = "Invalid display command";
@@ -430,281 +432,280 @@ public class SetDirectoryCommand implements Command {
 	 */
 
 public class Storage {
+    
+    private Map<Integer, Task> tasks;
+    private StorageIO storageIO;
+    private StorageSearch storageSearch;
+    private int lastIdNumber;
+    
+    public Storage(StorageIO _storageIO) {
+        storageIO = _storageIO;
+    }
+    /**
+     * Initialize StorageSerach and StorageIO, file paths and the data structure
+     * for storing tasks.
+     * 
+     * @return feedback string
+     */
+    public String prepareStorage() throws IOException {
+        storageSearch = new StorageSearch();
+        String storageFilePath = storageIO.initializeConfigFile();
+        String setStorageFileFeedback = storageIO.setFilePath(storageFilePath);
+        initializeTaskList();
+        return setStorageFileFeedback;
+    }
 
-	private Map<Integer, Task> tasks;
-	private StorageIO storageIO;
-	private StorageSearch storageSearch;
-	private int lastIdNumber;
+    /**
+     * Create a HashMap with Tasks and their id as key from the storage file
+     */
+    private void initializeTaskList() {
+        tasks = new HashMap<Integer, Task>();
+        storageIO.getDataFromFile(tasks);
+        lastIdNumber = storageIO.getLastIdNumber();
+    }
 
-	/**
-	 * Initialize StorageSerach and StorageIO, file paths and the data structure
-	 * for storing tasks.
-	 * 
-	 * @return feedback string
-	 */
-	public String prepareStorage() throws IOException {
-		storageSearch = new StorageSearch();
-		storageIO = new StorageIO();
-		String storageFilePath = storageIO.initializeConfigFile();
-		String setStorageFileFeedback = storageIO.setFilePath(storageFilePath);
-		initializeTaskList();
-		return setStorageFileFeedback;
-	}
+    /**
+     * Change the path for task storage and updates the tasks
+     * 
+     * @param path  the new path given by the user
+     * @return      feedback string
+     */
+    public String setFilePath(String path) throws IOException {
+        String feedback = storageIO.setFilePath(path);
+        initializeTaskList();
+        return feedback;
+    }
+    
+    public String getFilePath() {
+        return storageIO.getFilePath();
+    }
 
-	/**
-	 * Change the path for task storage and updates the tasks
-	 * 
-	 * @param path
-	 *            : the new path given by the user
-	 * @return feedback string
-	 */
-	public String setFilePath(String path) throws IOException {
-		String feedback = storageIO.setFilePath(path);
-		initializeTaskList();
-		return feedback;
-	}
-
-	/**
-	 * Create a HashMap with Tasks and their id as key from the storage file
-	 */
-
-	private void initializeTaskList() {
-		tasks = new HashMap<Integer, Task>();
-		storageIO.getDataFromFile(tasks);
-		lastIdNumber = storageIO.getLastIdNumber();
-	}
-
-	public String getFilePath() {
-		return storageIO.getFilePath();
-	}
-
-	private int getNextIdNo() {
-		lastIdNumber++;
-		return lastIdNumber;
-	}
-
-	public String add(Task newTask) {
-		int taskId = newTask.getId();
-		if (taskId == Constants.NO_ID_GIVEN) {
-			taskId = getNextIdNo();
-			newTask.setId(taskId);
-		}
-		tasks.put(taskId, newTask);
-		writeToFile();
-		return newTask.getUserFormat();
-	}
-
-	public String delete(int id) {
-		assert id > 0;
-		Task removedTask = tasks.get(id);
-		if (removedTask != null) {
-			tasks.remove(id);
-			writeToFile();
-			return String
-					.format(Constants.MESSAGE_DELETED, removedTask.getId());
-		}
-		return Constants.MESSAGE_INCORRECT_ID;
-	}
-
-	public String deleteAll() {
-		tasks = new HashMap<Integer, Task>();
-		writeToFile();
-		return String.format(Constants.MESSAGE_ALL_DELETED);
-	}
-
-	private String updateTask(int id, Task updatedTask) {
-		if (tasks.get(id) != null) {
-			tasks.put(id, updatedTask);
-			writeToFile();
-			return String.format(Constants.MESSAGE_UPDATED, id);
-		}
-		return Constants.MESSAGE_INCORRECT_ID;
-	}
-
-	public String updateDescription(int id, String newDesc) {
-		Task taskToUpdate = tasks.get(id);
-		if (taskToUpdate != null) {
-			taskToUpdate.setDescription(newDesc);
-			return updateTask(id, taskToUpdate);
-		}
-		return Constants.MESSAGE_INCORRECT_ID;
-	}
-
-	public String updateStartDate(int id, LocalDateTime startDate) {
-		Task taskToUpdate = tasks.get(id);
-		if (taskToUpdate != null) {
-			taskToUpdate.setStartDateTime(startDate);
-			return updateTask(id, taskToUpdate);
-		}
-		return Constants.MESSAGE_INCORRECT_ID;
-	}
-
-	public String updateEndDate(int id, LocalDateTime endDate) {
-		Task taskToUpdate = tasks.get(id);
-		if (taskToUpdate != null) {
-			taskToUpdate.setEndDateTime(endDate);
-			return updateTask(id, taskToUpdate);
-		}
-		return Constants.MESSAGE_INCORRECT_ID;
-	}
-
-	public String done(int id, boolean setDone) {
-		if (tasks.get(id) != null) {
-			Task doneTask = tasks.get(id);
-			doneTask.setDone(setDone);
-			tasks.put(id, doneTask);
-			writeToFile();
-			return doneTask.getUserFormat();
-		}
-		return Constants.MESSAGE_INCORRECT_ID;
-	}
-
-	public Task getTask(int id) {
-		if (tasks.get(id) != null) {
-			return tasks.get(id);
-		}
-		return null;
-	}
-
-	public Task getLastAddedTask() {
-		return getTask(lastIdNumber);
-	}
-
-	/**
-	 * @return array with all tasks
-	 */
-	public Task[] getAllTasks() {
-		Task[] taskArray = new Task[tasks.size()];
-		int i = 0;
-		for (Task task : tasks.values()) {
-			taskArray[i] = task;
-			i++;
-		}
-		return taskArray;
-	}
-
-	/**
-	 * Returns a string with all task information formatted as a table with the
-	 * done tasks at the top, then floating tasks and last the unfinished
-	 * deadline and event tasks, ordered by date.
-	 * 
-	 * @return all tasks as a user friendly formatted string
-	 */
-	public String getTasksAsString() {
-		String allTasks = "\n" + Constants.MESSAGE_DISPLAY_ALL;
-		allTasks += getDoneTasksAsString();
-
-		ArrayList<Task> unfinishedTasks = getUnfinishedTasks();
-		for (Task newTask : unfinishedTasks) {
-			allTasks += "\n" + newTask.getUserFormat();
-		}
-
-		if (allTasks.equals("")) {
-			return Constants.MESSAGE_NO_TASKS;
-		}
-		return allTasks;
-	}
-
-	/**
-	 * Returns all unfinished tasks ordered by date (closest deadline at the
-	 * bottom) and with floating tasks at the top
-	 * 
-	 * @return ArrayList with unfinished tasks
-	 */
-	private ArrayList<Task> getUnfinishedTasks() {
-		Task[] taskArray = getAllTasks();
-		ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
-		for (Task task : taskArray) {
-			if (!task.isDone()) {
-				unfinishedTasks.add(task);
-			}
-		}
-		Collections.sort(unfinishedTasks);
-		return unfinishedTasks;
-	}
-
-	/**
-	 * Returns a string with all tasks in a given time span, formatted as a
-	 * table with the done tasks at the top, then floating tasks and last the
-	 * unfinished deadline and event tasks, ordered by date.
-	 * 
-	 * @param displayObj
-	 *            : Task with the given time span as startDateTime and
-	 *            endDateTime
-	 * @return tasks in the time span as a user friendly formatted string
-	 */
-	public String displayByDate(Task displayObj) {
-		String displayTasks = "\n";
-		displayTasks += getDisplayTitle(displayObj);
-
-		ArrayList<Task> unfinishedTasks = getUnfinishedTasks();
-		String searchResult = storageSearch.search(unfinishedTasks, displayObj);
-		String floatingTasks = getFloatingTasksAsString();
-
-		if (searchResult == "" && floatingTasks == "") {
-			displayTasks += Constants.MESSAGE_NO_TASKS;
-		} else {
-			displayTasks += Constants.DISPLAY_TABLE_HEADERS;
-			displayTasks += floatingTasks;
-			displayTasks += searchResult;
-		}
-
-		return displayTasks;
-	}
-
-	private String getDisplayTitle(Task displayObj) {
-		String startTime;
-		String endTime;
-		if (displayObj.isDeadlineTask()) {
-			startTime = Constants.DISPLAY_TIME_NOW;
-		} else {
-			startTime = displayObj.getStartDateForDisplay();
-		}
-		endTime = displayObj.getEndDateForDisplay();
-		return String.format(Constants.MESSAGE_TIME_PERIOD, startTime, endTime);
-	}
-
-	/**
-	 * Make a search given the search criterias in the searchObj
-	 * 
-	 * @param searchObj
-	 * @return the search result as a string
-	 */
-	public String search(Task searchObj) {
-		String feedback;
-		ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
-		String result = storageSearch.search(taskList, searchObj);
-		if (result.equals("")) {
-			feedback = Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
-		} else {
-			feedback = Constants.DISPLAY_TABLE_HEADERS + "\n" + result;
-		}
-		return feedback;
-	}
-
-	public String getDoneTasksAsString() {
-		String doneTasksString = Constants.DISPLAY_TABLE_HEADERS;
-		for (Task task : tasks.values()) {
-			if (task.isDone()) {
-				doneTasksString += "\n" + task.getUserFormat();
-			}
-		}
-		return doneTasksString;
-	}
-
-	private String getFloatingTasksAsString() {
-		String floatingTasksString = "";
-		for (Task task : tasks.values()) {
-			if (task.isFloatingTask() && !task.isDone()) {
-				floatingTasksString += "\n" + task.getUserFormat();
-			}
-		}
-		return floatingTasksString;
-	}
-
-	public void writeToFile() {
-		storageIO.writeToFile(tasks);
-	}
+    private int getNextIdNo() {
+        lastIdNumber++;
+        return lastIdNumber;
+    }
+    
+    public String add(Task newTask) {
+        int taskId = newTask.getId();
+        if (taskId == Constants.NO_ID_GIVEN) {
+            taskId = getNextIdNo();
+            newTask.setId(taskId);
+        }
+        tasks.put(taskId, newTask);
+        writeToFile();
+        return newTask.getUserFormat();
+    }
+    
+    public String delete(int id) {
+        assert id > 0;
+        Task removedTask = tasks.get(id);
+        if (removedTask != null) {
+            tasks.remove(id);
+            writeToFile();
+            return String.format(Constants.MESSAGE_DELETED, removedTask.getId());
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
+    public String deleteAll() {
+        tasks = new HashMap<Integer, Task>();
+        writeToFile();
+        return String.format(Constants.MESSAGE_ALL_DELETED);
+    }
+    
+    public String done(int id, boolean setDone) {
+        if (tasks.get(id) != null) {
+            Task doneTask = tasks.get(id);
+            doneTask.setDone(setDone);
+            tasks.put(id, doneTask);
+            writeToFile();
+            return doneTask.getUserFormat();
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
+    private String updateTask(int id, Task updatedTask) {
+        if (tasks.get(id) != null) {
+            tasks.put(id, updatedTask);
+            writeToFile();
+            return String.format(Constants.MESSAGE_UPDATED, id);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
+    public String updateDescription(int id, String newDesc) {
+        Task taskToUpdate = tasks.get(id);
+        if (taskToUpdate != null) {
+            taskToUpdate.setDescription(newDesc);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
+    public String updateStartDate(int id, LocalDateTime startDate) {
+        Task taskToUpdate = tasks.get(id);
+        if (taskToUpdate != null) {
+            taskToUpdate.setStartDateTime(startDate);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
+    public String updateEndDate(int id, LocalDateTime endDate) {
+        Task taskToUpdate = tasks.get(id);
+        if (taskToUpdate != null) {
+            taskToUpdate.setEndDateTime(endDate);
+            return updateTask(id, taskToUpdate);
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
+    public Task getTask(int id) {
+        if (tasks.get(id) != null) {
+            return tasks.get(id);
+        }
+        return null;
+    }
+    
+    public Task getLastAddedTask() {
+        return getTask(lastIdNumber);
+    }
+    
+    /**
+     * Returns array with all tasks
+     */
+    public Task[] getAllTasks() {
+        Task[] taskArray = new Task[tasks.size()];
+        int i = 0;
+        for (Task task : tasks.values()) {
+            taskArray[i] = task;
+            i++;
+        }
+        return taskArray;
+    }
+    
+    /**
+     * Returns a string with all task information formatted as a table with the 
+     * done tasks at the top, then floating tasks and last the unfinished 
+     * deadline and event tasks, ordered by date. 
+     * 
+     * @return  all tasks as a user friendly formatted string 
+     */
+    public String getAllTasksAsString() {
+        String allTasks = getDoneTasksAsString();
+        
+        ArrayList<Task> unfinishedTasks = getUnfinishedTasks();
+        for (Task newTask : unfinishedTasks) {
+            allTasks += "\n" + newTask.getUserFormat();
+        }
+        
+        if (allTasks.equals("")) {
+            return Constants.MESSAGE_NO_TASKS;
+        }
+        String feedback = "\n" + Constants.MESSAGE_DISPLAY_ALL + 
+                Constants.DISPLAY_TABLE_HEADERS + allTasks;
+        return feedback;
+    }
+    
+    /**
+     * Returns all unfinished tasks ordered by date (closest deadline at the 
+     * bottom) and with floating tasks at the top
+     * 
+     * @return  ArrayList with unfinished tasks
+     */
+    private ArrayList<Task> getUnfinishedTasks() {
+        Task[] taskArray = getAllTasks();
+        ArrayList<Task> unfinishedTasks = new ArrayList<Task>();
+        for (Task task : taskArray) {
+            if (!task.isDone()) {
+                unfinishedTasks.add(task);
+            }
+        }
+        Collections.sort(unfinishedTasks);
+        return unfinishedTasks;
+    }
+    
+    /**
+     * Returns a string with all tasks in a given time span, formatted as a 
+     * table with the done tasks at the top, then floating tasks and last the 
+     * unfinished deadline and event tasks, ordered by date. 
+     * 
+     * @param displayObj    Task with the given time span as startDateTime and 
+     *                      endDateTime
+     * @return tasks in the time span as a user friendly formatted string 
+     */
+    public String getTasksInTimeSpan(Task displayObj) {
+        String displayTasks = "\n";
+        displayTasks += getDisplayTitle(displayObj);
+        
+        ArrayList<Task> unfinishedTasks = getUnfinishedTasks();        
+        String searchResult = storageSearch.search(unfinishedTasks, displayObj);
+        String floatingTasks = getFloatingTasksAsString();
+        
+        if (searchResult == "" && floatingTasks == "") {
+            displayTasks += Constants.MESSAGE_NO_TASKS;
+        } else {
+            displayTasks += Constants.DISPLAY_TABLE_HEADERS;
+            displayTasks += floatingTasks;
+            displayTasks += searchResult;
+        }
+        
+        return displayTasks;
+    }
+    
+    private String getDisplayTitle(Task displayObj) {
+        String startTime;
+        String endTime;
+        if (displayObj.isDeadlineTask()) {
+            startTime = Constants.DISPLAY_TIME_NOW;
+        } else {
+            startTime = displayObj.getStartDateForDisplay();
+        }
+        endTime = displayObj.getEndDateForDisplay();
+        return String.format(Constants.MESSAGE_TIME_PERIOD, startTime, endTime);
+    }
+    
+    public String getDoneTasksAsString() {
+        String doneTasksString = "";
+        for (Task task : tasks.values()) {
+            if (task.isDone()) {
+                doneTasksString += "\n" + task.getUserFormat();
+            }
+        }
+        return doneTasksString;
+    }
+    
+    private String getFloatingTasksAsString() {
+        String floatingTasksString = "";
+        for (Task task : tasks.values()) {
+            if (task.isFloatingTask() && !task.isDone()) {
+                floatingTasksString += "\n" + task.getUserFormat();
+            }
+        }
+        return floatingTasksString;
+    }
+    
+    /**
+     * Make a search given the search criterias in the searchObj
+     * 
+     * @param searchObj
+     * @return the search result as a string
+     */
+    public String search(Task searchObj) {
+        String feedback;
+        ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
+        String result = storageSearch.search(taskList, searchObj);
+        if (result.equals("")) {
+            feedback = Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
+        } else {
+            feedback = Constants.DISPLAY_TABLE_HEADERS+"\n"+result;
+        }
+        return feedback;
+    }
+    
+    public void writeToFile() {
+        storageIO.writeToFile(tasks);
+    }
 
 }
 
@@ -728,6 +729,11 @@ public class StorageIO {
 		return storageFilePath;
 	}
 
+	/**
+	 * Get the storage file path if any saved in the config file, otherwise 
+	 * create a new one.
+	 * @return the storage file path
+	 */
 	public String initializeConfigFile() throws IOException {
 		configFilePath = System.getProperty("user.dir") + "/config.txt";
 		File file = new File(configFilePath);
@@ -746,8 +752,7 @@ public class StorageIO {
 				}
 			}
 		} catch (IOException e) {
-			throw new IOException(
-					"TaskWaltz was not able to retrieve your data. Check your directory path in config.txtF");
+			throw new IOException(Constants.MESSAGE_ERROR_CONFIG_FILE);
 		}
 		return storageFilePath;
 	}
@@ -757,10 +762,13 @@ public class StorageIO {
 				+ Constants.DEFAULT_STORAGE_PATH;
 	}
 
+	/**
+	 * Set a new storage file path and save it to the config file
+	 * @param path     the new storage file path
+	 */
 	public String setFilePath(String path) throws IOException {
-
 		if (!path.contains(".json")) {
-			return "Please specify the directory, file name and extension(.json)";
+			return Constants.MESSAGE_ERROR_NOT_JSON;
 		}
 		storageFilePath = path;
 		File file = new File(storageFilePath);
@@ -769,10 +777,10 @@ public class StorageIO {
 				file.createNewFile();
 			}
 			File configFile = new File(configFilePath);
-			configFile.createNewFile();// to remove the old config file if any
+			configFile.createNewFile(); // to remove the old config file if any
 			BufferedWriter output = new BufferedWriter(new FileWriter(
 					configFile));
-			output.write(path);// write the storage file path
+			output.write(path); // write the storage file path
 			output.flush();
 			output.close();
 			return String
@@ -788,6 +796,9 @@ public class StorageIO {
 		return lastIdNumber;
 	}
 
+	/**
+	 * Turn the task objects into JSON and save to file
+	 */
 	public void writeToFile(Map<Integer, Task> tasks) {
 		JSONObject jsonObj = new JSONObject();
 
@@ -817,6 +828,9 @@ public class StorageIO {
 		}
 	}
 
+	/**
+	 * Read data from the storage file and create Task objects
+	 */
 	public void getDataFromFile(Map<Integer, Task> tasks) {
 		String jsonStr = "";
 		try {
@@ -837,10 +851,6 @@ public class StorageIO {
 
 	}
 
-	/*
-	 * JSON example: { tasks: [ { desc: do something, startDate: 190215 endDate:
-	 * 200215 done: false }, { ... }, { ... }, ...] }
-	 */
 	private void createTasksFromJson(String jsonStr, Map<Integer, Task> tasks) {
 		JSONObject jsonObj = new JSONObject(jsonStr);
 		JSONArray jsonArr = jsonObj.getJSONArray("tasks");
@@ -873,6 +883,53 @@ public class StorageIO {
 }
 
 	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\StorageIO.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\StorageIoMock.java
+	 */
+
+public class StorageIoMock extends StorageIO {
+    
+    private String storageFilePath;
+    private int lastIdNumber;
+    
+    public String getFilePath() {
+        return storageFilePath;
+    }
+    
+    public String initializeConfigFile() {
+        storageFilePath = getDefaultStoragePath();
+        return storageFilePath;
+    }
+    
+    private String getDefaultStoragePath() {
+        return System.getProperty("user.dir") + "/" + Constants.DEFAULT_STORAGE_PATH;
+    }
+    
+    public String setFilePath(String path) {
+        storageFilePath = path;
+        return String.format(Constants.MESSAGE_FILE_CHANGE, storageFilePath);
+    }
+    
+    public int getLastIdNumber() {
+        return lastIdNumber;
+    }
+    
+    public void writeToFile(Map<Integer, Task> tasks) {
+        
+    }
+    
+    public void getDataFromFile(Map<Integer, Task> tasks) {
+        
+    }
+    
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\StorageIoMock.java
 
 
 
@@ -1004,43 +1061,26 @@ public class StorageSearch {
 	 */
 
 public class StorageTest {
-
-    Storage storage = new Storage();
+    
+    StorageIO storageIO = new StorageIoMock();
+    Storage storage = new Storage(storageIO);
     String fileName = System.getProperty("user.dir") + "/file_path_for_test.txt";
     
     private void initialize() {
         try {
-			storage.prepareStorage();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        try {
-			storage.setFilePath(fileName);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            storage.prepareStorage();
+            storage.setFilePath(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         storage.deleteAll();
-    }
-    
-    private void endTest() {
-        storage.deleteAll();
-        try {
-			storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
     
     @Test
-    // Need to try out to be able to use it in other tests
     public void setAndGetFilePath() {
         initialize();
         String newFilePath = storage.getFilePath();
         assertEquals("Check that setFilePath() updates the filePath\n", fileName, newFilePath);
-        endTest();
     }
     
     @Test
@@ -1054,7 +1094,6 @@ public class StorageTest {
         Task theStoredTask = storage.getTask(taskId);
         assertEquals("Check that adding and getting a task works\n", 
                 theDesc, theStoredTask.getDescription());
-        endTest();
     }
     
     @Test
@@ -1070,14 +1109,6 @@ public class StorageTest {
         Task lastTask = storage.getLastAddedTask();
         assertEquals("Check that getting the last added task works\n", 
                 theDesc, lastTask.getDescription());
-        endTest();
-    }
-    
-    private Task getDisplayAllSearchObj() {
-        Task t = new Task();
-        t.setStartDateTime(LocalDateTime.MIN);
-        t.setEndDateTime(LocalDateTime.MAX);
-        return t;
     }
     
     @Test
@@ -1087,14 +1118,12 @@ public class StorageTest {
         testTask.setDescription("test task");
         storage.add(testTask);
         storage.deleteAll();
-        String tasksFeedback = storage.getTasksAsString();
+        String tasksFeedback = storage.getAllTasksAsString();
         assertEquals("Check that deleteAll() deletes all tasks\n", 
-                "\n"+Constants.MESSAGE_DISPLAY_ALL+Constants.MESSAGE_NO_TASKS, tasksFeedback);
-        endTest();
+                Constants.MESSAGE_NO_TASKS, tasksFeedback);
     }
     
     @Test
-    //No separate partitions and therefore no need to try out different values
     public void deleteTask() {
         initialize();
         Task testTask = new Task();
@@ -1102,22 +1131,14 @@ public class StorageTest {
         storage.add(testTask);
         int taskId = testTask.getId();
         storage.delete(taskId);
-        String tasksFeedback = storage.getTasksAsString();
+        String tasksFeedback = storage.getAllTasksAsString();
         assertEquals("Check that delete(id) deletes the task\n", 
-                "\n"+Constants.MESSAGE_DISPLAY_ALL+Constants.MESSAGE_NO_TASKS, tasksFeedback);
-        endTest();
+                Constants.MESSAGE_NO_TASKS, tasksFeedback);
     }
     
     @Test
-    // Only floating tasks working right now
-    // - later do tests for event and deadline tasks as well
     public void updateTaskDescription() {
-        try {
-			storage.prepareStorage();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        initialize();
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.add(testTask);
@@ -1127,7 +1148,6 @@ public class StorageTest {
         String acctualNewDesc = storage.getTask(taskId).getDescription();
         assertEquals("Check that the description can be updated\n", 
                 newDesc, acctualNewDesc);
-        endTest();
     }
     
     private void createTask(String taskDesc, String startDateString, 
@@ -1175,7 +1195,6 @@ public class StorageTest {
         
         assertThat("Check that search shows an event starting on that time\n", 
                 feedback, containsString(taskDesc));
-        endTest();
     }
     
     @Test
@@ -1196,7 +1215,6 @@ public class StorageTest {
         
         assertThat("Check that search shows an event starting after that time\n", 
                 feedback, containsString(taskDesc));
-        endTest();
     }
     
     @Test
@@ -1217,7 +1235,6 @@ public class StorageTest {
         
         assertThat("Check that search shows an event happening before that time\n", 
                 feedback, containsString(taskDesc));
-        endTest();
     }
     
     @Test
@@ -1237,7 +1254,6 @@ public class StorageTest {
         
         assertEquals("Check that search desn't show events happening after given time\n", 
                 feedback, Constants.MESSAGE_SEARCH_UNSUCCESSFUL);
-        endTest();
     }
     
     @Test
@@ -1253,7 +1269,6 @@ public class StorageTest {
         
         assertThat("Check that search can find tasks on substrings of the description\n", 
                 feedback, containsString("search"));
-        endTest();
     }
     
 }
@@ -1269,6 +1284,9 @@ public class StorageTest {
 
 public class Task implements Comparable<Task> {
 	
+	private static final int ID_NEW_EMPTY_TASK = -1;
+	private static final int CHAR_LENGTH_DAY_OF_WEEK_DISPLAY = 3;
+	private static final String EMPTY_STRING = "";
     private int id;
 	private String description;
 	private LocalDateTime startDateTime;
@@ -1373,7 +1391,7 @@ public class Task implements Comparable<Task> {
      */
     public String getUserFormat() {
     	String doneImage = Constants.DISPLAY_UNDONE;
-        String statusImage = "";
+        String statusImage = EMPTY_STRING;
         if (isDone()) {
             doneImage = Constants.DISPLAY_DONE;
         }
