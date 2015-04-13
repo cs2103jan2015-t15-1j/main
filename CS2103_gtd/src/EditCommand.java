@@ -1,6 +1,6 @@
 //@author A0111337U
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class EditCommand implements Command {
 	Task newTask;
@@ -8,14 +8,14 @@ class EditCommand implements Command {
 	Storage storage;
 	History history;
 
-//	private static final Logger logger = Logger.getLogger(EditCommand.class
-//			.getName());
+	private static final Logger logger = Logger.getLogger(EditCommand.class
+			.getName());
 
 	public EditCommand(Storage _storage, History _history, Task _newTask) {
 		newTask = _newTask;
 		storage = _storage;
 		history = _history;
-		// logger.log(Level.CONFIG, newTask.getUserFormat());
+		logger.log(Level.CONFIG, newTask.getUserFormat());
 
 	}
 
@@ -25,11 +25,11 @@ class EditCommand implements Command {
 		updateStorage(taskId);
 
 		Task realTask = storage.getTask(taskId);
-		String feedbackOriginal = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_ORIGINAL,
-				oldTask.getUserFormat());
-		String feedbackChange = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_CHANGE,
-				realTask.getUserFormat());
-		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
+		String feedbackOriginal = String.format(Constants.EDIT_FORMAT,
+				Constants.MESSAGE_EDIT_ORIGINAL, oldTask.getUserFormat());
+		String feedbackChange = String.format(Constants.EDIT_FORMAT,
+				Constants.MESSAGE_EDIT_CHANGE, realTask.getUserFormat());
+		logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		updateHistory();
 		return feedbackOriginal + "\n" + feedbackChange;
 	}
