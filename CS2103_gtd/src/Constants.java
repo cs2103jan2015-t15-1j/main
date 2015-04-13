@@ -51,18 +51,18 @@ public final class Constants {
 	public static final String DEFAULT_STORAGE_PATH = "storage_file.json";
     
     // Help
-    public static final String MESSAGE_HELP = "Available commands:\n"
-            + "add <description> <start time (if any)> <end time(if any)>\n  equivalent: a\n\n"
-            + "delete <task identification number(s)>\n  equivalent: remove, rm, del\n\n"
-            + "display\n  equivalent: dis, show, ls\n\n"
-            + "done <task identification number(s)>\n  equivalent: do\n\n"
-            + "edit <task identification number> <new parameters>\n  equivalent: e\n\n"
+    public static final String MESSAGE_HELP = "List of commands:\n"
+            + "add <description> <start time (if any)> <end time(if any)>\n  eg.add meeting at 1330  short-command: a\n\n"
+            + "delete <task identification number(s)>\n    delete task 4  short-command: remove, rm, del\n\n"
+            + "display\n     show      short-command: dis, show, ls\n\n"
+            + "done <task identification number(s)>\n  short-command: do\n\n"
+            + "edit <task identification number> <new parameters>\n   edit task 4 meeting at 1240 short-command: e\n\n"
             + "exit\n\n"
             + "getdir\n\n"
             + "help\n\n"
-            + "redo\n  equivalent: r\n\n"
-            + "search <Keyword>\n  equivalent: s\n\n"
+            + "redo\n   short-command: r\n\n"
+            + "search <Keyword>\n    search meeting  short-command: s\n\n"
             + "setdir <file path>\n\n"
-            + "undo\n  equivalent: u"
-            + "undone\n\n";
+            + "undo\n  short-commmand: u"
+            + "undone \n\n";
 }
