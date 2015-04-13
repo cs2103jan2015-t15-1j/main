@@ -9,7 +9,7 @@ public class SystemTest {
 
 	@Test
 	public void TranslatorTest_1() throws Exception {
-		Translator t = new Translator(new StorageStub(), new History());
+		Translator t = new Translator(new StorageStub(new StorageIoMock()), new History());
 		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
 		Command c = t.createCommand(testInput);
 		assertEquals(c.getClass(), AddCommand.class);
@@ -17,7 +17,7 @@ public class SystemTest {
 	
 	@Test
 	public void TranslatorTest_2() throws Exception {
-		Translator t = new Translator(new StorageStub(), new History());
+	    Translator t = new Translator(new StorageStub(new StorageIoMock()), new History());
 		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];
@@ -26,7 +26,7 @@ public class SystemTest {
 	
 	@Test
 	public void TranslatorTest_3() throws Exception {
-		Translator t = new Translator(new StorageStub(), new History());
+	    Translator t = new Translator(new StorageStub(new StorageIoMock()), new History());
 		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];
@@ -35,7 +35,7 @@ public class SystemTest {
 	
 	@Test
 	public void TranslatorTest_4() throws Exception {
-		Translator t = new Translator(new StorageStub(), new History());
+	    Translator t = new Translator(new StorageStub(new StorageIoMock()), new History());
 		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];
@@ -44,7 +44,7 @@ public class SystemTest {
 	
 	@Test
 	public void TranslatorTest_5() throws Exception {
-		Translator t = new Translator(new StorageStub(), new History());
+	    Translator t = new Translator(new StorageStub(new StorageIoMock()), new History());
 		String testInput = "add guest speech at Shaw Alumni Center start 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];
@@ -55,7 +55,7 @@ public class SystemTest {
 
 	@Test
 	public void TranslatorTest_6() throws Exception {
-		Translator t = new Translator(new StorageStub(), new History());
+	    Translator t = new Translator(new StorageStub(new StorageIoMock()), new History());
 		String testInput = "add guest speech at Shaw Alumni Center start 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];

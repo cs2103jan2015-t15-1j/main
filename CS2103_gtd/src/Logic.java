@@ -19,12 +19,13 @@ public class Logic {
 	}
 
 	public String initializeEnvironment() {
-		storage = new Storage();
+        StorageIO storageIO = new StorageIO();
+		storage = new Storage(storageIO);
 		String initializationFeedback;
 		try {
 			initializationFeedback = storage.prepareStorage();
 		} catch (IOException e) {
-			return "TaskWaltz was not able to retrieve your data. Check your directory path in config.txt";
+			return e.getMessage();
 		}
 		history = new History();
 		translator = new Translator(storage, history);

@@ -3,7 +3,7 @@
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\DeleteCommand.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteCommand.java
 	 */
 
 	@Override
@@ -28,14 +28,14 @@
 		}
 	}
 
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\DeleteCommand.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteCommand.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfo.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\KeywordInfo.java
 	 */
 
 public class KeywordInfo implements Comparable<KeywordInfo> {
@@ -112,14 +112,14 @@ public class KeywordInfo implements Comparable<KeywordInfo> {
 		}
 	}
 }
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfo.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\KeywordInfo.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfoList.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\KeywordInfoList.java
 	 */
 
 public class KeywordInfoList {
@@ -238,14 +238,14 @@ public class KeywordInfoList {
 	 }
 }
 
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\KeywordInfoList.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\KeywordInfoList.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\SystemTest.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SystemTest.java
 	 */
 
 public class SystemTest {
@@ -282,7 +282,7 @@ public class SystemTest {
 		String testInput = "add guest speech at Shaw Alumni Center start 4/5 18:00 end 20:00";
 		AddCommand c = (AddCommand) t.createCommand(testInput);
 		Task taskOutput = c.tasksToAdd[0];
-		assertEquals(taskOutput.getDone(), false);
+		assertEquals(taskOutput.isDone(), false);
 	}
 	
 	@Test
@@ -309,14 +309,75 @@ public class SystemTest {
 
 }
 
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\SystemTest.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SystemTest.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\Task.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Task.java
+	 */
+
+	public Task() {
+		id = -1;
+		description = null;
+		startDateTime = null;
+		endDateTime = null;
+		done = false;
+	}
+	
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Task.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Task.java
+	 */
+
+    private static String getDateTimeInString(LocalDateTime dateTime) {
+        String dateTimeString = "";
+        if (dateTime != null) {
+            dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+        }
+        return dateTimeString;
+    }
+    
+	public String getStartDateTimeInString() {
+		return getDateTimeInString(getStartDateTime());
+	}
+	
+	public String getEndDateTimeInString() {
+		return getDateTimeInString(getEndDateTime());
+	}
+    
+    private String getDateTimeForDisplay(LocalDateTime dateTime) {
+        String dateTimeString = "";
+        if (dateTime != null) {
+            dateTimeString = dateTime.getDayOfWeek().toString().substring(0, 3) + " ";
+            dateTimeString += dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
+        }
+        return dateTimeString;
+    }
+	
+	public String getStartDateForDisplay() {
+	    return getDateTimeForDisplay(getStartDateTime());
+	}
+	
+	public String getEndDateForDisplay() {
+        return getDateTimeForDisplay(getEndDateTime());
+    }
+	
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Task.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Task.java
 	 */
 
 	@Override
@@ -325,7 +386,6 @@ public class SystemTest {
 		this.description.equals(((Task)other).description) &&
 		this.startDateTime.equals(((Task)other).startDateTime) &&
 		this.endDateTime.equals(((Task)other).endDateTime) &&
-		this.location.equals(((Task)other).location) &&
 		this.done == ((Task)other).done) {
 			return true;
 		} else {
@@ -333,26 +393,31 @@ public class SystemTest {
 		}
 	}
 	
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\Task.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Task.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\Translator.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Translator.java
 	 */
 
 public class Translator {
 	// ==========Constants for Translator class Section Beginning==========//
 	// Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
-	// private static final String KEYWORD_ADD_EVENT_ONEHOUR =
-	// "((at)|(AT)|(@))";
-	private static final String KEYWORD_ADD_EVENTSTART = "((from)|(FROM)|(start)|(START)|(beg)|(BEG))";
+	private static final String KEYWORD_ADD_EVENTSTART = "((begin)|(BEGIN)|(start)|(START))";
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = {
 			KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND };
+	
+	// Parameters for DONE command
+	private static final String PARAMETER_DISPLAY_ALL = "all";
+	private static final String PARAMETER_DISPLAY_DONE = "done";
+	private static final String PARAMETER_DISPLAY_THISWEEK = "this week";
+	private static final String PARAMETER_DISPLAY_TODAY = "today";
+	private static final String PARAMETER_DISPLAY_TOMORROW = "tomorrow";
 
 	// Keywords for SEARCH command
 	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
@@ -378,8 +443,6 @@ public class Translator {
 
 	private static final String PARAMETER_EDIT_LAST_TASK = "((last)|(LAST))";
 	private static final int SPECIAL_ID_LAST_TASK = -100;
-
-	private static final String PARAMETER_DELETE_LAST_TASK = "((last)|(LAST))";
 	private static final String PARAMETER_DELETE_DONE_TASK = "((done)|(DONE))";
 	private static final int SPECIAL_ID_DELETE_DONE = -200;
 
@@ -424,7 +487,6 @@ public class Translator {
 	private static final String H_MM = "\\d" + DELIMITTER_TIME + "([0-5])\\d";
 	private static final String HH = "(0|1|2)\\d";
 	private static final String H = "\\d";
-	private static final String PM = "(p|P)(m|M)";
 	private static final String[] FORMATS_HOUR_MINUTE = { HH_MM, H_MM, HH, H };
 
 	// Default values for Date-Time variables.
@@ -436,6 +498,7 @@ public class Translator {
 	private static final int EXTRA_TIME_DAY = 1;
 	private static final int EXTRA_TIME_HOUR = 1;
 	private static final int TIME_HALFDAY = 12;
+	private static final int DAYS_IN_ONE_WEEK = 7;
 
 	// Miscellaneous default values.
 	private static final String EMPTY_STRING = "";
@@ -456,27 +519,29 @@ public class Translator {
 	private History commandHistory;
 
 	public Translator(Storage storage, History history) {
+		assert storage != null;
+		assert history != null;
 		taskStorage = storage;
 		commandHistory = history;
 	}
 
 	public void setStorage(Storage storage) {
-		// any guard?
+		assert storage != null;
 		taskStorage = storage;
 	}
 
 	public void setHistory(History history) {
-		// any guard?
+		assert history != null;
 		commandHistory = history;
 	}
 
 	public Storage getStorage() {
-		// Guard against null?
+		assert taskStorage != null;
 		return taskStorage;
 	}
 
 	public History getHistory() {
-		// Guard against null?
+		assert commandHistory != null;
 		return commandHistory;
 	}
 
@@ -494,7 +559,7 @@ public class Translator {
 			newCommand = createAddCommand(usercommand);
 			break;
 		case DISPLAY:
-			newCommand = createDisplayCommand();
+			newCommand = createDisplayCommand(usercommand);
 			break;
 		case DONE:
 			newCommand = createDoneCommand(usercommand);
@@ -536,7 +601,6 @@ public class Translator {
 			throw new Exception(String.format(INVALID_COMMAND,
 					inputCommandTypeString));
 		}
-
 		return newCommand;
 	}
 
@@ -590,13 +654,15 @@ public class Translator {
 	}
 
 	private Command createAddCommand(String usercommand) {
-		Task[] addInformation = { interpretAddParameter(usercommand) };
+		Task addInformation = interpretAddParameter(usercommand);
+		Task[] addInfoForAddCommandInit = new Task[]{addInformation};
 		return new AddCommand(this.getStorage(), this.getHistory(),
-				addInformation);
+				addInfoForAddCommandInit);
 	}
 
-	private Command createDisplayCommand() {
-		return new DisplayCommand(this.getStorage());
+	private Command createDisplayCommand(String usercommand) {
+		Task displayInformation = interpretDisplayParameter(usercommand);
+		return new DisplayCommand(this.getStorage(), displayInformation);
 	}
 
 	private Command createSearchCommand(String usercommand) {
@@ -747,16 +813,16 @@ public class Translator {
 					eventStart = interpretDateTimeParam(paramEventStart);
 					if (paramEventEnd == PARAMETER_DOES_NOT_EXIST) {
 						if (newTask.getEndDateTime() == null) {
-							System.err
-									.println("Please provide end time as well!");
-							return null;
+							newTask.setStartDateTime(eventStart);
+							newTask.setEndDateTime(eventStart.plusHours(EXTRA_TIME_HOUR));
+							doesEditParameterExist = true;
 						} else if (eventStart
 								.isBefore(newTask.getEndDateTime())) {
 							newTask.setStartDateTime(eventStart);
 							doesEditParameterExist = true;
 						} else {
 							System.err
-									.println("Event end time is before event start time!");
+									.println("\nEvent end time is before event start time\n");
 							return null;
 						}
 					}
@@ -815,7 +881,6 @@ public class Translator {
 				return newTask;
 			}
 		}
-
 		return null;
 	}
 
@@ -888,21 +953,109 @@ public class Translator {
 
 		return newTask;
 	}
+	
+	private Task interpretDisplayParameter(String usercommand) {
+		String displayParam = removeFirstWord(usercommand);
+		if (displayParam.equals(EMPTY_STRING)) {
+			return createDisplayOneWeekInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_ALL)) {
+			return createDisplayAllInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_DONE)) {
+			return createDisplayDoneInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_TODAY)) {
+			return createDisplayTodayInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_THISWEEK)) {
+			return createDisplayThisWeekInfoPackage();
+		} else if (displayParam.equalsIgnoreCase(PARAMETER_DISPLAY_TOMORROW)) {
+			return createDisplayTomorrowInfoPackage();
+		} else {
+			return null;
+		}
+	}
+	
+	private Task createDisplayOneWeekInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime todayBeginning = getBeginningOfDay(now);
+		LocalDateTime oneWeekLaterEnd = getEndOfDay(now.plusDays(DAYS_IN_ONE_WEEK));
+		assert now.isBefore(oneWeekLaterEnd);
+		
+		Task displayOneWeekInfoPackage = new Task();
+		//displayOneWeekInfoPackage.setStartDateTime(todayBeginning);
+		displayOneWeekInfoPackage.setStartDateTime(LocalDateTime.MIN);
+		displayOneWeekInfoPackage.setEndDateTime(oneWeekLaterEnd);
+		displayOneWeekInfoPackage.setDescription(EMPTY_STRING);
+		return displayOneWeekInfoPackage;
+	}
+	
+	private Task createDisplayAllInfoPackage() {
+		LocalDateTime beginningOfTime = LocalDateTime.MIN;
+		LocalDateTime endOfTime = LocalDateTime.MAX;
+		assert beginningOfTime.isBefore(endOfTime);
+		
+		Task displayAllInfoPackage = new Task();
+		displayAllInfoPackage.setStartDateTime(beginningOfTime);
+		displayAllInfoPackage.setEndDateTime(endOfTime);
+		displayAllInfoPackage.setDescription(EMPTY_STRING);
+		return displayAllInfoPackage;
+	}
+	
+	private Task createDisplayDoneInfoPackage() {
+		Task displayDoneInfoPackage = new Task();
+		displayDoneInfoPackage.setDone(true);
+		displayDoneInfoPackage.setDescription(EMPTY_STRING);
+		return displayDoneInfoPackage;
+	}
+	
+	private Task createDisplayTodayInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime todayBeginning = getBeginningOfDay(now);
+		LocalDateTime todayEnd = getEndOfDay(now);
+		assert todayBeginning.isBefore(todayEnd);
+		
+		Task displayTodayInfoPackage = new Task();
+		//displayTodayInfoPackage.setStartDateTime(todayBeginning);
+		displayTodayInfoPackage.setStartDateTime(LocalDateTime.MIN);
+		displayTodayInfoPackage.setEndDateTime(todayEnd);
+		displayTodayInfoPackage.setDescription(EMPTY_STRING);
+		return displayTodayInfoPackage;
+	}
+	
+	private Task createDisplayThisWeekInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime thisWeekBeginning = getBeginningOfDay(now).with(DayOfWeek.MONDAY);
+		LocalDateTime thisWeekEnd = getEndOfDay(now).with(DayOfWeek.SUNDAY);
+		assert thisWeekBeginning.isBefore(thisWeekEnd);
+		
+		Task displayThisWeekInfoPackage = new Task();
+		//displayThisWeekInfoPackage.setStartDateTime(thisWeekBeginning);
+		displayThisWeekInfoPackage.setStartDateTime(LocalDateTime.MIN);
+		displayThisWeekInfoPackage.setEndDateTime(thisWeekEnd);
+		displayThisWeekInfoPackage.setDescription(EMPTY_STRING);
+		return displayThisWeekInfoPackage;
+	}
+	
+	private Task createDisplayTomorrowInfoPackage() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tomorrowBeginning = getBeginningOfDay(now).plusDays(EXTRA_TIME_DAY);
+		LocalDateTime tomorrowEnd = getEndOfDay(now).plusDays(EXTRA_TIME_DAY);
+		assert tomorrowBeginning.isBefore(tomorrowEnd);
+		
+		Task displayTomorrowInfoPackage = new Task();
+		displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
+		//displayTomorrowInfoPackage.setStartDateTime(LocalDateTime.MIN);
+		displayTomorrowInfoPackage.setEndDateTime(tomorrowEnd);
+		displayTomorrowInfoPackage.setDescription(EMPTY_STRING);
+		return displayTomorrowInfoPackage;
+	}
 
 	private LocalDateTime getBeginningOfDay(LocalDateTime dateTime) {
-		LocalDateTime minuteSetToMinimum = dateTime
-				.withMinute(DATETIME_MINUTE_MINIMUM);
-		LocalDateTime hourAndMinuteSetToMinimum = minuteSetToMinimum
+		return dateTime.withMinute(DATETIME_MINUTE_MINIMUM)
 				.withHour(DATETIME_HOUR_MINIMUM);
-		return hourAndMinuteSetToMinimum;
 	}
 
 	private LocalDateTime getEndOfDay(LocalDateTime dateTime) {
-		LocalDateTime minuteSetToMaximum = dateTime
-				.withMinute(DATETIME_MINUTE_MAXIMUM);
-		LocalDateTime hourAndMinuteSetToMaximum = minuteSetToMaximum
+		return dateTime.withMinute(DATETIME_MINUTE_MAXIMUM)
 				.withHour(DATETIME_HOUR_MAXIMUM);
-		return hourAndMinuteSetToMaximum;
 	}
 
 	private int[] interpretDeleteParameter(String usercommand) {
@@ -931,7 +1084,7 @@ public class Translator {
 			}
 			assert startDateTime.isBefore(endDateTime);
 			return endDateTime;
-		} else if (date != null & time != null) {
+		} else if (date != null && time != null) {
 			LocalDateTime endDateTime = LocalDateTime.of(date, time);
 			if (endDateTime.isBefore(startDateTime)) {
 				System.err
@@ -940,9 +1093,16 @@ public class Translator {
 			} else {
 				return endDateTime;
 			}
+		} else if (date != null && time == null) {
+			time = getStartOfNextHour(LocalTime.now());
+			return LocalDateTime.of(date, time);
 		} else {
 			return null;
 		}
+	}
+	
+	private LocalTime getStartOfNextHour(LocalTime ref) {
+		return ref.withMinute(DATETIME_MINUTE_MINIMUM).plusHours(EXTRA_TIME_HOUR);
 	}
 
 	private LocalDateTime interpretDateTimeParam(String param) {
@@ -954,6 +1114,8 @@ public class Translator {
 		if (date == null && time != null) {
 			time = provideDefaultTime(time);
 			date = provideDefaultDate(time);
+		} else if (date != null && time == null) {
+			time = getStartOfNextHour(LocalTime.now());
 		}
 		return LocalDateTime.of(date, time);
 	}
@@ -1162,14 +1324,14 @@ public class Translator {
 		}
 	}
 
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\Translator.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\Translator.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Hanbin\git\main\CS2103_gtd\src\TranslatorTest.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\TranslatorTest.java
 	 */
 
 public class TranslatorTest {
@@ -2058,7 +2220,7 @@ public class TranslatorTest {
 	
 }
 
-	// End of segment: C:\Users\Hanbin\git\main\CS2103_gtd\src\TranslatorTest.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\TranslatorTest.java
 
 
 
