@@ -125,27 +125,29 @@ public class Translator {
 	private History commandHistory;
 
 	public Translator(Storage storage, History history) {
+		assert storage != null;
+		assert history != null;
 		taskStorage = storage;
 		commandHistory = history;
 	}
 
 	public void setStorage(Storage storage) {
-		// any guard?
+		assert storage != null;
 		taskStorage = storage;
 	}
 
 	public void setHistory(History history) {
-		// any guard?
+		assert history != null;
 		commandHistory = history;
 	}
 
 	public Storage getStorage() {
-		// Guard against null?
+		assert taskStorage != null;
 		return taskStorage;
 	}
 
 	public History getHistory() {
-		// Guard against null?
+		assert commandHistory != null;
 		return commandHistory;
 	}
 
@@ -205,7 +207,6 @@ public class Translator {
 			throw new Exception(String.format(INVALID_COMMAND,
 					inputCommandTypeString));
 		}
-
 		return newCommand;
 	}
 
@@ -259,9 +260,10 @@ public class Translator {
 	}
 
 	private Command createAddCommand(String usercommand) {
-		Task[] addInformation = { interpretAddParameter(usercommand) };
+		Task addInformation = interpretAddParameter(usercommand);
+		Task[] addInfoForAddCommandInit = new Task[]{addInformation};
 		return new AddCommand(this.getStorage(), this.getHistory(),
-				addInformation);
+				addInfoForAddCommandInit);
 	}
 
 	private Command createDisplayCommand(String usercommand) {

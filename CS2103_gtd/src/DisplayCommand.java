@@ -14,12 +14,16 @@ public class DisplayCommand implements Command {
 	@Override
 	public String execute() {
 		String displayFeedback = "";
-		if (displayObj.isDone() == true) {
-			displayFeedback = storage.getDoneTasksAsString();
-		} else if (isDisplayAllCommand()) {
-		    displayFeedback = storage.getTasksAsString();
+		if (displayObj != null) {
+			if (displayObj.isDone() == true) {
+				displayFeedback = storage.getDoneTasksAsString();
+			} else if (isDisplayAllCommand()) {
+				displayFeedback = storage.getTasksAsString();
+			} else {
+				displayFeedback = storage.displayByDate(displayObj);
+			}
 		} else {
-			displayFeedback = storage.displayByDate(displayObj);
+			displayFeedback = "Invalid display command";
 		}
 		return displayFeedback;
 	}
