@@ -63,7 +63,19 @@ public class Storage {
         }
         tasks.put(taskId, newTask);
         writeToFile();
-        return newTask.getUserFormat();
+        String feedback = newTask.getUserFormat();
+        ArrayList<Task> allTasks = getUnfinishedTasks();
+        for(Task task : allTasks) {
+         if (
+        	   (
+        	     (newTask.getStartDateTime().compareTo(task.getEndDateTime()) < 0) ||
+        	     (newTask.getEndDateTime().compareTo(task.getStartDateTime()) > 0)
+        	   ) && (newTask != task)
+    	   )
+    		   {feedback += "\n This task conflicts with " + task.getDescription();
+            }
+        }
+        return feedback;
     }
     
     public String delete(int id) {
