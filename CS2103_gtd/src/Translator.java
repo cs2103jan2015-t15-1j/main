@@ -1,31 +1,33 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.time.DayOfWeek;
 
 //@author A0135295B
 public class Translator {
 	// ==========Constants for Translator class Section Beginning==========//
-	// Keywords for ADD command
+	// === Keywords for ADD command
 	private static final String KEYWORD_ADD_DEADLINE = "((by)|(BY)|(due)|(DUE))";
 	private static final String KEYWORD_ADD_EVENTSTART = "((begin)|(BEGIN)|(start)|(START))";
 	private static final String KEYWORD_ADD_EVENTEND = "((until)|(UNTIL)|(end)|(END))";
 	private static final String[] addParameterKeywords = {
 			KEYWORD_ADD_DEADLINE, KEYWORD_ADD_EVENTSTART, KEYWORD_ADD_EVENTEND };
 	
-	// Parameters for DONE command
+	// === Parameters for DONE command
 	private static final String PARAMETER_DISPLAY_ALL = "all";
 	private static final String PARAMETER_DISPLAY_DONE = "done";
 	private static final String PARAMETER_DISPLAY_THISWEEK = "this week";
 	private static final String PARAMETER_DISPLAY_TODAY = "today";
 	private static final String PARAMETER_DISPLAY_TOMORROW = "tomorrow";
 
-	// Keywords for SEARCH command
+	// === Keywords for SEARCH command
 	private static final String KEYWORD_SEARCH_DUE = "((due)|(DUE))";
 	private static final String KEYWORD_SEARCH_AFTER = "((after)|(AFTER))";
 	private static final String KEYWORD_SEARCH_BEFORE = "((before)|(BEFORE))";
@@ -34,7 +36,7 @@ public class Translator {
 			KEYWORD_SEARCH_DUE, KEYWORD_SEARCH_AFTER, KEYWORD_SEARCH_BEFORE,
 			KEYWORD_SEARCH_ON };
 
-	// Keywords for EDIT command
+	// === Keywords for EDIT command
 	private static final String KEYWORD_EDIT_DEADLINE = "((deadline)|(DEADLINE))";
 	private static final String KEYWORD_EDIT_EVENTSTART = "((start)|(START)|(beg)|(BEG))";
 	private static final String KEYWORD_EDIT_EVENTEND = "((end)|(END))";
@@ -52,7 +54,8 @@ public class Translator {
 	private static final String PARAMETER_DELETE_DONE_TASK = "((done)|(DONE))";
 	private static final int SPECIAL_ID_DELETE_DONE = -200;
 
-	// Format for Date-Time input.
+	// === Recognized Formats for Date-Time input.
+	// == Date format including year
 	private static final String DELIMITTER_DATE = "(-|/)";
 	private static final String DD_MM_YYYY = "\\d\\d" + DELIMITTER_DATE
 			+ "\\d\\d" + DELIMITTER_DATE + "\\d\\d\\d\\d";
@@ -70,32 +73,25 @@ public class Translator {
 			+ DELIMITTER_DATE + "\\d\\d";
 	private static final String D_M_YY = "\\d" + DELIMITTER_DATE + "\\d"
 			+ DELIMITTER_DATE + "\\d\\d";
-	// private static final String[] FORMATS_DAY_MONTH_YEAR = {DD_MM_YYYY,
-	// DD_M_YYYY, D_MM_YYYY,
-	// D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY};
-
+	// == Date format omitting year
 	private static final String DD_MM = "\\d\\d" + DELIMITTER_DATE + "\\d\\d";
 	private static final String DD_M = "\\d\\d" + DELIMITTER_DATE + "\\d";
 	private static final String D_MM = "\\d" + DELIMITTER_DATE + "\\d\\d";
 	private static final String D_M = "\\d" + DELIMITTER_DATE + "\\d";
-	// private static final String[] FORMATS_DAY_MONTH = {DD_MM, DD_M, D_MM,
-	// D_M};
 	private static final String[] FORMATS_DAY_MONTH_YEAR = { DD_MM_YYYY,
 			DD_M_YYYY, D_MM_YYYY, D_M_YYYY, DD_MM_YY, DD_M_YY, D_MM_YY, D_M_YY,
 			DD_MM, DD_M, D_MM, D_M };
-	private static final int MAX_YY_VALUE = 99;
-	private static final int EXTRA_DATE_YEAR = 1;
-	private static final int CURRENT_MILLENIUM = 2000;
-
+	// == Time format including minutes
 	private static final String DELIMITTER_TIME = "(:)";
 	private static final String HH_MM = "(0|1|2)\\d" + DELIMITTER_TIME
 			+ "([0-5])\\d";
 	private static final String H_MM = "\\d" + DELIMITTER_TIME + "([0-5])\\d";
+	// == Time format omitting minutes
 	private static final String HH = "(0|1|2)\\d";
 	private static final String H = "\\d";
 	private static final String[] FORMATS_HOUR_MINUTE = { HH_MM, H_MM, HH, H };
 
-	// Default values for Date-Time variables.
+	// === Default values for Date-Time variables.
 	private static final String FILLER_DEFAULT_TIME = " 12:00 ";
 	private static final int DATETIME_HOUR_MINIMUM = 0;
 	private static final int DATETIME_MINUTE_MINIMUM = 0;
@@ -105,8 +101,11 @@ public class Translator {
 	private static final int EXTRA_TIME_HOUR = 1;
 	private static final int TIME_HALFDAY = 12;
 	private static final int DAYS_IN_ONE_WEEK = 7;
+	private static final int MAX_YY_VALUE = 99;
+	private static final int EXTRA_DATE_YEAR = 1;
+	private static final int CURRENT_MILLENIUM = 2000;
 
-	// Miscellaneous default values.
+	// === Miscellaneous default values.
 	private static final String EMPTY_STRING = "";
 	private static final String SINGLE_SPACE = " ";
 	private static final String WHITESPACE = "\\s+";
@@ -114,19 +113,26 @@ public class Translator {
 	private static final int ARRAY_POSITION_SECOND = 1;
 	private static final int NUM_TASKID_MINIMUM = 1;
 
-	// Error values.
+	// === Error values.
 	private static final String INVALID_COMMAND = "%1$s is not a valid command!";
+	private static final String ILLEGAL_EDIT_EVENT_TIME = "Event end time is before event start time!";
 	private static final String PARAMETER_DOES_NOT_EXIST = null;
 	private static final int INT_PARAM_INVALID = -1;
 	private static final int INVALID_TASK_ID = -1;
 	// ==========Constants for Translator class Section End================//
 
+	// === Debugging
+	private Logger logger;
+	
 	private Storage taskStorage;
 	private History commandHistory;
 
+	
 	public Translator(Storage storage, History history) {
 		assert storage != null;
 		assert history != null;
+		logger.log(Level.INFO, "Non-null storage and history passed to construct this Translator");
+		
 		taskStorage = storage;
 		commandHistory = history;
 	}
@@ -159,7 +165,8 @@ public class Translator {
 		Command newCommand = null;
 		String inputCommandTypeString = extractFirstWord(usercommand);
 		CommandType inputCommandType = determineCommandType(inputCommandTypeString);
-
+		logger.log(Level.INFO, "CommandType is " + inputCommandType.toString());
+		
 		switch (inputCommandType) {
 		case ADD:
 			newCommand = createAddCommand(usercommand);
@@ -204,8 +211,7 @@ public class Translator {
 			newCommand = createClearCommand();
 			break;
 		default:
-			throw new Exception(String.format(INVALID_COMMAND,
-					inputCommandTypeString));
+			throw new Exception(String.format(INVALID_COMMAND, inputCommandTypeString));
 		}
 		return newCommand;
 	}
@@ -287,8 +293,7 @@ public class Translator {
 		if (deleteInformation[ARRAY_POSITION_FIRST] == SPECIAL_ID_DELETE_DONE) {
 			return new DeleteDoneCommand(this.getStorage(), this.getHistory());
 		} else {
-			return new DeleteCommand(this.getStorage(), this.getHistory(),
-					deleteInformation);
+			return new DeleteCommand(this.getStorage(), this.getHistory(), deleteInformation);
 		}
 	}
 
@@ -298,14 +303,12 @@ public class Translator {
 
 	private Command createDoneCommand(String usercommand) {
 		int[] doneInformation = interpretDoneParameter(usercommand);
-		return new DoneCommand(this.getStorage(), this.getHistory(),
-				doneInformation, true);
+		return new DoneCommand(this.getStorage(), this.getHistory(), doneInformation, true);
 	}
 
 	private Command createUndoneCommand(String usercommand) {
 		int[] undoneInformation = interpretDoneParameter(usercommand);
-		return new DoneCommand(this.getStorage(), this.getHistory(),
-				undoneInformation, false);
+		return new DoneCommand(this.getStorage(), this.getHistory(), undoneInformation, false);
 	}
 
 	private Command createUndoCommand() {
@@ -322,8 +325,7 @@ public class Translator {
 
 	private Command createSetDirectoryCommand(String usercommand) {
 		String setDirInformation = extractSecondWord(usercommand);
-		return new SetDirectoryCommand(this.getStorage(), this.getHistory(),
-				setDirInformation);
+		return new SetDirectoryCommand(this.getStorage(), this.getHistory(), setDirInformation);
 	}
 
 	private Command createGetDirectoryCommand(String usercommand) {
@@ -337,8 +339,7 @@ public class Translator {
 	private Task interpretAddParameter(String usercommand) {
 
 		Task newTask = new Task();
-		KeywordInfoList kList = new KeywordInfoList(usercommand,
-				addParameterKeywords);
+		KeywordInfoList kList = new KeywordInfoList(usercommand, addParameterKeywords);
 
 		String paramDescription = kList.getDescription();
 		String paramDeadline = kList.getParameter(KEYWORD_ADD_DEADLINE);
@@ -359,8 +360,7 @@ public class Translator {
 				newTask.setStartDateTime(eventStart);
 				LocalDateTime eventEnd = null;
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
-					eventEnd = provideDefaultEndDateTime(paramEventEnd,
-							eventStart);
+					eventEnd = provideDefaultEndDateTime(paramEventEnd,	eventStart);
 				} else {
 					eventEnd = eventStart.plusHours(EXTRA_TIME_HOUR);
 				}
@@ -376,8 +376,7 @@ public class Translator {
 
 	private Task interpretEditParameter(String usercommand) {
 
-		KeywordInfoList kList = new KeywordInfoList(usercommand,
-				editParameterKeywords);
+		KeywordInfoList kList = new KeywordInfoList(usercommand, editParameterKeywords);
 
 		int taskID = extractEditTaskID(usercommand);
 		Task newTask;
@@ -386,19 +385,16 @@ public class Translator {
 
 			if (taskID == SPECIAL_ID_LAST_TASK) {
 				Task lastAddedOriginalTask = taskStorage.getLastAddedTask();
-				newTask = makeShallowCopyOfOriginalTask(lastAddedOriginalTask
-						.getId());
+				newTask = makeShallowCopyOfOriginalTask(lastAddedOriginalTask.getId());
 			} else {
 				newTask = makeShallowCopyOfOriginalTask(taskID);
 			}
 
 			boolean doesEditParameterExist = false;
 
-			String paramDescription = kList
-					.getParameter(KEYWORD_EDIT_DESCRIPTION);
+			String paramDescription = kList.getParameter(KEYWORD_EDIT_DESCRIPTION);
 			String paramDeadline = kList.getParameter(KEYWORD_EDIT_DEADLINE);
-			String paramEventStart = kList
-					.getParameter(KEYWORD_EDIT_EVENTSTART);
+			String paramEventStart = kList.getParameter(KEYWORD_EDIT_EVENTSTART);
 			String paramEventEnd = kList.getParameter(KEYWORD_EDIT_EVENTEND);
 
 			String paramRemove = kList.getParameter(KEYWORD_EDIT_REMOVE);
@@ -422,13 +418,11 @@ public class Translator {
 							newTask.setStartDateTime(eventStart);
 							newTask.setEndDateTime(eventStart.plusHours(EXTRA_TIME_HOUR));
 							doesEditParameterExist = true;
-						} else if (eventStart
-								.isBefore(newTask.getEndDateTime())) {
+						} else if (eventStart.isBefore(newTask.getEndDateTime())) {
 							newTask.setStartDateTime(eventStart);
 							doesEditParameterExist = true;
 						} else {
-							System.err
-									.println("\nEvent end time is before event start time\n");
+							System.out.println(ILLEGAL_EDIT_EVENT_TIME);
 							return null;
 						}
 					}
@@ -436,15 +430,13 @@ public class Translator {
 
 				if (paramEventEnd != PARAMETER_DOES_NOT_EXIST) {
 					if (eventStart != null) {
-						LocalDateTime eventEnd = provideDefaultEndDateTime(
-								paramEventEnd, eventStart);
+						LocalDateTime eventEnd = provideDefaultEndDateTime(paramEventEnd, eventStart);
 						if (eventEnd.isAfter(eventStart)) {
 							newTask.setStartDateTime(eventStart);
 							newTask.setEndDateTime(eventEnd);
 							doesEditParameterExist = true;
 						} else {
-							System.err
-									.println("Event end time is before event start time!");
+							System.out.println(ILLEGAL_EDIT_EVENT_TIME);
 							return null;
 						}
 					} else {
@@ -454,8 +446,7 @@ public class Translator {
 							newTask.setEndDateTime(eventEnd);
 							doesEditParameterExist = true;
 						} else {
-							System.err
-									.println("Event end time is before event start time!");
+							System.out.println(ILLEGAL_EDIT_EVENT_TIME);
 							return null;
 						}
 					}
@@ -463,19 +454,15 @@ public class Translator {
 			}
 
 			if (paramRemove != PARAMETER_DOES_NOT_EXIST) {
-				Pattern patternRemoveTime = Pattern
-						.compile(PARAMETER_EDIT_REMOVE_TIME);
-				Matcher matcherRemoveTime = patternRemoveTime
-						.matcher(paramRemove);
+				Pattern patternRemoveTime = Pattern.compile(PARAMETER_EDIT_REMOVE_TIME);
+				Matcher matcherRemoveTime = patternRemoveTime.matcher(paramRemove);
 				if (matcherRemoveTime.find()) {
 					newTask.setStartDateTime(null);
 					newTask.setEndDateTime(null);
 					doesEditParameterExist = true;
 				} else {
-					Pattern patternRemoveStart = Pattern
-							.compile(PARAMETER_EDIT_REMOVE_START);
-					Matcher matcherRemoveStart = patternRemoveStart
-							.matcher(paramRemove);
+					Pattern patternRemoveStart = Pattern.compile(PARAMETER_EDIT_REMOVE_START);
+					Matcher matcherRemoveStart = patternRemoveStart.matcher(paramRemove);
 					if (matcherRemoveStart.find()) {
 						newTask.setStartDateTime(null);
 						doesEditParameterExist = true;
@@ -493,10 +480,8 @@ public class Translator {
 	private int extractEditTaskID(String usercommand) {
 		String taskIDString = extractSecondWord(usercommand);
 		int taskID;
-		Pattern patternLastTaskRequest = Pattern
-				.compile(PARAMETER_EDIT_LAST_TASK);
-		Matcher matcherLastTaskRequest = patternLastTaskRequest
-				.matcher(usercommand);
+		Pattern patternLastTaskRequest = Pattern.compile(PARAMETER_EDIT_LAST_TASK);
+		Matcher matcherLastTaskRequest = patternLastTaskRequest.matcher(usercommand);
 		if (matcherLastTaskRequest.find()) {
 			taskID = SPECIAL_ID_LAST_TASK;
 		} else {
@@ -518,8 +503,7 @@ public class Translator {
 	private Task interpretSearchParameter(String usercommand) {
 
 		Task newTask = new Task();
-		KeywordInfoList kList = new KeywordInfoList(usercommand,
-				searchParameterKeywords);
+		KeywordInfoList kList = new KeywordInfoList(usercommand, searchParameterKeywords);
 
 		String paramDescription = kList.getDescription();
 		String paramAfter = kList.getParameter(KEYWORD_SEARCH_AFTER);
@@ -559,6 +543,59 @@ public class Translator {
 
 		return newTask;
 	}
+
+	private int[] interpretDeleteParameter(String usercommand) {
+		String parameter = removeFirstWord(usercommand);
+		return interpretDeleteTaskIDs(parameter);
+	}
+	
+	private int[] interpretDeleteTaskIDs(String param) {
+		String[] paramsBeforeParse = param.split(WHITESPACE);
+		Pattern patternDeleteDoneRequested = Pattern.compile(PARAMETER_DELETE_DONE_TASK);
+		Matcher matcherDeleteDoneRequested = patternDeleteDoneRequested.matcher(param);
+		if (matcherDeleteDoneRequested.find()) {
+			return new int[] { SPECIAL_ID_DELETE_DONE };
+		}
+		int[] paramsAfterParse = new int[paramsBeforeParse.length];
+		for (int i = 0; i < paramsBeforeParse.length; i++) {
+			try {
+				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
+			} catch (NumberFormatException paramNotInt) {
+				return new int[] { INT_PARAM_INVALID };
+			}
+		}
+		return paramsAfterParse;
+	}
+
+	private int[] interpretDoneParameter(String usercommand) {
+		String parameter = removeFirstWord(usercommand);
+		return interpretTaskIDs(parameter);
+	}
+	
+	private int[] interpretTaskIDs(String param) {
+		String[] paramsBeforeParse = param.split(WHITESPACE);
+		int[] paramsAfterParse = new int[paramsBeforeParse.length];
+		for (int i = 0; i < paramsBeforeParse.length; i++) {
+			try {
+				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
+			} catch (NumberFormatException paramNotInt) {
+				return new int[] { INT_PARAM_INVALID };
+			}
+		}
+		return paramsAfterParse;
+	}
+
+	private Path interpretFilePath(String userInput) {
+		String pathString = extractSecondWord(userInput);
+		Path pathCandidate = Paths.get(pathString);
+		Path path;
+		try {
+			path = pathCandidate.toRealPath();
+			return path;
+		} catch (IOException e) {
+			return null;
+		}
+	}
 	
 	private Task interpretDisplayParameter(String usercommand) {
 		String displayParam = removeFirstWord(usercommand);
@@ -581,12 +618,10 @@ public class Translator {
 	
 	private Task createDisplayOneWeekInfoPackage() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime todayBeginning = getBeginningOfDay(now);
 		LocalDateTime oneWeekLaterEnd = getEndOfDay(now.plusDays(DAYS_IN_ONE_WEEK));
 		assert now.isBefore(oneWeekLaterEnd);
 		
 		Task displayOneWeekInfoPackage = new Task();
-		//displayOneWeekInfoPackage.setStartDateTime(todayBeginning);
 		displayOneWeekInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayOneWeekInfoPackage.setEndDateTime(oneWeekLaterEnd);
 		displayOneWeekInfoPackage.setDescription(EMPTY_STRING);
@@ -619,7 +654,6 @@ public class Translator {
 		assert todayBeginning.isBefore(todayEnd);
 		
 		Task displayTodayInfoPackage = new Task();
-		//displayTodayInfoPackage.setStartDateTime(todayBeginning);
 		displayTodayInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayTodayInfoPackage.setEndDateTime(todayEnd);
 		displayTodayInfoPackage.setDescription(EMPTY_STRING);
@@ -633,7 +667,6 @@ public class Translator {
 		assert thisWeekBeginning.isBefore(thisWeekEnd);
 		
 		Task displayThisWeekInfoPackage = new Task();
-		//displayThisWeekInfoPackage.setStartDateTime(thisWeekBeginning);
 		displayThisWeekInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayThisWeekInfoPackage.setEndDateTime(thisWeekEnd);
 		displayThisWeekInfoPackage.setDescription(EMPTY_STRING);
@@ -648,12 +681,24 @@ public class Translator {
 		
 		Task displayTomorrowInfoPackage = new Task();
 		displayTomorrowInfoPackage.setStartDateTime(tomorrowBeginning);
-		//displayTomorrowInfoPackage.setStartDateTime(LocalDateTime.MIN);
 		displayTomorrowInfoPackage.setEndDateTime(tomorrowEnd);
 		displayTomorrowInfoPackage.setDescription(EMPTY_STRING);
 		return displayTomorrowInfoPackage;
 	}
-
+	
+	private LocalDateTime interpretDateTimeParam(String param) {
+		StringBuilder dateTimeStr = new StringBuilder(param);
+		LocalDate date = extractLocalDate(dateTimeStr);
+		LocalTime time = extractLocalTime(dateTimeStr);
+		if (date == null && time != null) {
+			time = provideDefaultTime(time);
+			date = provideDefaultDate(time);
+		} else if (date != null && time == null) {
+			time = getStartOfNextHour(LocalTime.now());
+		}
+		return LocalDateTime.of(date, time);
+	}
+	
 	private LocalDateTime getBeginningOfDay(LocalDateTime dateTime) {
 		return dateTime.withMinute(DATETIME_MINUTE_MINIMUM)
 				.withHour(DATETIME_HOUR_MINIMUM);
@@ -663,67 +708,9 @@ public class Translator {
 		return dateTime.withMinute(DATETIME_MINUTE_MAXIMUM)
 				.withHour(DATETIME_HOUR_MAXIMUM);
 	}
-
-	private int[] interpretDeleteParameter(String usercommand) {
-		String parameter = removeFirstWord(usercommand);
-		return interpretDeleteTaskIDs(parameter);
-	}
-
-	private int[] interpretDoneParameter(String usercommand) {
-		String parameter = removeFirstWord(usercommand);
-		return interpretTaskIDs(parameter);
-	}
-
-	private LocalDateTime provideDefaultEndDateTime(String endTimeParam,
-			LocalDateTime startDateTime) {
-		// Date format: dd-MM-yyyy
-		StringBuilder dateTimeStr = new StringBuilder(endTimeParam);
-		LocalDate date = extractLocalDate(dateTimeStr);
-		// Time format: HH:mm
-		LocalTime time = extractLocalTime(dateTimeStr);
-		if (date == null && time != null) {
-			time = provideDefaultEndTime(time, startDateTime);
-			date = startDateTime.toLocalDate();
-			LocalDateTime endDateTime = LocalDateTime.of(date, time);
-			if (endDateTime.isBefore(startDateTime)) {
-				endDateTime = endDateTime.plusDays(EXTRA_TIME_DAY);
-			}
-			assert startDateTime.isBefore(endDateTime);
-			return endDateTime;
-		} else if (date != null && time != null) {
-			LocalDateTime endDateTime = LocalDateTime.of(date, time);
-			if (endDateTime.isBefore(startDateTime)) {
-				System.err
-						.println("Event end time is before event start time!");
-				return null;
-			} else {
-				return endDateTime;
-			}
-		} else if (date != null && time == null) {
-			time = getStartOfNextHour(LocalTime.now());
-			return LocalDateTime.of(date, time);
-		} else {
-			return null;
-		}
-	}
 	
 	private LocalTime getStartOfNextHour(LocalTime ref) {
 		return ref.withMinute(DATETIME_MINUTE_MINIMUM).plusHours(EXTRA_TIME_HOUR);
-	}
-
-	private LocalDateTime interpretDateTimeParam(String param) {
-		// Date format: dd-MM-yyyy
-		StringBuilder dateTimeStr = new StringBuilder(param);
-		LocalDate date = extractLocalDate(dateTimeStr);
-		// Time format: HH:mm
-		LocalTime time = extractLocalTime(dateTimeStr);
-		if (date == null && time != null) {
-			time = provideDefaultTime(time);
-			date = provideDefaultDate(time);
-		} else if (date != null && time == null) {
-			time = getStartOfNextHour(LocalTime.now());
-		}
-		return LocalDateTime.of(date, time);
 	}
 
 	private LocalTime provideDefaultTime(LocalTime time) {
@@ -776,12 +763,67 @@ public class Translator {
 			return null;
 		}
 	}
+	
+	private LocalDateTime provideDefaultEndDateTime(String endTimeParam,
+			LocalDateTime startDateTime) {
+		StringBuilder dateTimeStr = new StringBuilder(endTimeParam);
+		LocalDate date = extractLocalDate(dateTimeStr);
+		LocalTime time = extractLocalTime(dateTimeStr);
+		if (date == null && time != null) {
+			time = provideDefaultEndTime(time, startDateTime);
+			date = startDateTime.toLocalDate();
+			LocalDateTime endDateTime = LocalDateTime.of(date, time);
+			if (endDateTime.isBefore(startDateTime)) {
+				endDateTime = endDateTime.plusDays(EXTRA_TIME_DAY);
+			}
+			assert startDateTime.isBefore(endDateTime);
+			return endDateTime;
+		} else if (date != null && time != null) {
+			LocalDateTime endDateTime = LocalDateTime.of(date, time);
+			if (endDateTime.isBefore(startDateTime)) {
+				System.out.println(ILLEGAL_EDIT_EVENT_TIME);
+				return null;
+			} else {
+				return endDateTime;
+			}
+		} else if (date != null && time == null) {
+			time = getStartOfNextHour(LocalTime.now());
+			return LocalDateTime.of(date, time);
+		} else {
+			return null;
+		}
+	}
+	
+	private LocalTime extractLocalTime(StringBuilder param) {
+		if (param != null) {
+			for (int i = 0; i < FORMATS_HOUR_MINUTE.length; i++) {
+				Pattern timePattern = Pattern.compile(FORMATS_HOUR_MINUTE[i]);
+				Matcher timePatternMatcher = timePattern.matcher(param);
+				if (timePatternMatcher.find()) {
+					String timeString = timePatternMatcher.group();
+					int hour;
+					int minute;
+					Pattern delimitterPattern = Pattern.compile(DELIMITTER_TIME);
+					Matcher delimitterMatcher = delimitterPattern.matcher(timeString);
+					if (delimitterMatcher.find()) {
+						String[] timeSegments = timeString.split(DELIMITTER_TIME);
+						hour = Integer.parseInt(timeSegments[0]);
+						minute = Integer.parseInt(timeSegments[1]);
+					} else {
+						hour = Integer.parseInt(timeString);
+						minute = DATETIME_MINUTE_MINIMUM;
+					}
+					return LocalTime.of(hour, minute);
+				}
+			}
+		}
+		return null;
+	}
 
 	private LocalDate extractLocalDate(StringBuilder param) {
 		if (param != null) {
 			for (int i = 0; i < FORMATS_DAY_MONTH_YEAR.length; i++) {
-				Pattern datePattern = Pattern
-						.compile(FORMATS_DAY_MONTH_YEAR[i]);
+				Pattern datePattern = Pattern.compile(FORMATS_DAY_MONTH_YEAR[i]);
 				Matcher datePatternMatcher = datePattern.matcher(param);
 				if (datePatternMatcher.find()) {
 					String dateString = datePatternMatcher.group();
@@ -798,44 +840,13 @@ public class Translator {
 							year += CURRENT_MILLENIUM;
 						}
 					} else {
-						LocalDate extractedDate = LocalDate
-								.of(year, month, day);
+						LocalDate extractedDate = LocalDate.of(year, month, day);
 						if (extractedDate.isBefore(LocalDate.now())) {
 							year += EXTRA_DATE_YEAR;
 						}
 					}
-					param.replace(datePatternMatcher.start(),
-							datePatternMatcher.end() + 1, EMPTY_STRING);
+					param.replace(datePatternMatcher.start(), datePatternMatcher.end() + 1, EMPTY_STRING);
 					return LocalDate.of(year, month, day);
-				}
-			}
-		}
-		return null;
-	}
-
-	private LocalTime extractLocalTime(StringBuilder param) {
-		if (param != null) {
-			for (int i = 0; i < FORMATS_HOUR_MINUTE.length; i++) {
-				Pattern timePattern = Pattern.compile(FORMATS_HOUR_MINUTE[i]);
-				Matcher timePatternMatcher = timePattern.matcher(param);
-				if (timePatternMatcher.find()) {
-					String timeString = timePatternMatcher.group();
-					int hour;
-					int minute;
-					Pattern delimitterPattern = Pattern
-							.compile(DELIMITTER_TIME);
-					Matcher delimitterMatcher = delimitterPattern
-							.matcher(timeString);
-					if (delimitterMatcher.find()) {
-						String[] timeSegments = timeString
-								.split(DELIMITTER_TIME);
-						hour = Integer.parseInt(timeSegments[0]);
-						minute = Integer.parseInt(timeSegments[1]);
-					} else {
-						hour = Integer.parseInt(timeString);
-						minute = DATETIME_MINUTE_MINIMUM;
-					}
-					return LocalTime.of(hour, minute);
 				}
 			}
 		}
@@ -885,50 +896,7 @@ public class Translator {
 		}
 	}
 
-	private int[] interpretTaskIDs(String param) {
-		String[] paramsBeforeParse = param.split(WHITESPACE);
-		int[] paramsAfterParse = new int[paramsBeforeParse.length];
-		for (int i = 0; i < paramsBeforeParse.length; i++) {
-			try {
-				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
-			} catch (NumberFormatException paramNotInt) {
-				return new int[] { INT_PARAM_INVALID };
-			}
-		}
-		return paramsAfterParse;
-	}
 
-	private int[] interpretDeleteTaskIDs(String param) {
-		String[] paramsBeforeParse = param.split(WHITESPACE);
-		Pattern patternDeleteDoneRequested = Pattern
-				.compile(PARAMETER_DELETE_DONE_TASK);
-		Matcher matcherDeleteDoneRequested = patternDeleteDoneRequested
-				.matcher(param);
-		if (matcherDeleteDoneRequested.find()) {
-			return new int[] { SPECIAL_ID_DELETE_DONE };
-		}
-		int[] paramsAfterParse = new int[paramsBeforeParse.length];
-		for (int i = 0; i < paramsBeforeParse.length; i++) {
-			try {
-				paramsAfterParse[i] = Integer.parseInt(paramsBeforeParse[i]);
-			} catch (NumberFormatException paramNotInt) {
-				return new int[] { INT_PARAM_INVALID };
-			}
-		}
-		return paramsAfterParse;
-	}
-
-	private Path interpretFilePath(String userInput) {
-		String pathString = extractSecondWord(userInput);
-		Path pathCandidate = Paths.get(pathString);
-		Path path;
-		try {
-			path = pathCandidate.toRealPath();
-			return path;
-		} catch (IOException e) {
-			return null;
-		}
-	}
 
 	// @author A0111337U
 	private Task makeShallowCopyOfOriginalTask(int TaskId) {
