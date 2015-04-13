@@ -58,11 +58,11 @@ public final class Constants {
             + "done <task identification number(s)>\n  equivalent: do\n\n"
             + "edit <task identification number> <new parameters>\n  equivalent: e\n\n"
             + "exit\n\n"
-            + "getdir\n\n"
+            + "getdirectory <file path>\n  equivalent: getdir\n\n"
             + "help\n\n"
             + "redo\n  equivalent: r\n\n"
             + "search <Keyword>\n  equivalent: s\n\n"
-            + "setdir <file path>\n\n"
+            + "setdirectory <file path>\n  equivalent: setdir\n\n"
             + "undo\n  equivalent: u\n\n"
-            + "undone";
+            + "undone <task identification number(s)>";
 }
