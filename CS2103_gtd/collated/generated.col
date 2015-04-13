@@ -3,7 +3,7 @@
 
 
 	/**
-	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
 	 */
 
 	@Override
@@ -11,7 +11,24 @@
 		return null;
 	}
 
-	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	 */
+
+	@Override
+	public void updateHistory() {
+
+	}
+
+}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
 
 
 
@@ -20,6 +37,11 @@
 	/**
 	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
 	 */
+
+	@Override
+	public Command makeUndo() {
+		return null;
+	}
 
 	@Override
 	public void updateHistory() {
@@ -104,16 +126,6 @@
 	public Command makeUndo() {
 		return null;
 	}
-
-	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SearchCommand.java
-
-
-
-
-
-	/**
-	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\SearchCommand.java
-	 */
 
 	@Override
 	public void updateHistory() {

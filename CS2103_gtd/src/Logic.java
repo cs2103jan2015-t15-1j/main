@@ -24,7 +24,7 @@ public class Logic {
 		try {
 			initializationFeedback = storage.prepareStorage();
 		} catch (IOException e) {
-			return "TaskWaltz was not able to retrieve your data. Check your directory path in config.txt";
+			return e.getMessage();
 		}
 		history = new History();
 		translator = new Translator(storage, history);

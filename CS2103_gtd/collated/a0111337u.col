@@ -122,32 +122,32 @@ interface Command {
 
 
 	/**
-	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteDoneCommand.java
 	 */
 
-	@Override
-	public Command makeUndo() {
-		return null;
-	}
+    public Command makeUndo() {
+        Command reversedCommand = new AddCommand(storage, history, deletedTasks);
+        return reversedCommand;
+    }
 
-	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteDoneCommand.java
 
 
 
 
 
 	/**
-	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteDoneCommand.java
 	 */
 
-	@Override
-	public void updateHistory() {
-
-	}
+    @Override
+    public void updateHistory() {
+        history.pushUndo(makeUndo());
+    }
 
 }
 
-	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DisplayCommand.java
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\DeleteDoneCommand.java
 
 
 
@@ -190,8 +190,8 @@ interface Command {
 	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\EditCommand.java
 	 */
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 
 class EditCommand implements Command {
 	Task newTask;
@@ -199,8 +199,8 @@ class EditCommand implements Command {
 	Storage storage;
 	History history;
 
-	private static final Logger logger = Logger.getLogger(EditCommand.class
-			.getName());
+//	private static final Logger logger = Logger.getLogger(EditCommand.class
+//			.getName());
 
 	public EditCommand(Storage _storage, History _history, Task _newTask) {
 		newTask = _newTask;
@@ -213,24 +213,23 @@ class EditCommand implements Command {
 	@Override
 	public String execute() {
 		int taskId = newTask.getId();
-		oldTask = makeShallowCopyOfOriginalTask(taskId);
-
-		storage.updateDescription(taskId, newTask.getDescription());
-
-		storage.updateStartDate(taskId, newTask.getStartDateTime());
-
-		storage.updateEndDate(taskId, newTask.getEndDateTime());
-
-		storage.updateLocation(taskId, newTask.getLocation());
+		updateStorage(taskId);
 
 		Task realTask = storage.getTask(taskId);
-		String feedbackOrg = String.format("%-15s%s", "Original Task:",
+		String feedbackOriginal = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_ORIGINAL,
 				oldTask.getUserFormat());
-		String feedbackChange = String.format("%-15s%s", "Changed to:",
+		String feedbackChange = String.format(Constants.EDIT_FORMAT, Constants.MESSAGE_EDIT_CHANGE,
 				realTask.getUserFormat());
 		// logger.log(Level.FINE, storage.getTask(taskId).getUserFormat());
 		updateHistory();
-		return feedbackOrg + "\n" + feedbackChange;
+		return feedbackOriginal + "\n" + feedbackChange;
+	}
+
+	private void updateStorage(int taskId) {
+		oldTask = makeShallowCopyOfOriginalTask(taskId);
+		storage.updateDescription(taskId, newTask.getDescription());
+		storage.updateStartDate(taskId, newTask.getStartDateTime());
+		storage.updateEndDate(taskId, newTask.getEndDateTime());
 	}
 
 	@Override
@@ -242,11 +241,10 @@ class EditCommand implements Command {
 		Task oldTask = new Task();
 		Task old = storage.getTask(TaskId);
 		oldTask.setDescription(old.getDescription());
-		oldTask.setDone(old.getDone());
+		oldTask.setDone(old.isDone());
 		oldTask.setId(old.getId());
 		oldTask.setStartDateTime(old.getStartDateTime());
 		oldTask.setEndDateTime(old.getEndDateTime());
-		oldTask.setLocation(old.getLocation());
 		return oldTask;
 	}
 
@@ -265,16 +263,65 @@ class EditCommand implements Command {
 
 
 	/**
+	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+	 */
+
+public class ExitCommand implements Command {
+
+	public ExitCommand() {
+
+	}
+
+	@Override
+	public String execute() {
+		System.exit(0);
+		return null;
+	}
+
+	// End of segment: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\ExitCommand.java
+
+
+
+
+
+	/**
 	 * origin: C:\Users\Luq\workspace\TaskWaltz\main\CS2103_gtd\src\History.java
 	 */
+
+public class History {
+
+	Stack<Command> undoStack = new Stack<Command>();
+	Stack<Command> redoStack = new Stack<Command>();
+	boolean isUndoOrRedo = false;
+	boolean isRedo = false;
+
+	public void pushUndo(Command cmd) {
+		// command should already be in its undo state
+		if (isUndoOrRedo) {
+			isUndoOrRedo = false;
+			return;
+		}
+		undoStack.push(cmd);
+		if (!isRedo) {
+			redoStack.clear();
+		} else {
+			isRedo = false;
+		}
+	}
+
+	public void pushRedo(Command cmd) {
+		// command should already be in its undo state
+		redoStack.push(cmd);
+	}
 
 	public Command getUndo() {
 		Command lastCmd;
 		try {
 			lastCmd = undoStack.pop();
+			isUndoOrRedo = true;
 			return lastCmd;
 		} catch (Exception e) {
-			throw new NullPointerException("No commands to undo");
+			throw new NullPointerException(Constants.MESSAGE_NO_UNDO);
 		}
 	}
 
@@ -292,9 +339,11 @@ class EditCommand implements Command {
 		Command lastCmd;
 		try {
 			lastCmd = redoStack.pop();
+			isUndoOrRedo = true;
+			isRedo = true;
 			return lastCmd;
 		} catch (Exception e) {
-			throw new NullPointerException("No commands to redo");
+			throw new NullPointerException(Constants.MESSAGE_NO_REDO);
 		}
 	}
 
@@ -329,7 +378,12 @@ public class Logic {
 
 	public String initializeEnvironment() {
 		storage = new Storage();
-		String initializationFeedback = storage.prepareStorage();
+		String initializationFeedback;
+		try {
+			initializationFeedback = storage.prepareStorage();
+		} catch (IOException e) {
+			return "TaskWaltz was not able to retrieve your data. Check your directory path in config.txt";
+		}
 		history = new History();
 		translator = new Translator(storage, history);
 		return initializationFeedback;
@@ -339,11 +393,12 @@ public class Logic {
 		Command command;
 		try {
 			command = translator.createCommand(userInput);
-			String feedback = command.execute();
-			return feedback;
 		} catch (Exception e) {
-			return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
-		}
+            return Constants.MESSAGE_COMMAND_EXECUTION_ERROR + userInput;
+        }
+		String feedback = command.execute();
+		return feedback;
+		
 
 	}
 
@@ -757,11 +812,10 @@ public class RedoCommand implements Command {
 		Task oldTask = new Task();
 		Task old = taskStorage.getTask(TaskId);
 		oldTask.setDescription(old.getDescription());
-		oldTask.setDone(old.getDone());
+		oldTask.setDone(old.isDone());
 		oldTask.setId(old.getId());
 		oldTask.setStartDateTime(old.getStartDateTime());
 		oldTask.setEndDateTime(old.getEndDateTime());
-		oldTask.setLocation(old.getLocation());
 		return oldTask;
 	}
 }
@@ -790,6 +844,7 @@ public class UndoCommand implements Command {
 	public String execute() {
 		String feedback;
 		try {
+			
 			cmd = history.getUndo();
 			feedback = cmd.execute();
 			updateHistory();
