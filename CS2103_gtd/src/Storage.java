@@ -42,9 +42,8 @@ public class Storage {
     /**
      * Change the path for task storage and updates the tasks
      * 
-     * @param path
-     *            : the new path given by the user
-     * @return feedback string
+     * @param path  the new path given by the user
+     * @return      feedback string
      */
     public String setFilePath(String path) throws IOException {
         String feedback = storageIO.setFilePath(path);
@@ -89,6 +88,17 @@ public class Storage {
         return String.format(Constants.MESSAGE_ALL_DELETED);
     }
     
+    public String done(int id, boolean setDone) {
+        if (tasks.get(id) != null) {
+            Task doneTask = tasks.get(id);
+            doneTask.setDone(setDone);
+            tasks.put(id, doneTask);
+            writeToFile();
+            return doneTask.getUserFormat();
+        }
+        return Constants.MESSAGE_INCORRECT_ID;
+    }
+    
     private String updateTask(int id, Task updatedTask) {
         if (tasks.get(id) != null) {
             tasks.put(id, updatedTask);
@@ -125,17 +135,6 @@ public class Storage {
         return Constants.MESSAGE_INCORRECT_ID;
     }
     
-    public String done(int id, boolean setDone) {
-        if (tasks.get(id) != null) {
-            Task doneTask = tasks.get(id);
-            doneTask.setDone(setDone);
-            tasks.put(id, doneTask);
-            writeToFile();
-            return doneTask.getUserFormat();
-        }
-        return Constants.MESSAGE_INCORRECT_ID;
-    }
-    
     public Task getTask(int id) {
         if (tasks.get(id) != null) {
             return tasks.get(id);
@@ -148,7 +147,7 @@ public class Storage {
     }
     
     /**
-     * @return array with all tasks
+     * Returns array with all tasks
      */
     public Task[] getAllTasks() {
         Task[] taskArray = new Task[tasks.size()];
@@ -164,9 +163,10 @@ public class Storage {
      * Returns a string with all task information formatted as a table with the 
      * done tasks at the top, then floating tasks and last the unfinished 
      * deadline and event tasks, ordered by date. 
-     * @return all tasks as a user friendly formatted string 
+     * 
+     * @return  all tasks as a user friendly formatted string 
      */
-    public String getTasksAsString() {
+    public String getAllTasksAsString() {
         String allTasks = getDoneTasksAsString();
         
         ArrayList<Task> unfinishedTasks = getUnfinishedTasks();
@@ -185,7 +185,8 @@ public class Storage {
     /**
      * Returns all unfinished tasks ordered by date (closest deadline at the 
      * bottom) and with floating tasks at the top
-     * @return ArrayList with unfinished tasks
+     * 
+     * @return  ArrayList with unfinished tasks
      */
     private ArrayList<Task> getUnfinishedTasks() {
         Task[] taskArray = getAllTasks();
@@ -203,11 +204,12 @@ public class Storage {
      * Returns a string with all tasks in a given time span, formatted as a 
      * table with the done tasks at the top, then floating tasks and last the 
      * unfinished deadline and event tasks, ordered by date. 
-     * @param displayObj: Task with the given time span as startDateTime and 
-     * endDateTime
+     * 
+     * @param displayObj    Task with the given time span as startDateTime and 
+     *                      endDateTime
      * @return tasks in the time span as a user friendly formatted string 
      */
-    public String displayByDate(Task displayObj) {
+    public String getTasksInTimeSpan(Task displayObj) {
         String displayTasks = "\n";
         displayTasks += getDisplayTitle(displayObj);
         
@@ -238,23 +240,6 @@ public class Storage {
         return String.format(Constants.MESSAGE_TIME_PERIOD, startTime, endTime);
     }
     
-    /**
-     * Make a search given the search criterias in the searchObj
-     * @param searchObj
-     * @return the search result as a string
-     */
-    public String search(Task searchObj) {
-        String feedback;
-        ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
-        String result = storageSearch.search(taskList, searchObj);
-        if (result.equals("")) {
-            feedback = Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
-        } else {
-            feedback = Constants.DISPLAY_TABLE_HEADERS+"\n"+result;
-        }
-        return feedback;
-    }
-    
     public String getDoneTasksAsString() {
         String doneTasksString = "";
         for (Task task : tasks.values()) {
@@ -273,6 +258,24 @@ public class Storage {
             }
         }
         return floatingTasksString;
+    }
+    
+    /**
+     * Make a search given the search criterias in the searchObj
+     * 
+     * @param searchObj
+     * @return the search result as a string
+     */
+    public String search(Task searchObj) {
+        String feedback;
+        ArrayList<Task> taskList = new ArrayList<Task>(tasks.values());
+        String result = storageSearch.search(taskList, searchObj);
+        if (result.equals("")) {
+            feedback = Constants.MESSAGE_SEARCH_UNSUCCESSFUL;
+        } else {
+            feedback = Constants.DISPLAY_TABLE_HEADERS+"\n"+result;
+        }
+        return feedback;
     }
     
     public void writeToFile() {
