@@ -12,6 +12,10 @@ public class Storage {
     private StorageSearch storageSearch;
     private int lastIdNumber;
     
+    public Storage(StorageIO _storageIO) {
+        storageIO = _storageIO;
+    }
+    
     /**
      * Initialize StorageSerach and StorageIO, file paths and the data structure
      * for storing tasks.
@@ -19,7 +23,6 @@ public class Storage {
      */
     public String prepareStorage() {
         storageSearch = new StorageSearch();
-        storageIO = new StorageIO();
         String configFilePath = storageIO.initializeConfigFile();
         String setStorageFileFeedback = storageIO.setFilePath(configFilePath);
         initializeTaskList();
@@ -161,8 +164,7 @@ public class Storage {
      * @return all tasks as a user friendly formatted string 
      */
     public String getTasksAsString() {
-        String allTasks = "\n" + Constants.MESSAGE_DISPLAY_ALL;
-        allTasks += getDoneTasksAsString();
+        String allTasks = getDoneTasksAsString();
         
         ArrayList<Task> unfinishedTasks = getUnfinishedTasks();
         for (Task newTask : unfinishedTasks) {
@@ -172,7 +174,9 @@ public class Storage {
         if (allTasks.equals("")) {
             return Constants.MESSAGE_NO_TASKS;
         }
-        return allTasks;
+        String feedback = "\n" + Constants.MESSAGE_DISPLAY_ALL + 
+                Constants.DISPLAY_TABLE_HEADERS + allTasks;
+        return feedback;
     }
     
     /**
@@ -249,7 +253,7 @@ public class Storage {
     }
     
     public String getDoneTasksAsString() {
-        String doneTasksString = Constants.DISPLAY_TABLE_HEADERS;
+        String doneTasksString = "";
         for (Task task : tasks.values()) {
             if (task.isDone()) {
                 doneTasksString += "\n" + task.getUserFormat();

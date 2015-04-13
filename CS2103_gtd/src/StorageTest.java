@@ -7,8 +7,9 @@ import org.junit.Test;
 
 //@author A0135280M
 public class StorageTest {
-
-    Storage storage = new Storage();
+    
+    StorageIO storageIO = new StorageIoMock();
+    Storage storage = new Storage(storageIO);
     String fileName = System.getProperty("user.dir") + "/file_path_for_test.txt";
     
     private void initialize() {
@@ -17,18 +18,11 @@ public class StorageTest {
         storage.deleteAll();
     }
     
-    private void endTest() {
-        storage.deleteAll();
-        storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
-    }
-    
     @Test
-    // Need to try out to be able to use it in other tests
     public void setAndGetFilePath() {
         initialize();
         String newFilePath = storage.getFilePath();
         assertEquals("Check that setFilePath() updates the filePath\n", fileName, newFilePath);
-        endTest();
     }
     
     @Test
@@ -42,7 +36,6 @@ public class StorageTest {
         Task theStoredTask = storage.getTask(taskId);
         assertEquals("Check that adding and getting a task works\n", 
                 theDesc, theStoredTask.getDescription());
-        endTest();
     }
     
     @Test
@@ -58,14 +51,6 @@ public class StorageTest {
         Task lastTask = storage.getLastAddedTask();
         assertEquals("Check that getting the last added task works\n", 
                 theDesc, lastTask.getDescription());
-        endTest();
-    }
-    
-    private Task getDisplayAllSearchObj() {
-        Task t = new Task();
-        t.setStartDateTime(LocalDateTime.MIN);
-        t.setEndDateTime(LocalDateTime.MAX);
-        return t;
     }
     
     @Test
@@ -77,12 +62,10 @@ public class StorageTest {
         storage.deleteAll();
         String tasksFeedback = storage.getTasksAsString();
         assertEquals("Check that deleteAll() deletes all tasks\n", 
-                "\n"+Constants.MESSAGE_DISPLAY_ALL+Constants.MESSAGE_NO_TASKS, tasksFeedback);
-        endTest();
+                Constants.MESSAGE_NO_TASKS, tasksFeedback);
     }
     
     @Test
-    //No separate partitions and therefore no need to try out different values
     public void deleteTask() {
         initialize();
         Task testTask = new Task();
@@ -92,13 +75,10 @@ public class StorageTest {
         storage.delete(taskId);
         String tasksFeedback = storage.getTasksAsString();
         assertEquals("Check that delete(id) deletes the task\n", 
-                "\n"+Constants.MESSAGE_DISPLAY_ALL+Constants.MESSAGE_NO_TASKS, tasksFeedback);
-        endTest();
+                Constants.MESSAGE_NO_TASKS, tasksFeedback);
     }
     
     @Test
-    // Only floating tasks working right now
-    // - later do tests for event and deadline tasks as well
     public void updateTaskDescription() {
         storage.prepareStorage();
         Task testTask = new Task();
@@ -110,7 +90,6 @@ public class StorageTest {
         String acctualNewDesc = storage.getTask(taskId).getDescription();
         assertEquals("Check that the description can be updated\n", 
                 newDesc, acctualNewDesc);
-        endTest();
     }
     
     private void createTask(String taskDesc, String startDateString, 
@@ -158,7 +137,6 @@ public class StorageTest {
         
         assertThat("Check that search shows an event starting on that time\n", 
                 feedback, containsString(taskDesc));
-        endTest();
     }
     
     @Test
@@ -179,7 +157,6 @@ public class StorageTest {
         
         assertThat("Check that search shows an event starting after that time\n", 
                 feedback, containsString(taskDesc));
-        endTest();
     }
     
     @Test
@@ -200,7 +177,6 @@ public class StorageTest {
         
         assertThat("Check that search shows an event happening before that time\n", 
                 feedback, containsString(taskDesc));
-        endTest();
     }
     
     @Test
@@ -220,7 +196,6 @@ public class StorageTest {
         
         assertEquals("Check that search desn't show events happening after given time\n", 
                 feedback, Constants.MESSAGE_SEARCH_UNSUCCESSFUL);
-        endTest();
     }
     
     @Test
@@ -236,7 +211,6 @@ public class StorageTest {
         
         assertThat("Check that search can find tasks on substrings of the description\n", 
                 feedback, containsString("search"));
-        endTest();
     }
     
 }
