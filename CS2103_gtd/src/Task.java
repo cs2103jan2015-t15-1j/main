@@ -4,6 +4,9 @@ import java.time.temporal.ChronoUnit;
 //@author A0135280M
 public class Task implements Comparable<Task> {
 	
+	private static final int ID_NEW_EMPTY_TASK = -1;
+	private static final int CHAR_LENGTH_DAY_OF_WEEK_DISPLAY = 3;
+	private static final String EMPTY_STRING = "";
     private int id;
 	private String description;
 	private LocalDateTime startDateTime;
@@ -12,7 +15,7 @@ public class Task implements Comparable<Task> {
 	
 	//@author A0135295B
 	public Task() {
-		id = -1;
+		id = ID_NEW_EMPTY_TASK;
 		description = null;
 		startDateTime = null;
 		endDateTime = null;
@@ -46,7 +49,7 @@ public class Task implements Comparable<Task> {
 	
 	//@author A0135295B
     private static String getDateTimeInString(LocalDateTime dateTime) {
-        String dateTimeString = "";
+        String dateTimeString = EMPTY_STRING;
         if (dateTime != null) {
             dateTimeString = dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
         }
@@ -62,9 +65,9 @@ public class Task implements Comparable<Task> {
 	}
     
     private String getDateTimeForDisplay(LocalDateTime dateTime) {
-        String dateTimeString = "";
+        String dateTimeString = EMPTY_STRING;
         if (dateTime != null) {
-            dateTimeString = dateTime.getDayOfWeek().toString().substring(0, 3) + " ";
+            dateTimeString = dateTime.getDayOfWeek().toString().substring(0, CHAR_LENGTH_DAY_OF_WEEK_DISPLAY) + " ";
             dateTimeString += dateTime.format(Constants.FORMAT_STORAGE_DATETIME);
         }
         return dateTimeString;
@@ -133,7 +136,7 @@ public class Task implements Comparable<Task> {
      */
     public String getUserFormat() {
     	String doneImage = Constants.DISPLAY_UNDONE;
-        String statusImage = "";
+        String statusImage = EMPTY_STRING;
         if (isDone()) {
             doneImage = Constants.DISPLAY_DONE;
         }
