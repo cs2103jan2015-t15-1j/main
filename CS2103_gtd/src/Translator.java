@@ -164,7 +164,7 @@ public class Translator {
 		Command newCommand = null;
 		String inputCommandTypeString = extractFirstWord(usercommand);
 		CommandType inputCommandType = determineCommandType(inputCommandTypeString);
-		logger.log(Level.INFO, "CommandType is " + inputCommandType.toString());
+//		logger.log(Level.INFO, "CommandType is " + inputCommandType.toString());
 		
 		switch (inputCommandType) {
 		case ADD:
