@@ -2,6 +2,10 @@
 public class StorageStub extends Storage {
 
 	Task someTask;
+	
+	public StorageStub(StorageIO _storageIO) {
+	    super(_storageIO);
+	}
 
 	public String add(Task newTask) {
 		someTask = newTask;

@@ -19,7 +19,8 @@ public class Logic {
 	}
 
 	public String initializeEnvironment() {
-		storage = new Storage();
+        StorageIO storageIO = new StorageIO();
+		storage = new Storage(storageIO);
 		String initializationFeedback;
 		try {
 			initializationFeedback = storage.prepareStorage();

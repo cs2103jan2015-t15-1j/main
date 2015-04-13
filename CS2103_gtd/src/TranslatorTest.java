@@ -84,7 +84,7 @@ public class TranslatorTest {
 		private static final int INVALID_TASK_ID = -1;
 		//==========Constants for Translator class Section End================//
 		
-		private Translator trans = new Translator(new StorageStub(), new History());
+		private Translator trans = new Translator(new StorageStub(new StorageIoMock()), new History());
 		private Class translatorClass = trans.getClass();
 		
 		/*

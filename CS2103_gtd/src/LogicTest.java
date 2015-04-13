@@ -5,7 +5,8 @@ import org.junit.Test;
 //@author A0111337U
 public class LogicTest {
 
-	Storage storage = new Storage();
+    StorageIO storageIO = new StorageIoMock();
+	Storage storage = new Storage(storageIO);
 	String fileName = "file_path_for_test.txt";
 	Logic logic = Logic.getLogicObject();
 
