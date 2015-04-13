@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 //@author A0135280M
 public class SetDirectoryCommand implements Command {
 
@@ -7,7 +9,7 @@ public class SetDirectoryCommand implements Command {
 	private String oldDir;
 	
 	public SetDirectoryCommand(Storage _storage, History _history, String path) {
-		newDir = System.getProperty("user.dir") + "/" + path;
+		newDir = path;
 		storage = _storage;
 		history = _history;
 	}
@@ -15,7 +17,12 @@ public class SetDirectoryCommand implements Command {
 	@Override
 	public String execute() {
 	    oldDir = storage.getFilePath();
-		String feedback = storage.setFilePath(newDir);
+		String feedback;
+		try {
+			feedback = storage.setFilePath(newDir);
+		} catch (IOException e) {
+			return e.getMessage();
+		}
 		updateHistory();
 		return feedback;
 	}

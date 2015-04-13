@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,20 +16,20 @@ public class Storage {
     public Storage(StorageIO _storageIO) {
         storageIO = _storageIO;
     }
-    
     /**
      * Initialize StorageSerach and StorageIO, file paths and the data structure
      * for storing tasks.
+     * 
      * @return feedback string
      */
-    public String prepareStorage() {
+    public String prepareStorage() throws IOException {
         storageSearch = new StorageSearch();
-        String configFilePath = storageIO.initializeConfigFile();
-        String setStorageFileFeedback = storageIO.setFilePath(configFilePath);
+        String storageFilePath = storageIO.initializeConfigFile();
+        String setStorageFileFeedback = storageIO.setFilePath(storageFilePath);
         initializeTaskList();
         return setStorageFileFeedback;
     }
-    
+
     /**
      * Create a HashMap with Tasks and their id as key from the storage file
      */
@@ -37,13 +38,15 @@ public class Storage {
         storageIO.getDataFromFile(tasks);
         lastIdNumber = storageIO.getLastIdNumber();
     }
-    
+
     /**
      * Change the path for task storage and updates the tasks
-     * @param path: the new path given by the user
+     * 
+     * @param path
+     *            : the new path given by the user
      * @return feedback string
      */
-    public String setFilePath(String path) {
+    public String setFilePath(String path) throws IOException {
         String feedback = storageIO.setFilePath(path);
         initializeTaskList();
         return feedback;

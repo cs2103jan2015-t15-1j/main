@@ -1,6 +1,7 @@
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.junit.Test;
@@ -13,8 +14,12 @@ public class StorageTest {
     String fileName = System.getProperty("user.dir") + "/file_path_for_test.txt";
     
     private void initialize() {
-        storage.prepareStorage();
-        storage.setFilePath(fileName);
+        try {
+            storage.prepareStorage();
+            storage.setFilePath(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         storage.deleteAll();
     }
     
@@ -80,7 +85,7 @@ public class StorageTest {
     
     @Test
     public void updateTaskDescription() {
-        storage.prepareStorage();
+        initialize();
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.add(testTask);
