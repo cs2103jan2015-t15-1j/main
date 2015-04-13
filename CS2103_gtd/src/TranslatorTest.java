@@ -84,57 +84,9 @@ public class TranslatorTest {
 		private static final int INVALID_TASK_ID = -1;
 		//==========Constants for Translator class Section End================//
 		
-		private Translator trans = new Translator(new StorageStub(new StorageIoMock()), new History());
+		private Translator trans = new Translator(new Storage(new StorageIoMock()), new History());
 		private Class translatorClass = trans.getClass();
-		
-		/*
-		private Command createAddCommand(String usercommand)
-		private Command createDisplayCommand()
-		private Command createSearchCommand(String usercommand)
-		private Command createEditCommand(String usercommand) 
-		private Command createDeleteCommand(String usercommand)
-		private Command createClearCommand()
-		private Command createDoneCommand(String usercommand)
-		private Command createUndoCommand()
-		private Command createRedoCommand()
-		private Command createHelpCommand()
-		private Command createSetDirectoryCommand(String usercommand)
-		private Command createExitCommand()
-		*/
-		/*
-		private Task interpretAddParameter(String usercommand)
-		private Task interpretEditParameter(String usercommand)
-		private int extractEditTaskID(String usercommand)
-		private Task interpretSearchParameter(String usercommand)
-		private LocalDateTime getBeginningOfDay(LocalDateTime dateTime)
-		private LocalDateTime getEndOfDay(LocalDateTime dateTime)
-		private int[] interpretDeleteParameter(String usercommand) 
-		private int[] interpretDoneParameter(String usercommand)
-		private LocalDateTime interpretDateTimeParam(String param)
-		private LocalDate extractLocalDate(String param)
-		private LocalTime extractLocalTime(String param)
-		
-		private String extractFirstWord(String str)
-		
-		private String extractSecondWord(String str);
-		private String removeFirstWord(String str);
-		private int[] interpretTaskIDs(String param);
-		private Path interpretFilePath(String userInput);
-		*/
-		/*
-		@Test
-		public void interpretFilePathTest() {
-			try {
-				Method method = translatorClass.getDeclaredMethod("interpretFilePath", String.class);
-				method.setAccessible(true);
-				method.invoke(trans, ".");
-			} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				System.out.println(e.toString());
-			}
-		}
-		*/
-	
-		
+
 		/* Boundary case for null input */
 		@Test
 		public void determineCommandTypeTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -405,16 +357,6 @@ public class TranslatorTest {
 	}
 	
 	@Test
-	public void extractLocalDateTest_7() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
-		methodELD.setAccessible(true);
-		StringBuilder testInput = new StringBuilder("22 11 3333");
-		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
-		LocalDate expectedOutput = LocalDate.of(3333, 11, 22);
-		assertEquals(actualOutput, expectedOutput);
-	}
-	
-	@Test
 	public void extractLocalDateTest_8() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Method methodELD = translatorClass.getDeclaredMethod("extractLocalDate", StringBuilder.class);
 		methodELD.setAccessible(true);
@@ -520,7 +462,7 @@ public class TranslatorTest {
 		methodELD.setAccessible(true);
 		StringBuilder testInput = new StringBuilder("11/2");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
-		LocalDate expectedOutput = LocalDate.of(2015, 2, 11);
+		LocalDate expectedOutput = LocalDate.of(2016, 2, 11);
 		assertEquals(actualOutput, expectedOutput);
 	}
 	
@@ -540,7 +482,7 @@ public class TranslatorTest {
 		methodELD.setAccessible(true);
 		StringBuilder testInput = new StringBuilder("1/2");
 		LocalDate actualOutput = (LocalDate) methodELD.invoke(trans, testInput);
-		LocalDate expectedOutput = LocalDate.of(2015, 2, 1);
+		LocalDate expectedOutput = LocalDate.of(2016, 2, 1);
 		assertEquals(actualOutput, expectedOutput);
 	}
 	
@@ -776,131 +718,4 @@ public class TranslatorTest {
 		LocalDate expectedOutput = today.plusDays(1);
 		assertEquals(actualOutput, expectedOutput);
 	}
-//	
-//	@Test
-//		public void interpretFilePathTest_1() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-//		Method methodIFP = translatorClass.getDeclaredMethod("interpretFilePath", String.class);
-//		methodIFP.setAccessible(true);
-//		String testInput = ".";
-//		Path actualOutput = (Path) methodIFP.invoke(trans, testInput);
-//		Path expectedOutput = Paths.get(".");
-//		assertEquals(expectedOutput, actualOutput);
-//	}
-	
-	/*
-	@Test
-	public void determineCommandTypeTest() {
-		String testInput = "aDD";
-		CommandType expected = CommandType.ADD;
-		CommandType actual = Interpreter.interpretCommandType(testInput);
-		assertEquals(expected, actual);
-	}
-	
-	KeywordInfoList kList;
-	public void initKList() {
-		String usercommand = "add format a commit by 5PM at atLanta";
-		kList = new KeywordInfoList(usercommand, addParameterKeywords);
-	}
-	
-	@Test
-	public void paramDescriptionTest() {
-		initKList();
-		String expected = "format a commit";
-		String actual = kList.getDescription();
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void paramDeadlineTest() {
-		initKList();
-		String expected = "5PM";
-		String actual = kList.getParameter(KEYWORD_DEADLINE);
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void paramLocationTest() {
-		initKList();
-		String expected = "atLanta";
-		String actual = kList.getParameter(KEYWORD_LOCATION);
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void paramEventStart() {
-		initKList();
-		String expected = null;
-		String actual = kList.getParameter(KEYWORD_EVENTSTART);
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void paramEventEnd() {
-		initKList();
-		String expected = null;
-		String actual = kList.getParameter(KEYWORD_EVENTEND);
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void removeFirstWordTest() {
-		String testInput = "  firstWord  firstWordRemoved  yes";
-		String expected = "firstWordRemoved  yes";
-		String actual = Interpreter.removeFirstWord(testInput);
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void interpretDeleteParametersTest() {
-		String testInput = " delete 120 33   135  34";
-		int[] expected = {120, 33, 135, 34};
-		int[] actual = Interpreter.interpretDeleteParameter(testInput);
-		assertTrue(Arrays.equals(expected, actual));
-	}
-	
-	@Test
-	public void interpretDoneParametersTest() {
-		String testInput = " done 120 33   135  34";
-		int[] expected = {120, 33, 135, 34};
-		int[] actual = Interpreter.interpretDeleteParameter(testInput);
-		assertTrue(Arrays.equals(expected, actual));
-	}
-	
-	@Test
-	public void extractLocalDateTest() {
-		String testInput = " add task waltz meting start 10:30 on 04/03/2015 at Computing";
-		LocalDate expected = LocalDate.of(2015, 3, 4);
-		LocalDate actual = Interpreter.extractLocalDate(testInput);
-		assertTrue(expected.equals(actual));
-	}
-	
-	@Test
-	public void extractLocalTimeTest() {
-		String testInput = " add task waltz meting start 10:30 on 04/03/2015 at Computing";
-		LocalTime expected = LocalTime.of(10, 30);
-		LocalTime actual = Interpreter.extractLocalTime(testInput);
-		assertTrue(expected.equals(actual));
-	}
-	
-	@Test
-	public void interpretDateTimeParamTest() {
-		String testInput = " on the 20:30 of 03-12-5888 Supernova exploded.";
-		LocalDateTime expected = LocalDateTime.of(5888, 12, 3, 20, 30);
-		LocalDateTime actual = Interpreter.interpretDateTimeParam(testInput, CommandType.ADD);
-		assertTrue(expected.equals(actual));
-	}
-	
-	public void interpretAddOREditParameterTest() {
-		String testInput = " add finish lunch and call a loved one at Hawker Center from 12:30 04/03/2015 to 15:30 04/03/2015";
-		Task expected = new Task();
-		expected.setDescription("finish lunch and call a loved one");
-		expected.setDone(false);
-		expected.setLocation("Hawker Center");
-		expected.setStartDateTime(LocalDateTime.of(2015, 3, 4, 12, 30));
-		expected.setEndDateTime(LocalDateTime.of(2015, 3, 4, 15, 30));
-		Task actual = Interpreter.interpretAddOREditParameter(testInput, Interpreter.interpretCommandType(testInput));
-		assertEquals(expected, actual);
-	}
-	*/
-	
 }

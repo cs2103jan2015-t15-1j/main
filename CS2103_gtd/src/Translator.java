@@ -131,7 +131,6 @@ public class Translator {
 	public Translator(Storage storage, History history) {
 		assert storage != null;
 		assert history != null;
-		logger.log(Level.INFO, "Non-null storage and history passed to construct this Translator");
 		
 		taskStorage = storage;
 		commandHistory = history;
