@@ -63,6 +63,6 @@ public final class Constants {
             + "redo\n  equivalent: r\n\n"
             + "search <Keyword>\n  equivalent: s\n\n"
             + "setdir <file path>\n\n"
-            + "undo\n  equivalent: u"
-            + "undone\n\n";
+            + "undo\n  equivalent: u\n\n"
+            + "undone";
 }
