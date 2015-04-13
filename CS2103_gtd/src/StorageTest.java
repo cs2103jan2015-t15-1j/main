@@ -1,6 +1,7 @@
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.junit.Test;
@@ -12,14 +13,29 @@ public class StorageTest {
     String fileName = System.getProperty("user.dir") + "/file_path_for_test.txt";
     
     private void initialize() {
-        storage.prepareStorage();
-        storage.setFilePath(fileName);
+        try {
+			storage.prepareStorage();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        try {
+			storage.setFilePath(fileName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         storage.deleteAll();
     }
     
     private void endTest() {
         storage.deleteAll();
-        storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
+        try {
+			storage.setFilePath(Constants.DEFAULT_STORAGE_PATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     @Test
@@ -100,7 +116,12 @@ public class StorageTest {
     // Only floating tasks working right now
     // - later do tests for event and deadline tasks as well
     public void updateTaskDescription() {
-        storage.prepareStorage();
+        try {
+			storage.prepareStorage();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         Task testTask = new Task();
         testTask.setDescription("test task");
         storage.add(testTask);

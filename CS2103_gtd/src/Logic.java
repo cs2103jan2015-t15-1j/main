@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 //@author A0111337U
 public class Logic {
 
@@ -18,7 +20,12 @@ public class Logic {
 
 	public String initializeEnvironment() {
 		storage = new Storage();
-		String initializationFeedback = storage.prepareStorage();
+		String initializationFeedback;
+		try {
+			initializationFeedback = storage.prepareStorage();
+		} catch (IOException e) {
+			return "TaskWaltz was not able to retrieve your data. Check your directory path in config.txt";
+		}
 		history = new History();
 		translator = new Translator(storage, history);
 		return initializationFeedback;
